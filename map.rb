@@ -60,7 +60,11 @@ class Layer
         @octaves[i] = template[i]
       end
     end
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 4007a36b43a36d3e493856ed73727222e470eab2
     if oct_nbr > copy_n
       for i in copy_n..oct_nbr-1
         @octaves[i] = Array.new(template[i].size)
@@ -80,9 +84,15 @@ class Map
 
   def initialize()
     @images = Array.new(4)
+<<<<<<< HEAD
     @images[0] = Gosu::Image.new("res/tiles/air.png") # air
     @images[1] = Gosu::Image.new("res/tiles/grass.png")
     @images[2] = Gosu::Image.new("res/tiles/earth.png")
+=======
+    @images[0] = 0 # air
+    @images[1] = Gosu::Image.new("res/tiles/grass.png")
+    @images[2] = Gosu::Image.new("res/tiles/dirt.png")
+>>>>>>> 4007a36b43a36d3e493856ed73727222e470eab2
     @images[3] = Gosu::Image.new("res/tiles/stone.png")
 
   end
@@ -147,6 +157,7 @@ class Map
     end
   end
 
+<<<<<<< HEAD
   def draw()
     for j in 0..@data[0].size-1 # Parcous du tableau bidimensionnel
       for i in 0..@data.size-1
@@ -154,6 +165,17 @@ class Map
         img = @images[@data[i][j]]  
         img.draw(2*i*(img.width - 2), 2*j*(img.height - 2), 0, 2, 2) # on le dessine en fonction de sa position dans le tableau
         #end
+=======
+  def draw(posX, posY)
+    debutX = (posX / 30) - 40
+    debutY = (posY / 30) - 25
+
+    for j in debutY..debutY+50 # Parcous du tableau bidimensionnel
+      for i in debutX..debutX+80
+        if @data[i][j] != Tiles::Air # S'il ne s'agit pas d'un block d'air
+          @images[@data[i][j]].draw(i*(@images[@data[i][j]].width - 2), j*(@images[@data[i][j]].height - 2), -1) # on le dessine en fonction de sa position dans le tableau
+        end
+>>>>>>> 4007a36b43a36d3e493856ed73727222e470eab2
       end
     end
   end
@@ -162,4 +184,15 @@ class Map
     @data[i][j] = state
   end
 
+<<<<<<< HEAD
 end
+=======
+  def solid(x, y)
+    if @data[x / 30][y / 30] != 0
+      return true
+    else
+      return false
+    end
+  end
+end
+>>>>>>> 4007a36b43a36d3e493856ed73727222e470eab2
