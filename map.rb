@@ -98,7 +98,7 @@ class Map
 
   def load()
     File.open("terrain.map") do |file|
-      Marshal.load(@data, file)
+      @data = Marshal.load(file)
     end
   end
 
@@ -164,7 +164,7 @@ class Map
   end
 
   def solid(x, y)
-    if @data[x / (30*2)][y / (30*2)] != 0 || @data[(x / (30*2))+1][y / (30*2)] != 0
+    if @data[x / (30*2)][y / (30*2)] != 0 || @data[((x+58) / (30*2))][y / (30*2)] != 0
       return true
     else
       return false
