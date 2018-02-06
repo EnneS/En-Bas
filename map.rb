@@ -147,11 +147,11 @@ class Map
   end
 
   def draw(posX, posY)
-    debutX = (posX / 60) - 40
-    debutY = (posY / 60) - 25
+    debutX = (posX / 60) - 32
+    debutY = (posY / 60) - 16
 
-    for j in debutY..debutY+50 # Parcous du tableau bidimensionnel
-      for i in debutX..debutX+80
+    for j in debutY..debutY+32 # Parcous du tableau bidimensionnel
+      for i in debutX..debutX+64
         if @data[i][j] != Tiles::Air # S'il ne s'agit pas d'un block d'air
           @images[@data[i][j]].draw(2*i*(@images[@data[i][j]].width - 2), 2*j*(@images[@data[i][j]].height - 2), -1, 2, 2) # on le dessine en fonction de sa position dans le tableau
         end
