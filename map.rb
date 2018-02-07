@@ -118,6 +118,8 @@ class Map
   def load()
     File.open("terrain.map") do |file|
       @data = Marshal.load(file)
+      @w = @data.size
+      @h = @data[0].size
     end
   end
   def lightValue(x, y)
@@ -216,8 +218,8 @@ class Map
 
     for x in 0..@w-1
       for y in 0..@h-1
-        @data[x][y] = Tiles::Air 
-        for i in 0..layers.size-1       
+        @data[x][y] = Tiles::Air
+        for i in 0..layers.size-1
           if y >= precomputed[i][x]
             @data[x][y] = layers[i].material
           end
@@ -299,7 +301,7 @@ class Map
       for j in debutY..finY
         if i >= 0 && j >= 0 && @data[i][j] != Tiles::Air # S'il ne s'agit pas d'un block d'air
           @images[@data[i][j]].draw(2*i*(@images[@data[i][j]].width), 2*j*(@images[@data[i][j]].height), -1, 2, 2) # on le dessine en fonction de sa position dans le tableau
-          
+
           #@shadow.draw(2*i*(@shadow.width - 2), 2*j*(@shadow.height - 2), -1, 2, 2, )
         end
       end
@@ -314,14 +316,10 @@ class Map
     return i
   end
 
-  def update(i, j, state)
-    @data[i][j] = state
-  end
-
   def solid(x, y)
     #Test pour le bloc du bas gauche/droite et haut gauche/droite s'il est solide
     # On ne peut aussi pas dépasser les limites de la map
-    if x < 0 || x > (@data.size-1)*(30*2) || y > (@data[0].size-1)*60 || @data[x / (30*2)][y / (30*2)] != 0 || @data[((x+58) / (30*2))][y / (30*2)] != 0 || @data[x / (30*2)][(y-64) / (30*2)] !=0 || @data[((x+58) / (30*2))][(y-64) / (30*2)] != 0
+    if x < 0 || x > (@data.size-1)*(32*2) || y > (@data[0].size-1)*64 || @data[x / (32*2)][y / (32*2)] != 0 || @data[((x+58) / (32*2))][y / (32*2)] != 0 || @data[x / (32*2)][(y-64) / (32*2)] !=0 || @data[((x+58) / (32*2))][(y-64) / (32*2)] != 0
       return true
     else
       return false
