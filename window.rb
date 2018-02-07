@@ -9,7 +9,7 @@ class Window < Gosu::Window
     @background_image = Gosu::Image.new("res/blue.jpg")
 
     @map = Map.new()
-    @map.generate(3, 200, 40, 8, 7, 64)
+    @map.generate(3, 3000, 40, 8, 7, 64)
     #@map.load()
     @hero = Hero.new(100, 100, @map)
     @inventaire = Inventaire.new(10)

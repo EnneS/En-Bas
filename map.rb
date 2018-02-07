@@ -109,74 +109,119 @@ class Map
       @data = Marshal.load(file)
     end
   end
-
+  def check(c, x, y, w, h)
+    if x < 0 then return 1 end
+    if y < 0 then return 1 end
+    if x >= w then return 1 end
+    if y >= h then return 1 end
+    return c[x][y] ? 1 : 0
+  end
   def generate(width_points, h, sea_lvl, wave_length_pow, nb_oct, amplitude)
     w = (2 ** wave_length_pow)*width_points
     layers = Array.new(3)
-    puts 1
+    puts "Generating octaves"
     layers[0] = Layer.new(Tiles::Grass, sea_lvl, nb_oct, amplitude, wave_length_pow)
     layers[0].generateNew(width_points)
     layers[1] = Layer.new(Tiles::Earth, sea_lvl+1, nb_oct, amplitude, wave_length_pow)
     layers[1].generateOctaves(layers[0].octaves, nb_oct)
     layers[2] = Layer.new(Tiles::Stone, sea_lvl+5, nb_oct, amplitude, wave_length_pow)
-    layers[2].generateOctaves(layers[0].octaves, nb_oct - 4)
+    layers[2].generateOctaves(layers[0].octaves, nb_oct - 3)
 
-    puts 2
+    puts "Generating terrain"
     @data = Array.new(w){Array.new(h)}
 
-    for y in 0..@data[0].size-1
+    precomputed = Array.new(layers.size){Array.new(w)}
+    for i in 0..layers.size-1
       for x in 0..@data.size-1
-        s = layers.size - 1
-        @data[x][y] = Tiles::Air
-        for i in 0..s
-          l = layers[i].base_lvl
-          for j in (0..layers[i].octaves.size-1)
-            twl = w / layers[i].octaves[j].size
-            a = max(0, x - 1) / twl
-            b = min(a + 1, layers[i].octaves[j].size - 1)
+        l = layers[i].base_lvl
+        for j in (0..layers[i].octaves.size-1)
+          twl = w / layers[i].octaves[j].size
+          a = max(0, x - 1) / twl
+          b = min(a + 1, layers[i].octaves[j].size - 1)
 
-            xab = (max(0, x - 1) % twl) / twl.to_f
-            l -= interpolate(layers[i].octaves[j][a], layers[i].octaves[j][b], xab)
-          end
+          xab = (max(0, x - 1) % twl) / twl.to_f
+          l -= interpolate(layers[i].octaves[j][a], layers[i].octaves[j][b], xab)
+        end
+        precomputed[i][x] = l
+      end
+    end
 
-          if y >= l
+    for x in 0..w-1
+      for y in 0..h-1
+        @data[x][y] = Tiles::Air 
+        for i in 0..layers.size-1       
+          if y >= precomputed[i][x]
             @data[x][y] = layers[i].material
           end
-
         end
       end
     end
-    puts 3
-    pStart = 45
+
+    puts "Generating caves"
+    pStartH = 38
+    pStartL = 48
     birth = 4
     death = 4
     steps = 3
 
-    caves = Array.new(@data.size){ |j|
-      Array.new(data[0].size){ |i|
-        $rng.Random(100) < pStart ? true : false
+    caves = Array.new(w){ |i|
+      Array.new(h){ |j|
+        $rng.Random(100) >= interpolate(pStartH, pStartL, j.to_f / h) ? true : false
       }
     }
-    
-    for j in 0..@data.size - 1
-      for i in 0..@data[0].size - 1
+    for step in 0..steps
+      caves2 = Array.new(w){Array.new(h)}
+      for i in 0..w-1
+        for j in 0..h-1
+          t = 0
+          t += check(caves, i+1, j, w, h)
+          t += check(caves, i+1, j+1, w, h)
+          t += check(caves, i, j+1, w, h)
+          t += check(caves, i-1, j, w, h)
+          t += check(caves, i-1, j-1, w, h)
+          t += check(caves, i, j-1, w, h)
+          t += check(caves, i+1, j-1, w, h)
+          t += check(caves, i-1, j+1, w, h)
+
+          if caves[i][j]
+              caves2[i][j] = (t < death ? false : true) 
+          else
+              caves2[i][j] = (t > birth ? true : false)
+          end
+        end 
+      end
+      caves, caves2 = caves2, caves
+=begin
+      for i in 0..w-1
+        for j in 0..h-1
+          caves[i][j] = caves2[i][j]
+        end
+      end
+=end
+    end
+
+
+
+    for i in 0..w-1
+      for j in 0..h-1
         if !caves[i][j]
           @data[i][j] = Tiles::Air
         end 
       end
     end
 
+
     File.open("terrain.map", "w+") do |file|
       Marshal.dump(@data, file)
     end
-    puts 4
+    puts "Done"
   end
 
   def draw(posX, posY)
     debutX = (posX / 60) - 32
     debutY = (posY / 60) - 16
-    for j in debutY..debutY+32 # Parcous du tableau bidimensionnel
-      for i in debutX..debutX+64
+    for i in debutX..debutX+64
+      for j in debutY..debutY+32
         if i >= 0 && j >= 0 && @data[i][j] != Tiles::Air # S'il ne s'agit pas d'un block d'air
           @images[@data[i][j]].draw(2*i*(@images[@data[i][j]].width - 2), 2*j*(@images[@data[i][j]].height - 2), -1, 2, 2) # on le dessine en fonction de sa position dans le tableau
         end
