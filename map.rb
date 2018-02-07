@@ -332,10 +332,6 @@ class Map
 
   def trouveBloc(cursor_x,cursor_y,camera_x, camera_y,hero_x,hero_y)
 
-    #valeur de z
-    #0 => poser
-    #1 => casser
-
     blocTrouve = false
     cursor_r_x = camera_x+cursor_x
     cursor_r_y = camera_y+cursor_y
@@ -345,7 +341,16 @@ class Map
     #calcul coef directeur
     c = ((hero_y)-cursor_r_y)/((hero_x)-cursor_r_x)
 
+    exit = 500
+
     while !blocTrouve
+
+      exit -= 1
+
+      if exit < 0
+        return -1,-1
+      end
+
 
       if cursor_r_x < hero_x
         bloc_x-=1
@@ -371,7 +376,6 @@ class Map
        blocTrouve = true
       end
      
-
     end
 
     if ((x-(hero_x/64).floor).abs < 5) && ((y-(hero_y/64).floor).abs < 5)
@@ -389,23 +393,25 @@ class Map
     cursor_r_x = camera_x+cursor_x
     cursor_r_y = camera_y+cursor_y
 
-    x = (cursor_r_x/60).floor
-    y = (cursor_r_y/60).floor
+    x = (cursor_r_x/64).floor
+    y = (cursor_r_y/64).floor
 
     #puts cursor_r_y.to_s+" . "+cursor_r_x.to_s
 
-    hero_xb = (hero_x/60).floor
-    hero_yb = (hero_y/60).floor
+    hero_xb = (hero_x/64).floor
+    hero_yb = (hero_y/64).floor
 
-    #puts hero_xb.to_s+" . "+hero_yb.to_s
-    #puts x.to_s+" . "+ y.to_s
+    puts "HERO"+hero_xb.to_s+" . "+hero_yb.to_s
+    puts "BLOC"+x.to_s+" . "+ y.to_s
 
-    #if (x = hero_xb && y = hero_yb) || (x = hero_xb && y = (hero_yb-1)) || (x = (hero_xb+1) && y = hero_yb) || (x = (hero_xb+1) && y = hero_yb-1)
-    #  return -1,-1
-    #        puts "SUPER"
-    #else
+    espaceHero = ((x == hero_xb && y == hero_yb) || (x == hero_xb && y == (hero_yb-1)) || (x == (hero_xb+1) && y == hero_yb) || (x == (hero_xb+1) && y == hero_yb-1))
+    blocAdjacent = (@data[x-1][y] != Tiles::Air) || (@data[x+1][y] != Tiles::Air) || (@data[x][y-1] != Tiles::Air) || (@data[x][y+1] != Tiles::Air)
+
+    if espaceHero || !blocAdjacent
+      return -1,-1
+    else
       return x,y
-    #end
+    end
 
   end
 
