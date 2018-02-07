@@ -219,9 +219,9 @@ end
 
 def draw(posX, posY)
   # Définition des blocs du tableau à draw
-  debutX = (posX / 60) - 25
+  debutX = (posX / 60) - 34
   debutY = (posY / 60) - 16
-  finX = debutX + 50
+  finX = debutX + 68
   finY = debutY + 32
 
   # L'index ne peut pas être négatif (min = 0)
@@ -256,7 +256,7 @@ end
   def solid(x, y)
     #Test pour le bloc du bas gauche/droite et haut gauche/droite s'il est solide
     # On ne peut aussi pas dépasser les limites de la map
-    if x < 0 || x > (@data.size-1)*(30*2) || @data[x / (30*2)][y / (30*2)] != 0 || @data[((x+58) / (30*2))][y / (30*2)] != 0 || @data[x / (30*2)][(y-64) / (30*2)] !=0 || @data[((x+58) / (30*2))][(y-64) / (30*2)] != 0
+    if x < 0 || x > (@data.size-1)*(30*2) || y > (@data[0].size-1)*60 || @data[x / (30*2)][y / (30*2)] != 0 || @data[((x+58) / (30*2))][y / (30*2)] != 0 || @data[x / (30*2)][(y-64) / (30*2)] !=0 || @data[((x+58) / (30*2))][(y-64) / (30*2)] != 0
       return true
     else
       return false
