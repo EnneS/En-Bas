@@ -206,7 +206,7 @@ class Map
       for j in 0..h-1
         if !caves[i][j]
           @data[i][j] = Tiles::Air
-        end 
+        end
       end
     end
 
@@ -214,24 +214,41 @@ class Map
     File.open("terrain.map", "w+") do |file|
       Marshal.dump(@data, file)
     end
-    puts "Done"
-  end
+    puts 4
+end
 
-  def draw(posX, posY)
-    debutX = (posX / 60) - 32
-    debutY = (posY / 60) - 16
-    for i in debutX..debutX+64
-      for j in debutY..debutY+32
-        if i >= 0 && j >= 0 && @data[i][j] != Tiles::Air # S'il ne s'agit pas d'un block d'air
-          @images[@data[i][j]].draw(2*i*(@images[@data[i][j]].width - 2), 2*j*(@images[@data[i][j]].height - 2), -1, 2, 2) # on le dessine en fonction de sa position dans le tableau
-        end
+def draw(posX, posY)
+  # Définition des blocs du tableau à draw
+  debutX = (posX / 60) - 25
+  debutY = (posY / 60) - 16
+  finX = debutX + 50
+  finY = debutY + 32
+
+  # L'index ne peut pas être négatif (min = 0)
+  debutX = (debutX < 0)? 0 : debutX
+  debutY = (debutY < 0)? 0 : debutY
+
+  # Si on dépasse la taille du tableau on dessine la valeur max (permet d'éviter le out of bound)
+  finX = (finX > @data.size-1)? @data.size-1 : finX
+  finY = (finY > @data[0].size-1)? @data[0].size-1 : finY
+
+  for i in debutX..finX
+    for j in debutY..finY
+      if i >= 0 && j >= 0 && @data[i][j] != Tiles::Air # S'il ne s'agit pas d'un block d'air
+        @images[@data[i][j]].draw(2*i*(@images[@data[i][j]].width - 2), 2*j*(@images[@data[i][j]].height - 2), -1, 2, 2) # on le dessine en fonction de sa position dans le tableau
       end
     end
   end
+end
 
+  def update(i, j, state)
+    @data[i][j] = state
+  end
 
   def solid(x, y)
-    if @data[x / (30*2)][y / (30*2)] != 0 || @data[((x+58) / (30*2))][y / (30*2)] != 0
+    #Test pour le bloc du bas gauche/droite et haut gauche/droite s'il est solide
+    # On ne peut aussi pas dépasser les limites de la map
+    if x < 0 || x > (@data.size-1)*(30*2) || @data[x / (30*2)][y / (30*2)] != 0 || @data[((x+58) / (30*2))][y / (30*2)] != 0 || @data[x / (30*2)][(y-64) / (30*2)] !=0 || @data[((x+58) / (30*2))][(y-64) / (30*2)] != 0
       return true
     else
       return false
