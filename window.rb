@@ -26,8 +26,20 @@ class Window < Gosu::Window
   end
 
   def update
+    close if Gosu::button_down?(Gosu::KbEscape)
+    @inventaire.setSelected(0) if Gosu::button_down?(Gosu::Kb1) && @inventaire.idItem(0) != -1
+    @inventaire.setSelected(1) if Gosu::button_down?(Gosu::Kb2) && @inventaire.idItem(1) != -1
+    @inventaire.setSelected(2) if Gosu::button_down?(Gosu::Kb3) && @inventaire.idItem(2) != -1
+    @inventaire.setSelected(3) if Gosu::button_down?(Gosu::Kb4) && @inventaire.idItem(3) != -1
+    @inventaire.setSelected(4) if Gosu::button_down?(Gosu::Kb5) && @inventaire.idItem(4) != -1
+    @inventaire.setSelected(5) if Gosu::button_down?(Gosu::Kb6) && @inventaire.idItem(5) != -1
 
+  
     if @gameStarted == false
+      # Evénements du menu
+      #
+      #
+      #
 
     else
       # Actions du héro
@@ -63,8 +75,6 @@ class Window < Gosu::Window
       end
     end
 
-
-    close if Gosu::button_down?(Gosu::KbEscape)
   end
 
   def draw
