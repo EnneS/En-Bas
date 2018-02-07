@@ -48,11 +48,7 @@ class Hero
       @image = @images[3]
       move_x.times {
         if peutSeDeplacer(1, 0)
-          if @sprinting == false
-            @x += 1
-          else
-            @x += 2
-          end
+          @x += 1
         end }
     end
 
@@ -61,11 +57,7 @@ class Hero
       @image = @images[2]
       (-move_x).times {
         if peutSeDeplacer(-1, 0)
-          if @sprinting == false
-            @x -= 1
-          else
-            @x -= 2
-          end
+          @x -= 1
         end }
     end
 
@@ -85,12 +77,8 @@ class Hero
 
   def jump
     if @map.solid(@x, @y +1) # il saute seulement s'il n'est pas dans les airs
-      @velocityY = -19
+      @velocityY = -21
     end
-  end
-
-  def setSprinting(bool)
-    @sprinting = bool
   end
 
 end

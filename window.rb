@@ -6,12 +6,14 @@ class Window < Gosu::Window
     super
     self.caption = "Hardcore Survival"
 
+    $font = Gosu::Font.new(self, "res/pokemon_pixel_font.ttf", 40)
+
     @background_image = Gosu::Image.new("res/blue.jpg")
 
     @map = Map.new()
-    @map.generate(1, 2000, 23, 7, 6, 32)
+    @map.generate(3, 3000, 128, 8, 7, 60)
     #@map.load()
-    @hero = Hero.new(100, 100, @map)
+    @hero = Hero.new(((@map.data.size-1)*60)/2, 250, @map)
     @inventaire = Inventaire.new(10)
     @inventaire.store(1, 4)
     @inventaire.store(2, 7)
@@ -27,10 +29,9 @@ class Window < Gosu::Window
     move_x = 0
     move_x -= 6 if Gosu.button_down? Gosu::KB_LEFT
     move_x += 6 if Gosu.button_down? Gosu::KB_RIGHT
+    move_x *= 2 if Gosu::button_down?(Gosu::KbLeftShift)
     @hero.update(move_x)
     @hero.jump if Gosu::button_down?(Gosu::KbSpace)
-    @hero.setSprinting(true) if Gosu::button_down?(Gosu::KbLeftShift)
-    @hero.setSprinting(false) if !Gosu::button_down?(Gosu::KbLeftShift)
 
     @camera_x = [[@hero.x - WIDTH / 2, 0].max, (1280*30) * 50 - WIDTH].min
     @camera_y = [[@hero.y - HEIGHT / 2, 0].max, 150*30 * 50 - HEIGHT].min
