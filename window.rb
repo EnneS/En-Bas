@@ -11,9 +11,9 @@ class Window < Gosu::Window
     @gamebackground_image = Gosu::Image.new("res/blue.jpg")
 
     @map = Map.new()
-    #@map.generate(3, 3000, 128, 8, 7, 60)
-    @map.load()
-    @hero = Hero.new(((@map.data.size-1)*60)/2, (@map.ground((@map.data.size-1)/2)*60)-1, @map)
+    @map.generate(3, 3000, 128, 8, 7, 60)
+    #@map.load()
+    @hero = Hero.new((((@map.data.size-1)/2)*60)-1, (@map.ground((@map.data.size-1)/2)*60)-1, @map)
     @inventaire = Inventaire.new(6)
     @inventaire.store(4, 1)
 
@@ -25,13 +25,12 @@ class Window < Gosu::Window
 
   def update
     close if Gosu::button_down?(Gosu::KbEscape)
-    @inventaire.setSelected(0) if Gosu::button_down?(Gosu::Kb1) && @inventaire.idItem(0) != -1
-    @inventaire.setSelected(1) if Gosu::button_down?(Gosu::Kb2) && @inventaire.idItem(1) != -1
-    @inventaire.setSelected(2) if Gosu::button_down?(Gosu::Kb3) && @inventaire.idItem(2) != -1
-    @inventaire.setSelected(3) if Gosu::button_down?(Gosu::Kb4) && @inventaire.idItem(3) != -1
-    @inventaire.setSelected(4) if Gosu::button_down?(Gosu::Kb5) && @inventaire.idItem(4) != -1
-    @inventaire.setSelected(5) if Gosu::button_down?(Gosu::Kb6) && @inventaire.idItem(5) != -1
-
+    @inventaire.setSelected(0) if Gosu::button_down?(Gosu::Kb1)
+    @inventaire.setSelected(1) if Gosu::button_down?(Gosu::Kb2)
+    @inventaire.setSelected(2) if Gosu::button_down?(Gosu::Kb3)
+    @inventaire.setSelected(3) if Gosu::button_down?(Gosu::Kb4)
+    @inventaire.setSelected(4) if Gosu::button_down?(Gosu::Kb5)
+    @inventaire.setSelected(5) if Gosu::button_down?(Gosu::Kb6)
 
     if @gameStarted == false
       # Evénements du menu
@@ -48,8 +47,10 @@ class Window < Gosu::Window
       @hero.update(move_x)
       @hero.jump if Gosu::button_down?(Gosu::KbSpace)
 
-      @camera_x = [[@hero.x - WIDTH / 2, 0].max, (1280*30) * 50 - WIDTH].min
-      @camera_y = [[@hero.y - HEIGHT / 2, 0].max, 150*30 * 50 - HEIGHT].min
+      # Viewport ! Il s'agit d'un tableau avec les coordonnées max possible de la fenêtre (en l'occurence la taille de la map)
+      # Si on arrive aux extrêmités il faut arrêter le scroll (on utilise ainsi min et max par rapport à la taille de la fenêtre)
+      @camera_x = [[@hero.x - WIDTH / 2, 0].max, (@map.data.size)*60 - WIDTH].min
+      @camera_y = [[@hero.y - HEIGHT / 2, 0].max, (@map.data[0].size)*60 - HEIGHT].min
 
     end
 
@@ -82,7 +83,6 @@ class Window < Gosu::Window
         x,y = @map.trouveBloc(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
 
         if @hero.dernierBlocCasse < (Time.now.to_f*1000).to_i-500 and x != -1 and y != -1
-
           bloc_x, bloc_y = @map.trouveBloc(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
           id = @map.data[bloc_x][bloc_y]
           
