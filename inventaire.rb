@@ -14,6 +14,7 @@ class Inventaire
     @images.push(Gosu::Image.new("res/tiles/dirt.png"))
     @images.push(Gosu::Image.new("res/tiles/stone.png"))
 
+    @selected = 0
   end
 
   def vider
