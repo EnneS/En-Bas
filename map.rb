@@ -281,7 +281,7 @@ class Map
 
     puts "Hiding treasures..."
 
-    nbCoffres = $rng.Random(1000) + 2000
+    nbCoffres = $rng.Random(2000) + 6000
     b = 1
     x = 0
     y = 0
