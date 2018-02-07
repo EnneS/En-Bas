@@ -61,10 +61,10 @@ class Layer
       end
     end
     if oct_nbr > copy_n
-      for i in copy_n..oct_nbr-1
-        @octaves[i] = Array.new(template[i].size)
-        for j in 0..template[i].size
-          @octaves[i][j] = $rng.GenerateKeyPoint(x, amplitude / (2**i), layer_index)
+      for j in copy_n..oct_nbr-1
+        @octaves[j] = Array.new(template[j].size)
+        for i in 0..template[j].size - 1
+          @octaves[j][i] = $rng.GenerateKeyPoint(i, amplitude / (2**j), layer_index)
         end
       end
     end
@@ -86,8 +86,13 @@ class Map
 
   end
 
-  def setData(x, y, v)
+  def setBlock(x, y, v)
+    o = @data[x][y]
     @data[x][y] = v
+    addBlockToWaitList(x-1, y)
+    addBlockToWaitList(x+1, y)
+    addBlockToWaitList(x, y-1)
+    addBlockToWaitList(x, y+1)
   end
 
   def interpolate(a, b, x)
@@ -110,8 +115,8 @@ class Map
     layers[0].generateNew(width_points, 0)
     layers[1] = Layer.new(Tiles::Earth, sea_lvl+1, nb_oct, amplitude, wave_length_pow)
     layers[1].generateOctaves(layers[0].octaves, nb_oct, 1)
-    layers[2] = Layer.new(Tiles::Stone, sea_lvl+5, nb_oct - 2, amplitude, wave_length_pow)
-    layers[2].generateNew(width_points, 2)
+    layers[2] = Layer.new(Tiles::Stone, sea_lvl+5, nb_oct, amplitude, wave_length_pow)
+    layers[2].generateOctaves(layers[0].octaves, nb_oct - 4, 2)
 
 
     @data = Array.new(w){Array.new(h)}
@@ -128,7 +133,6 @@ class Map
             b = min(a + 1, layers[i].octaves[j].size - 1)
 
             xab = (max(0, x - 1) % twl) / twl.to_f
-
             l -= interpolate(layers[i].octaves[j][a], layers[i].octaves[j][b], xab)
           end
 
