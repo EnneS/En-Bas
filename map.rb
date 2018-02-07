@@ -93,16 +93,16 @@ class Map
 
     @transparency = Array.new(4)
     @transparency[0] = 1
-    @transparency[1] = 5
-    @transparency[2] = 5
-    @transparency[3] = 7
+    @transparency[1] = 7
+    @transparency[2] = 7
+    @transparency[3] = 9
 
-    #@shadow = Gosu::Image.new("res/tiles/shadow.png")
+    @shadow = Gosu::Image.new("res/tiles/shadow.png", {:tileable => true })
   end
 
   def setBlock(x, y, v)
-    o = @data[x][y]
     @data[x][y] = v
+    updateLight(x, y, 0)
     #addBlockToWaitList(x-1, y)
     #addBlockToWaitList(x+1, y)
     #addBlockToWaitList(x, y-1)
@@ -136,7 +136,7 @@ class Map
     end
 
     vu = lightValue(x, y-1)
-    if vu >= 31
+    if vu >= 32 - @transparency[0]
       @lightmap[x][y] = 32 - @transparency[@data[x][y]]
       if @lightmap[x][y] != v
         modified = true
@@ -226,7 +226,7 @@ class Map
     end
 
     puts "Generating caves..."
-    pStartH = 38
+    pStartH = 43
     pStartL = 48
     birth = 4
     death = 4
@@ -282,8 +282,8 @@ class Map
 
   def draw(posX, posY)
     # Définition des blocs du tableau à draw
-    debutX = (posX / 60) - 34
-    debutY = (posY / 60) - 16
+    debutX = (posX / 64) - 34
+    debutY = (posY / 64) - 16
     finX = debutX + 68
     finY = debutY + 32
 
@@ -299,8 +299,9 @@ class Map
       for j in debutY..finY
         if i >= 0 && j >= 0 && @data[i][j] != Tiles::Air # S'il ne s'agit pas d'un block d'air
           @images[@data[i][j]].draw(2*i*(@images[@data[i][j]].width), 2*j*(@images[@data[i][j]].height), -1, 2, 2) # on le dessine en fonction de sa position dans le tableau
-          
-          #@shadow.draw(2*i*(@shadow.width - 2), 2*j*(@shadow.height - 2), -1, 2, 2, )
+          alpha = 255 - (@lightmap[i][j] * 8)
+          col = Gosu::Color.new(alpha, 255, 255, 255)
+          @shadow.draw(2*i*(@shadow.width), 2*j*(@shadow.height), -1, 2, 2, col)
         end
       end
     end
@@ -321,7 +322,7 @@ class Map
   def solid(x, y)
     #Test pour le bloc du bas gauche/droite et haut gauche/droite s'il est solide
     # On ne peut aussi pas dépasser les limites de la map
-    if x < 0 || x > (@data.size-1)*(30*2) || y > (@data[0].size-1)*60 || @data[x / (30*2)][y / (30*2)] != 0 || @data[((x+58) / (30*2))][y / (30*2)] != 0 || @data[x / (30*2)][(y-64) / (30*2)] !=0 || @data[((x+58) / (30*2))][(y-64) / (30*2)] != 0
+    if x < 0 || x > (@data.size-1)*(32*2) || y > (@data[0].size-1)*64 || @data[x / (32*2)][y / (32*2)] != 0 || @data[((x+58) / (32*2))][y / (32*2)] != 0 || @data[x / (32*2)][(y-64) / (32*2)] !=0 || @data[((x+58) / (32*2))][(y-64) / (32*2)] != 0
       return true
     else
       return false
@@ -335,11 +336,11 @@ class Map
     blocTrouve = false
     cursor_r_x = camera_x+cursor_x
     cursor_r_y = camera_y+cursor_y
-    bloc_x = hero_x+30
-    bloc_y = hero_y-60
+    bloc_x = hero_x+32
+    bloc_y = hero_y-64
 
     #calcul coef directeur
-    c = ((hero_y-60)-cursor_r_y)/((hero_x+30)-cursor_r_x)
+    c = ((hero_y-64)-cursor_r_y)/((hero_x+32)-cursor_r_x)
 
     while !blocTrouve
 
@@ -353,8 +354,8 @@ class Map
 
 
       #puts bloc_x.
-      x = (bloc_x/60).floor
-      y = (bloc_y/60).floor
+      x = (bloc_x/64).floor
+      y = (bloc_y/64).floor
 
       if @data[x][y] != Tiles::Air
         blocTrouve = true
@@ -364,24 +365,6 @@ class Map
     return x,y
 
   end
-
-=begin
-
-  def trouveBloc(cursor_x,cursor_y,camera_x, camera_y,hero_x,hero_y)
-
-    cursor_r_x = camera_x+cursor_x
-    cursor_r_y = camera_y+cursor_y
-    #bloc_x = hero_x+30
-    #bloc_y = hero_y-60
-
-    x = (cursor_r_x/60).floor
-    y = (cursor_r_y/60).floor
-
-    return x,y
-
-  end
-
-=end
 
   def detruireBloc(bloc_x,bloc_y)
     setBlock(bloc_x,bloc_y,0)
