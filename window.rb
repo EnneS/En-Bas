@@ -6,7 +6,7 @@ class Window < Gosu::Window
     super
     self.caption = "Hardcore Survival"
     @map = Map.new()
-    @map.generate(8, 3000, 40, 8, 7, 64)
+    @map.generate(3, 200, 40, 8, 7, 64)
     #@map.load()
     @hero = Hero.new(100, 100, @map)
     @song = Gosu::Song.new("res/music.mp3")
