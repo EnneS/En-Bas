@@ -320,7 +320,7 @@ class Map
   def solid(x, y)
     #Test pour le bloc du bas gauche/droite et haut gauche/droite s'il est solide
     # On ne peut aussi pas dépasser les limites de la map
-    if x < 0 || x > (@data.size-1)*(32*2) || y > (@data[0].size-1)*64 || @data[x / (32*2)][y / (32*2)] != 0 || @data[((x+58) / (32*2))][y / (32*2)] != 0 || @data[x / (32*2)][(y-64) / (32*2)] !=0 || @data[((x+58) / (32*2))][(y-64) / (32*2)] != 0
+    if x < 0 || x > (@data.size-1)*(32*2) || y > (@data[0].size-1)*64 || @data[x / (32*2)][y / (32*2)] != 0 || @data[((x+60) / (32*2))][y / (32*2)] != 0 || @data[x / (32*2)][(y-70) / (32*2)] !=0 || @data[(x+60) / (32*2)][(y-70) / (32*2)] !=0
       return true
     else
       return false
