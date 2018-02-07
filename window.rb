@@ -43,6 +43,21 @@ class Window < Gosu::Window
 
     end
 
+
+    if button_down?(Gosu::MsLeft)
+
+      if @hero.dernierBlocCasse < (Time.now.to_f*1000).to_i-500
+        cursor_x = self.mouse_x
+        cursor_y = self.mouse_y
+        bloc_x, bloc_y = @map.trouveBloc(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
+        @inventaire.store(@map.data[bloc_x][bloc_y],1)
+        @map.detruireBloc(bloc_x,bloc_y)
+        @hero.dernierBlocCasse = (Time.now.to_f*1000).to_i
+
+      end
+    end
+
+
     close if Gosu::button_down?(Gosu::KbEscape)
   end
 
@@ -68,4 +83,5 @@ class Window < Gosu::Window
       end
     end
   end
+
 end
