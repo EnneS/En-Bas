@@ -26,8 +26,20 @@ class Window < Gosu::Window
   end
 
   def update
+    close if Gosu::button_down?(Gosu::KbEscape)
+    @inventaire.setSelected(0) if Gosu::button_down?(Gosu::Kb1) && @inventaire.idItem(0) != -1
+    @inventaire.setSelected(1) if Gosu::button_down?(Gosu::Kb2) && @inventaire.idItem(1) != -1
+    @inventaire.setSelected(2) if Gosu::button_down?(Gosu::Kb3) && @inventaire.idItem(2) != -1
+    @inventaire.setSelected(3) if Gosu::button_down?(Gosu::Kb4) && @inventaire.idItem(3) != -1
+    @inventaire.setSelected(4) if Gosu::button_down?(Gosu::Kb5) && @inventaire.idItem(4) != -1
+    @inventaire.setSelected(5) if Gosu::button_down?(Gosu::Kb6) && @inventaire.idItem(5) != -1
 
+  
     if @gameStarted == false
+      # Evénements du menu
+      #
+      #
+      #
 
     else
       # Actions du héro
@@ -41,24 +53,18 @@ class Window < Gosu::Window
       @camera_x = [[@hero.x - WIDTH / 2, 0].max, (1280*30) * 50 - WIDTH].min
       @camera_y = [[@hero.y - HEIGHT / 2, 0].max, 150*30 * 50 - HEIGHT].min
 
-    end
-
-
-    if button_down?(Gosu::MsLeft)
-
-      if @hero.dernierBlocCasse < (Time.now.to_f*1000).to_i-500
-        cursor_x = self.mouse_x
-        cursor_y = self.mouse_y
-        bloc_x, bloc_y = @map.trouveBloc(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
-        @inventaire.store(@map.data[bloc_x][bloc_y],1)
-        @map.detruireBloc(bloc_x,bloc_y)
-        @hero.dernierBlocCasse = (Time.now.to_f*1000).to_i
-
+      if button_down?(Gosu::MsLeft)
+        if @hero.dernierBlocCasse < (Time.now.to_f*1000).to_i-500
+          cursor_x = self.mouse_x
+          cursor_y = self.mouse_y
+          bloc_x, bloc_y = @map.trouveBloc(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
+          @inventaire.store(@map.data[bloc_x][bloc_y],1)
+          @map.detruireBloc(bloc_x,bloc_y)
+          @hero.dernierBlocCasse = (Time.now.to_f*1000).to_i
+        end
       end
     end
 
-
-    close if Gosu::button_down?(Gosu::KbEscape)
   end
 
   def draw

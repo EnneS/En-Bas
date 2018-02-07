@@ -4,9 +4,10 @@ class Inventaire
  0 : Air
  1 : Grass
  2 : Dirt
- 3 : Stone 
+ 3 : Stone
 
 =end
+attr_reader :selected, :items
 
   def initialize(places)
     @places = places #nombre de places de l'inventaire
@@ -86,6 +87,18 @@ class Inventaire
     end
   end
 
+  def idItem(n)
+    return @items[n][0]
+  end
+
+  def nbItems(id)
+    return @items[id][1]
+  end
+
+  def setSelected(n)
+    @selected = n
+  end
+
   def draw
     @barre.draw(1920-@barre.width, 0, 3)
     i = 0
@@ -93,9 +106,9 @@ class Inventaire
       @case.draw((1920-@case.width-(@barre.width/6)), 1080/4/@places + ((1080/@places)*i), 4)
 
         if @items[i][0] != -1 #si l'emplacement contient un item
-          @images[@items[i][0]].draw((1920-(@images[1].width)-(@case.width/2)-(@barre.width/6)), 1080/4/@places + ((1080/@places)*i) + 16, 5, 2, 2)
+          @images[@items[i][0]].draw((1920-(@images[1].width)-(@case.width/2)-(@barre.width/6)), 1080/4/@places + ((1080/@places)*i) + 16, 6, 2, 2)
 
-          $font.draw(@items[i][1].to_s, 1870,  1080/4/@places + ((1080/@places)*i) + 60, 6)
+          $font.draw(@items[i][1].to_s, 1870,  1080/4/@places + ((1080/@places)*i) + 60, 7)
         end
         i += 1
     end
