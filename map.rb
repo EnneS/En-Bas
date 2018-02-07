@@ -262,11 +262,11 @@ end
     blocTrouve = false
     cursor_r_x = camera_x+cursor_x
     cursor_r_y = camera_y+cursor_y
-    bloc_x = hero_x+30
+    bloc_x = hero_x+29
     bloc_y = hero_y-60
 
     #calcul coef directeur
-    c = ((hero_y-60)-cursor_r_y)/((hero_x+30)-cursor_r_x)
+    c = ((hero_y-60)-cursor_r_y)/((hero_x+29)-cursor_r_x)
 
     while !blocTrouve
 

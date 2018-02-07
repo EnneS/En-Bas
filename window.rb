@@ -11,8 +11,8 @@ class Window < Gosu::Window
     @background_image = Gosu::Image.new("res/blue.jpg")
 
     @map = Map.new()
-    @map.generate(3, 3000, 128, 8, 7, 60)
-    #@map.load()
+    #@map.generate(3, 3000, 128, 8, 7, 60)
+    @map.load()
     @hero = Hero.new(((@map.data.size-1)*60)/2, 250, @map)
     @inventaire = Inventaire.new(10)
     @inventaire.store(1, 4)
@@ -42,9 +42,15 @@ class Window < Gosu::Window
       if @hero.dernierBlocCasse < (Time.now.to_f*1000).to_i-500
         cursor_x = self.mouse_x
         cursor_y = self.mouse_y
+
         bloc_x, bloc_y = @map.trouveBloc(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
-        @inventaire.store(@map.data[bloc_x][bloc_y],1)
+
+        v = @map.data[bloc_x][bloc_y]
+
         @map.detruireBloc(bloc_x,bloc_y)
+        if @map.data[bloc_x][bloc_y] == 0
+          @inventaire.store(v,1)
+        end
         @hero.dernierBlocCasse = (Time.now.to_f*1000).to_i
         
       end
