@@ -13,17 +13,21 @@ def max(a, b)
   return a > b ? a : b
 end
 class RNG
-  attr :seed
+  attr :seed, :m, :a, :c
 
   def initialize(seed)
     @seed = seed
+    @m = 2**31
+    @a = 1103515245
+    @c = 12345
   end
-  def GenerateKeyPoint(x, amp, index)
-    m = 2**31
-    a = 1103515245
-    c = 12345*(index+1)
-    r = (x * a * seed + c) % m;
-    return (r % amp) - (amp / 2)
+  def Random(max)
+    @seed = (@a * @seed + @c) % @m;
+    return @seed % max
+  end
+  def GenerateKeyPoint(amp)
+    @seed = (@a * @seed + @c) % @m;
+    return (@seed % amp) - (amp / 2)
   end
 end
 class Layer
@@ -35,21 +39,20 @@ class Layer
     @base_lvl, @material, @oct_nbr, @amplitude, @wave_length_pow = base_lvl, material, oct_nbr, amplitude, wave_length_pow
   end
 
-  def generateNew(width_points, index)
+  def generateNew(width_points)
     wl = 2 ** wave_length_pow
-    width_points_total = width_points
-    tmp_wt = width_points_total
+    tmp_wp = width_points
 
-    @octaves = Array.new(oct_nbr){Array.new(tmp_wt)}
+    @octaves = Array.new(oct_nbr){Array.new(tmp_wp)}
     for y in 0..oct_nbr - 1
-      for x in 0..tmp_wt - 1
-        octaves[y][x] = $rng.GenerateKeyPoint(x, amplitude / (2 ** y), index)
+      for x in 0..tmp_wp - 1
+        octaves[y][x] = $rng.GenerateKeyPoint(amplitude / (1.5 ** y))
 
       end
-      tmp_wt *= 2
+      tmp_wp *= 2
     end
   end
-  def generateOctaves(template, copy_n, layer_index)
+  def generateOctaves(template, copy_n)
     if copy_n > @oct_nbr
       puts "copy_n too big"
       copy_n = oct_nbr
@@ -61,10 +64,10 @@ class Layer
       end
     end
     if oct_nbr > copy_n
-      for i in copy_n..oct_nbr-1
-        @octaves[i] = Array.new(template[i].size)
-        for j in 0..template[i].size
-          @octaves[i][j] = $rng.GenerateKeyPoint(x, amplitude / (2**i), layer_index)
+      for j in copy_n..oct_nbr-1
+        @octaves[j] = Array.new(template[j].size)
+        for i in 0..template[j].size - 1
+          @octaves[j][i] = $rng.GenerateKeyPoint(amplitude / (1.5**j))
         end
       end
     end
@@ -86,8 +89,13 @@ class Map
 
   end
 
-  def setData(x, y, v)
+  def setBlock(x, y, v)
+    o = @data[x][y]
     @data[x][y] = v
+    addBlockToWaitList(x-1, y)
+    addBlockToWaitList(x+1, y)
+    addBlockToWaitList(x, y-1)
+    addBlockToWaitList(x, y+1)
   end
 
   def interpolate(a, b, x)
@@ -105,15 +113,15 @@ class Map
   def generate(width_points, h, sea_lvl, wave_length_pow, nb_oct, amplitude)
     w = (2 ** wave_length_pow)*width_points
     layers = Array.new(3)
-
+    puts 1
     layers[0] = Layer.new(Tiles::Grass, sea_lvl, nb_oct, amplitude, wave_length_pow)
-    layers[0].generateNew(width_points, 0)
+    layers[0].generateNew(width_points)
     layers[1] = Layer.new(Tiles::Earth, sea_lvl+1, nb_oct, amplitude, wave_length_pow)
-    layers[1].generateOctaves(layers[0].octaves, nb_oct, 1)
-    layers[2] = Layer.new(Tiles::Stone, sea_lvl+5, nb_oct - 2, amplitude, wave_length_pow)
-    layers[2].generateNew(width_points, 2)
+    layers[1].generateOctaves(layers[0].octaves, nb_oct)
+    layers[2] = Layer.new(Tiles::Stone, sea_lvl+5, nb_oct, amplitude, wave_length_pow)
+    layers[2].generateOctaves(layers[0].octaves, nb_oct - 4)
 
-
+    puts 2
     @data = Array.new(w){Array.new(h)}
 
     for y in 0..@data[0].size-1
@@ -128,7 +136,6 @@ class Map
             b = min(a + 1, layers[i].octaves[j].size - 1)
 
             xab = (max(0, x - 1) % twl) / twl.to_f
-
             l -= interpolate(layers[i].octaves[j][a], layers[i].octaves[j][b], xab)
           end
 
@@ -139,32 +146,51 @@ class Map
         end
       end
     end
+    puts 3
+    pStart = 45
+    birth = 4
+    death = 4
+    steps = 3
 
+    caves = Array.new(@data.size){ |j|
+      Array.new(data[0].size){ |i|
+        $rng.Random(100) < pStart ? true : false
+      }
+    }
+
+    for j in 0..@data.size - 1
+      for i in 0..@data[0].size - 1
+        if !caves[i][j]
+          @data[i][j] = Tiles::Air
+        end
+      end
+    end
 
     File.open("terrain.map", "w+") do |file|
       Marshal.dump(@data, file)
     end
-  end
+    puts 4
+end
 
-  def draw(posX, posY)
-    debutX = (posX / 60) - 32
-    debutY = (posY / 60) - 16
-
-    for j in debutY..debutY+32 # Parcous du tableau bidimensionnel
-      for i in debutX..debutX+64
-        if @data[i][j] != Tiles::Air # S'il ne s'agit pas d'un block d'air
-          @images[@data[i][j]].draw(2*i*(@images[@data[i][j]].width - 2), 2*j*(@images[@data[i][j]].height - 2), -1, 2, 2) # on le dessine en fonction de sa position dans le tableau
-        end
+def draw(posX, posY)
+  debutX = (posX / 60) - 32
+  debutY = (posY / 60) - 16
+  for j in debutY..debutY+32 # Parcous du tableau bidimensionnel
+    for i in debutX..debutX+64
+      if i >= 0 && j >= 0 && @data[i][j] != Tiles::Air # S'il ne s'agit pas d'un block d'air
+        @images[@data[i][j]].draw(2*i*(@images[@data[i][j]].width - 2), 2*j*(@images[@data[i][j]].height - 2), -1, 2, 2) # on le dessine en fonction de sa position dans le tableau
       end
     end
   end
+end
 
   def update(i, j, state)
     @data[i][j] = state
   end
 
   def solid(x, y)
-    if @data[x / (30*2)][y / (30*2)] != 0 || @data[((x+58) / (30*2))][y-120 / (30*2)] != 0
+    #Test pour le bloc du bas gauche/droite et haut gauche/droite s'il est solide
+    if @data[x / (30*2)][y / (30*2)] != 0 || @data[((x+58) / (30*2))][y / (30*2)] != 0 || @data[x / (30*2)][(y-64) / (30*2)] !=0 || @data[((x+58) / (30*2))][(y-64) / (30*2)] != 0
       return true
     else
       return false
