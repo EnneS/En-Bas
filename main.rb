@@ -4,6 +4,7 @@ require_relative 'z_order'
 require_relative 'hero'
 require_relative 'window'
 require_relative 'map'
+require_relative 'inventaire'
 
 WindowWidth = 1920
 WindowHeight = 1080
