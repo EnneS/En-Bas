@@ -24,6 +24,10 @@ attr_reader :selected, :items
     @images.push(Gosu::Image.new("res/tiles/stone.png"))
     @images.push(Gosu::Image.new("res/tiles/pioche.png"))
 
+#    @image.push(Gosu:Image.new )
+#    @imagesTransparant = 
+
+
     @selected = 0
   end
 
