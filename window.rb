@@ -49,8 +49,8 @@ class Window < Gosu::Window
 
       # Viewport ! Il s'agit d'un tableau avec les coordonnées max possible de la fenêtre (en l'occurence la taille de la map)
       # Si on arrive aux extrêmités il faut arrêter le scroll (on utilise ainsi min et max par rapport à la taille de la fenêtre)
-      @camera_x = [[@hero.x - WIDTH / 2, 0].max, (@map.data.size)*60 - WIDTH].min
-      @camera_y = [[@hero.y - HEIGHT / 2, 0].max, (@map.data[0].size)*60 - HEIGHT].min
+      @camera_x = [[@hero.x - WIDTH / 2, 0].max, (@map.data.size)*64 - WIDTH].min
+      @camera_y = [[@hero.y - HEIGHT / 2, 0].max, (@map.data[0].size)*64 - HEIGHT].min
 
     end
 
@@ -85,7 +85,7 @@ class Window < Gosu::Window
         if @hero.dernierBlocCasse < (Time.now.to_f*1000).to_i-500 and x != -1 and y != -1
           bloc_x, bloc_y = @map.trouveBloc(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
           id = @map.data[bloc_x][bloc_y]
-          
+
           @map.detruireBloc(bloc_x,bloc_y)
           if @map.data[bloc_x][bloc_y] == 0
             @inventaire.store(id,1)

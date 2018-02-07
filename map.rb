@@ -118,6 +118,8 @@ class Map
   def load()
     File.open("terrain.map") do |file|
       @data = Marshal.load(file)
+      @w = @data.size
+      @h = @data[0].size
     end
   end
   def lightValue(x, y)
@@ -216,8 +218,8 @@ class Map
 
     for x in 0..@w-1
       for y in 0..@h-1
-        @data[x][y] = Tiles::Air 
-        for i in 0..layers.size-1       
+        @data[x][y] = Tiles::Air
+        for i in 0..layers.size-1
           if y >= precomputed[i][x]
             @data[x][y] = layers[i].material
           end
@@ -315,10 +317,6 @@ class Map
     return i
   end
 
-  def update(i, j, state)
-    @data[i][j] = state
-  end
-
   def solid(x, y)
     #Test pour le bloc du bas gauche/droite et haut gauche/droite s'il est solide
     # On ne peut aussi pas dépasser les limites de la map
@@ -353,7 +351,7 @@ class Map
       else
         bloc_x+=1
         bloc_y+=(c)
-      end 
+      end
 
       #puts bloc_x.
       x = (bloc_x/64).floor
@@ -371,8 +369,8 @@ class Map
     else
       return -1,-1
     end
-  
-  end 
+
+  end
 
   def trouveBlocP(cursor_x,cursor_y,camera_x, camera_y,hero_x,hero_y)
 
