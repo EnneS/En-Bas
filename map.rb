@@ -8,6 +8,7 @@ module Tiles
   DarkStone = 4
   Water = 5
   Lava = 6
+  Chest = 7
 
 end
 def min(a, b)
@@ -90,6 +91,7 @@ class Map
     @images[1] = Gosu::Image.new("res/tiles/grass.png", {:tileable => true })
     @images[2] = Gosu::Image.new("res/tiles/dirt.png", {:tileable => true })
     @images[3] = Gosu::Image.new("res/tiles/stone.png", {:tileable => true })
+    @images[7] = Gosu::Image.new("res/tiles/stone.png", {:tileable => true })
 
     @transparency = Array.new(4)
     @transparency[0] = 1
@@ -275,8 +277,28 @@ class Map
 
 
     puts "Calculating lightning..."
-
     initLight()
+
+    puts "Hiding treasures..."
+
+    nbCoffres = $rng.Random(1000) + 2000
+    b = 1
+    x = 0
+    y = 0
+    while nbCoffres > 0
+      while b != Tiles::Air
+        x = $rng.Random(w)
+        y = $rng.Random(h)
+        b = data[x][y]
+      end
+      y += 1
+      while b == Tiles::Air
+        y -= 1
+        b = @data[x][y-1]
+      end
+      @data[i][j] = Tiles::Chest
+      nbCoffres -= 1;
+    end
     File.open("terrain.map", "w+") do |file|
       Marshal.dump(@data, file)
     end
@@ -330,18 +352,14 @@ class Map
 
   def trouveBloc(cursor_x,cursor_y,camera_x, camera_y,hero_x,hero_y)
 
-    #valeur de z
-    #0 => poser
-    #1 => casser
-
     blocTrouve = false
     cursor_r_x = camera_x+cursor_x
     cursor_r_y = camera_y+cursor_y
-    bloc_x = hero_x+32
-    bloc_y = hero_y-64
+    bloc_x = hero_x / 64
+    bloc_y = hero_y / 64
 
     #calcul coef directeur
-    c = ((hero_y-64)-cursor_r_y)/((hero_x+32)-cursor_r_x)
+    c = (hero_y-cursor_r_y)/(hero_x-cursor_r_x)
 
     while !blocTrouve
 
@@ -352,19 +370,14 @@ class Map
         bloc_x+=1
         bloc_y+=(c)
       end
-
-      #puts bloc_x.
-      x = (bloc_x/64).floor
-      y = (bloc_y/64).floor
-
       #puts x.to_s+" . "+ y.to_s
 
-      if @data[x][y] == 1 || @data[x][y] == 2 || @data[x][y] == 3
+      if @data[bloc_x][bloc_y] == 1 || @data[bloc_x][bloc_y] == 2 || @data[bloc_x][bloc_y] == 3
         blocTrouve = true
       end
     end
 
-    if ((x-(hero_x/60).floor).abs < 5) && ((y-(hero_y/60).floor).abs < 5)
+    if ((bloc_x-(hero_x/64).floor).abs < 5) && ((bloc_y-(hero_y/64).floor).abs < 5)
       return x,y
     else
       return -1,-1
