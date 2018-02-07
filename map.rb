@@ -107,6 +107,8 @@ class Map
   def load()
     File.open("terrain.map") do |file|
       @data = Marshal.load(file)
+      @w = @data.size
+      @h = @data[0].size
     end
   end
   def check(c, x, y, w, h)
@@ -249,10 +251,6 @@ end
     return i
   end
 
-  def update(i, j, state)
-    @data[i][j] = state
-  end
-
   def solid(x, y)
     #Test pour le bloc du bas gauche/droite et haut gauche/droite s'il est solide
     # On ne peut aussi pas dépasser les limites de la map
@@ -288,7 +286,7 @@ end
       else
         bloc_x+=1
         bloc_y+=(c)
-      end 
+      end
 
       x = (bloc_x/60).floor
       y = (bloc_y/60).floor
@@ -305,8 +303,8 @@ end
     else
       return -1,-1
     end
-  
-  end 
+
+  end
 
   def trouveBlocP(cursor_x,cursor_y,camera_x, camera_y,hero_x,hero_y)
 
