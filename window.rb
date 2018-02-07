@@ -13,11 +13,9 @@ class Window < Gosu::Window
     @map = Map.new()
     #@map.generate(3, 3000, 128, 8, 7, 60)
     @map.load()
-    @hero = Hero.new(((@map.data.size-1)*60)/2, 250, @map)
+    @hero = Hero.new(((@map.data.size-1)*60)/2, (@map.ground((@map.data.size-1)/2)*60)-1, @map)
     @inventaire = Inventaire.new(6)
-    @inventaire.store(1, 4)
-    @inventaire.store(2, 7)
-
+    @inventaire.store(4, 1)
 
     @cursor = Gosu::Image.new("res/cursor.png")
     @camera_x = @camera_y = 0
@@ -34,7 +32,7 @@ class Window < Gosu::Window
     @inventaire.setSelected(4) if Gosu::button_down?(Gosu::Kb5) && @inventaire.idItem(4) != -1
     @inventaire.setSelected(5) if Gosu::button_down?(Gosu::Kb6) && @inventaire.idItem(5) != -1
 
-  
+
     if @gameStarted == false
       # Evénements du menu
       #
