@@ -332,6 +332,9 @@ class Map
 
   def trouveBloc(cursor_x,cursor_y,camera_x, camera_y,hero_x,hero_y)
 
+    #valeur de z
+    #0 => poser
+    #1 => casser
 
     blocTrouve = false
     cursor_r_x = camera_x+cursor_x
@@ -350,23 +353,62 @@ class Map
       else
         bloc_x+=1
         bloc_y+=(c)
-      end
-
+      end 
 
       #puts bloc_x.
       x = (bloc_x/64).floor
       y = (bloc_y/64).floor
 
-      if @data[x][y] != Tiles::Air
+      puts x.to_s+" . "+ y.to_s
+
+      if @data[x][y] == 1 || @data[x][y] == 2 || @data[x][y] == 3
         blocTrouve = true
       end
     end
 
-    return x,y
+    if ((x-(hero_x/60).floor).abs < 5) && ((y-(hero_y/60).floor).abs < 5)
+      return x,y
+    else
+      return -1,-1
+    end
+  
+  end 
 
+  def trouveBlocP(cursor_x,cursor_y,camera_x, camera_y,hero_x,hero_y)
+
+    #puts hero_x.to_s+" . "+hero_y.to_s
+
+    cursor_r_x = camera_x+cursor_x
+    cursor_r_y = camera_y+cursor_y
+
+    x = (cursor_r_x/60).floor
+    y = (cursor_r_y/60).floor
+
+    #puts cursor_r_y.to_s+" . "+cursor_r_x.to_s
+
+    hero_xb = (hero_x/60).floor
+    hero_yb = (hero_y/60).floor
+
+    #puts hero_xb.to_s+" . "+hero_yb.to_s
+    #puts x.to_s+" . "+ y.to_s
+
+    #if (x = hero_xb && y = hero_yb) || (x = hero_xb && y = (hero_yb-1)) || (x = (hero_xb+1) && y = hero_yb) || (x = (hero_xb+1) && y = hero_yb-1)
+    #  return -1,-1
+    #        puts "SUPER"
+    #else
+      return x,y
+    #end
+
+  end
+
+
+  def poserBloc(bloc_x,bloc_y,id)
+    #puts id.to_s
+    setBlock(bloc_x,bloc_y,id)
   end
 
   def detruireBloc(bloc_x,bloc_y)
     setBlock(bloc_x,bloc_y,0)
   end
+
 end

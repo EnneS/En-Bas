@@ -52,19 +52,49 @@ class Window < Gosu::Window
       @camera_x = [[@hero.x - WIDTH / 2, 0].max, (@map.data.size)*60 - WIDTH].min
       @camera_y = [[@hero.y - HEIGHT / 2, 0].max, (@map.data[0].size)*60 - HEIGHT].min
 
-      # Minage / Posage
-      if button_down?(Gosu::MsLeft)
-        if @hero.dernierBlocCasse < (Time.now.to_f*1000).to_i-500
-          cursor_x = self.mouse_x
-          cursor_y = self.mouse_y
+    end
+
+
+    if button_down?(Gosu::MsLeft)
+
+      cursor_x = self.mouse_x
+      cursor_y = self.mouse_y
+
+      v = @inventaire.idItem(@inventaire.selected)
+
+      if (v != 4) && (v != 5)
+
+        x,y = @map.trouveBlocP(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
+
+        if @hero.dernierBlocPoser < (Time.now.to_f*1000).to_i-500 and x != -1 and y != -1
+
+          bloc_x, bloc_y = @map.trouveBlocP(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
+          #puts bloc_x.to_s+" . "+bloc_y.to_s
+          @map.poserBloc(bloc_x,bloc_y,v)
+          @inventaire.pick(v,1)
+          @hero.dernierBlocPoser = (Time.now.to_f*1000).to_i
+
+        end
+
+      end
+
+      if v == 4
+
+        x,y = @map.trouveBloc(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
+
+        if @hero.dernierBlocCasse < (Time.now.to_f*1000).to_i-500 and x != -1 and y != -1
           bloc_x, bloc_y = @map.trouveBloc(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
-          @inventaire.store(@map.data[bloc_x][bloc_y],1)
+          id = @map.data[bloc_x][bloc_y]
+          
           @map.detruireBloc(bloc_x,bloc_y)
+          if @map.data[bloc_x][bloc_y] == 0
+            @inventaire.store(id,1)
+          end
           @hero.dernierBlocCasse = (Time.now.to_f*1000).to_i
+
         end
       end
     end
-
   end
 
   def draw
