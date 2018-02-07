@@ -9,7 +9,7 @@ class Hero
     @velocityY = 0
 
     @dir = :left
-
+    @sprinting = false
     # création d'un tableau qui contiendra les différentes images du héros
     @images = []
     # on ajoute les 4 images dans le tableau
@@ -45,7 +45,11 @@ class Hero
       @image = @images[3]
       move_x.times {
         if peutSeDeplacer(1, 0)
-          @x += 1
+          if @sprinting == false
+            @x += 1
+          else
+            @x += 2
+          end
         end }
     end
 
@@ -54,7 +58,11 @@ class Hero
       @image = @images[2]
       (-move_x).times {
         if peutSeDeplacer(-1, 0)
-          @x -= 1
+          if @sprinting == false
+            @x -= 1
+          else
+            @x -= 2
+          end
         end }
     end
 
@@ -78,8 +86,8 @@ class Hero
     end
   end
 
-  def sprint
-    @velocityX *= 1.05
+  def setSprinting(bool)
+    @sprinting = bool
   end
 
 end
