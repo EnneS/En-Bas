@@ -19,13 +19,34 @@ class Hero
     @images.push(Gosu::Image.new("res/hero/face.png"))
     @images.push(Gosu::Image.new("res/hero/dos.png"))
     @images.push(Gosu::Image.new("res/hero/gauche.png"))
-    @images.push(Gosu::Image.new("res/hero/droite.png"))
     # de base, le héros est de face
     @image = @images[0]
+
+    @direction = 1
+
+    @imagesDroite = []
+    @imagesDroite.push(Gosu::Image.new("res/hero/droite1.png"))
+    @imagesDroite.push(Gosu::Image.new("res/hero/droite2.png"))
+    @imagesDroite.push(Gosu::Image.new("res/hero/droite3.png"))
+    @imagesDroite.push(Gosu::Image.new("res/hero/droite4.png"))
+    @imagesDroite.push(Gosu::Image.new("res/hero/droite5.png"))
+
+    @imagesGauche = []
+    @imagesGauche.push(Gosu::Image.new("res/hero/gauche1.png"))
+    @imagesGauche.push(Gosu::Image.new("res/hero/gauche2.png"))
+    @imagesGauche.push(Gosu::Image.new("res/hero/gauche3.png"))
+    @imagesGauche.push(Gosu::Image.new("res/hero/gauche4.png"))
+    @imagesGauche.push(Gosu::Image.new("res/hero/gauche5.png"))
+
+    @imagesFace = []
+    @imagesFace.push(Gosu::Image.new("res/hero/face1.png"))
+    @imagesFace.push(Gosu::Image.new("res/hero/face2.png"))
+    @imagesFace.push(Gosu::Image.new("res/hero/face3.png"))
+    @imagesFace.push(Gosu::Image.new("res/hero/face4.png"))
   end
 
   def draw
-    @image.draw(@x, @y - @image.height, 0, ZOrder::Hero) # on le draw à partir du bas du sprite (utile pour la collision)
+    @image.draw(@x - 30, @y - @image.height*1.5, ZOrder::Hero, 1.5, 1.5) # on le draw à partir du bas du sprite (utile pour la collision)
   end
 
   def peutSeDeplacer(offs_x, offs_y)
@@ -34,9 +55,12 @@ class Hero
   end
 
   def update(move_x)
+    indices = [0] * 5 + [1] * 4 + [2] * 6 + [3] * 8
+    index = indices[Gosu::milliseconds / 20 % indices.size]
+
     # Actualisation de l'image en fonction de la direction
     if (move_x == 0)
-      @image = @images[0]
+      @image = @imagesFace[index]
     end
     if (@velocityY < 0)
     #SAUT   @image = @jump
@@ -44,7 +68,8 @@ class Hero
 
     # Mouvement horizontal, se déplace si le prochain bloc dans la direction n'est pas solide
     if move_x > 0
-      @image = @images[3]
+      @direction = 1
+      @image = @imagesDroite[index]
       move_x.times {
         if peutSeDeplacer(1, 0)
           @x += 1
@@ -52,7 +77,8 @@ class Hero
     end
 
     if move_x < 0
-      @image = @images[2]
+      @direction = -1
+      @image = @imagesGauche[index]
       (-move_x).times {
         if peutSeDeplacer(-1, 0)
           @x -= 1
