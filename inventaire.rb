@@ -1,5 +1,13 @@
 class Inventaire
 
+=begin
+ 0 : Air
+ 1 : Grass
+ 2 : Dirt
+ 3 : Stone 
+
+=end
+
   def initialize(places)
     @places = places #nombre de places de l'inventaire
     @items = Array.new(@places) {Array.new(2)} #en premier l'id en second le nombre

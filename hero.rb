@@ -1,8 +1,11 @@
 class Hero
   attr_reader :x, :y
+  attr_accessor :dernierBlocCasse
 
   def initialize(x, y, map)
     @map = map
+
+    @dernierBlocCasse = (Time.now.to_f*1000).to_i
 
     @x = x
     @y = y
