@@ -103,7 +103,9 @@ class Map
   end
 
   def setBlock(x, y, v)
-    @data[x][y] = v
+    if v>=0 || v>=9
+      @data[x][y] = v
+    end
     updateLight(x, y, 0)
     #addBlockToWaitList(x-1, y)
     #addBlockToWaitList(x+1, y)
@@ -238,7 +240,7 @@ class Map
 
     caves = Array.new(@w){ |i|
       Array.new(@h){ |j|
-        $rng.Random(100) >= interpolate(pStartH, pStartL, j.to_f / @h) ? true : false
+        $rng.Random(100) >= interpolate(pStartH, pStartL, (j.to_f) / (@h)) ? true : false
       }
     }
     for step in 0..steps
@@ -355,13 +357,22 @@ class Map
     blocTrouve = false
     cursor_r_x = camera_x+cursor_x
     cursor_r_y = camera_y+cursor_y
-    bloc_x = hero_x / 64
-    bloc_y = hero_y / 64
+    bloc_x = hero_x
+    bloc_y = hero_y
 
     #calcul coef directeur
-    c = (hero_y-cursor_r_y)/(hero_x-cursor_r_x)
+    c = ((hero_y)-cursor_r_y)/((hero_x)-cursor_r_x)
+
+    exit = 500
 
     while !blocTrouve
+
+      exit -= 1
+
+      if exit < 0
+        return -1,-1
+      end
+
 
       if cursor_r_x < hero_x
         bloc_x-=1
@@ -372,12 +383,25 @@ class Map
       end
       #puts x.to_s+" . "+ y.to_s
 
-      if @data[bloc_x][bloc_y] == 1 || @data[bloc_x][bloc_y] == 2 || @data[bloc_x][bloc_y] == 3
-        blocTrouve = true
+      #puts bloc_x.
+      x = (bloc_x/64).floor
+      y = (bloc_y/64).floor
+
+      #puts x.to_s+" . "+ y.to_s
+
+      if x>=0 && y>=0 && x<@w && y<@h
+        if @data[x][y] != Tiles::Air
+          blocTrouve = true
+        end
       end
+
+      if x>@w || y>@h
+       blocTrouve = true
+      end
+     
     end
 
-    if ((bloc_x-(hero_x/64).floor).abs < 5) && ((bloc_y-(hero_y/64).floor).abs < 5)
+    if ((x-(hero_x/64).floor).abs < 5) && ((y-(hero_y/64).floor).abs < 5)
       return x,y
     else
       return -1,-1
@@ -392,23 +416,25 @@ class Map
     cursor_r_x = camera_x+cursor_x
     cursor_r_y = camera_y+cursor_y
 
-    x = (cursor_r_x/60).floor
-    y = (cursor_r_y/60).floor
+    x = (cursor_r_x/64).floor
+    y = (cursor_r_y/64).floor
 
     #puts cursor_r_y.to_s+" . "+cursor_r_x.to_s
 
-    hero_xb = (hero_x/60).floor
-    hero_yb = (hero_y/60).floor
+    hero_xb = (hero_x/64).floor
+    hero_yb = (hero_y/64).floor
 
-    #puts hero_xb.to_s+" . "+hero_yb.to_s
-    #puts x.to_s+" . "+ y.to_s
+    puts "HERO"+hero_xb.to_s+" . "+hero_yb.to_s
+    puts "BLOC"+x.to_s+" . "+ y.to_s
 
-    #if (x = hero_xb && y = hero_yb) || (x = hero_xb && y = (hero_yb-1)) || (x = (hero_xb+1) && y = hero_yb) || (x = (hero_xb+1) && y = hero_yb-1)
-    #  return -1,-1
-    #        puts "SUPER"
-    #else
+    espaceHero = ((x == hero_xb && y == hero_yb) || (x == hero_xb && y == (hero_yb-1)) || (x == (hero_xb+1) && y == hero_yb) || (x == (hero_xb+1) && y == hero_yb-1))
+    blocAdjacent = (@data[x-1][y] != Tiles::Air) || (@data[x+1][y] != Tiles::Air) || (@data[x][y-1] != Tiles::Air) || (@data[x][y+1] != Tiles::Air)
+
+    if espaceHero || !blocAdjacent
+      return -1,-1
+    else
       return x,y
-    #end
+    end
 
   end
 
