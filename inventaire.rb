@@ -5,6 +5,8 @@ class Inventaire
  1 : Grass
  2 : Dirt
  3 : Stone
+ 4 : Gold
+ 6 : 
 
 =end
 attr_reader :selected, :items

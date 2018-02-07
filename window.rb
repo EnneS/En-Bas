@@ -58,23 +58,37 @@ class Window < Gosu::Window
 
     if button_down?(Gosu::MsLeft)
 
-      if @hero.dernierBlocCasse < (Time.now.to_f*1000).to_i-500
-        cursor_x = self.mouse_x
-        cursor_y = self.mouse_y
+      cursor_x = self.mouse_x
+      cursor_y = self.mouse_y
 
-        bloc_x, bloc_y = @map.trouveBloc(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
+      v = @inventaire.idItem(@inventaire.selected)
 
-        v = @map.data[bloc_x][bloc_y]
+      if v == 1
 
-        @map.detruireBloc(bloc_x,bloc_y)
-        if @map.data[bloc_x][bloc_y] == 0
-          @inventaire.store(v,1)
+        if @hero.dernierBlocPoser < (Time.now.to_f*1000).to_i-500
+
+          bloc_x, bloc_y = @map.trouveBloc(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y,0)
+          @map.poserBloc(bloc_x,bloc_y,v)
+          @inventaire.pick(v,1)
+          @hero.dernierBlocCasse = (Time.now.to_f*1000).to_i
+
         end
-        @hero.dernierBlocCasse = (Time.now.to_f*1000).to_i
 
+      elsif v == -1
+
+        if @hero.dernierBlocCasse < (Time.now.to_f*1000).to_i-500
+
+          bloc_x, bloc_y = @map.trouveBloc(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y,1)
+          v = @map.data[bloc_x][bloc_y]
+          @map.detruireBloc(bloc_x,bloc_y)
+          if @map.data[bloc_x][bloc_y] == 0
+            @inventaire.store(v,1)
+          end
+          @hero.dernierBlocCasse = (Time.now.to_f*1000).to_i
+
+        end
       end
     end
-
   end
 
   def draw

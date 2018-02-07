@@ -256,7 +256,7 @@ end
   end
 
 
-  def trouveBloc(cursor_x,cursor_y,camera_x, camera_y,hero_x,hero_y,z)
+  def trouveBloc(cursor_x,cursor_y,camera_x, camera_y,hero_x,hero_y)
 
     #valeur de z
     #0 => poser
@@ -267,6 +267,8 @@ end
     cursor_r_y = camera_y+cursor_y
     bloc_x = hero_x
     bloc_y = hero_y
+    x = 0
+    y = 0
 
     #calcul coef directeur
     c = ((hero_y)-cursor_r_y)/((hero_x)-cursor_r_x)
@@ -280,28 +282,23 @@ end
         bloc_x+=1
         bloc_y+=(c)
       end 
-     
-      x = (bloc_x/60).floor
-      y = (bloc_y/60).floor
 
       xlast = x
       ylast = y
+     
+      x = (bloc_x/60).floor
+      y = (bloc_y/60).floor
 
       if @data[x][y] != Tiles::Air
         blocTrouve = true
       end 
     end
 
-    if z
-      return x,y
-    else
-      return xlast, ylast
-
+    return x,y
+  
   end 
 
-=begin
-
-  def trouveBloc(cursor_x,cursor_y,camera_x, camera_y,hero_x,hero_y)
+  def trouveBloc(cursor_x,cursor_y,camera_x, camera_y,hero_x,hero_y,z)
 
     cursor_r_x = camera_x+cursor_x
     cursor_r_y = camera_y+cursor_y
@@ -315,7 +312,11 @@ end
 
   end 
 
-=end
+
+  def poserBloc(bloc_x,bloc_y,id)
+    #puts id.to_s
+    setBlock(bloc_x,bloc_y,id)
+  end
 
   def detruireBloc(bloc_x,bloc_y)
     setBlock(bloc_x,bloc_y,0)
