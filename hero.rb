@@ -11,7 +11,6 @@ class Hero
     @y = y
     @velocityY = 0
 
-    @dir = :left
     @sprinting = false
     # création d'un tableau qui contiendra les différentes images du héros
     @images = []
@@ -29,12 +28,12 @@ class Hero
   end
 
   def peutSeDeplacer(offs_x, offs_y)
-    # Check at the center/top and center/bottom for map collisions
+    # Regarde dans les directions (offs_x et offs_y) si le prochain bloc est solide
     not @map.solid(@x + offs_x, @y + offs_y) and not @map.solid(@x + offs_x, @y + offs_y - 45)
   end
 
   def update(move_x)
-    # Select image depending on action
+    # Actualisation de l'image en fonction de la direction
     if (move_x == 0)
       @image = @images[0]
     end
@@ -42,9 +41,8 @@ class Hero
     #SAUT   @image = @jump
     end
 
-    # Directional walking, horizontal movement
+    # Mouvement horizontal, se déplace si le prochain bloc dans la direction n'est pas solide
     if move_x > 0
-      @dir = :right
       @image = @images[3]
       move_x.times {
         if peutSeDeplacer(1, 0)
@@ -53,7 +51,6 @@ class Hero
     end
 
     if move_x < 0
-      @dir = :left
       @image = @images[2]
       (-move_x).times {
         if peutSeDeplacer(-1, 0)
@@ -61,12 +58,10 @@ class Hero
         end }
     end
 
-    # Acceleration/gravity
-    # By adding 1 each frame, and (ideally) adding vy to y, the player's
-    # jumping curve will be the parabole we want it to be.
+    # Gravité
     @velocityY += 1
 
-    # Vertical movement
+    # Mouvement vertical, la vélocité augmente si le prochain bloc dans la direction n'est pas solide
     if @velocityY > 0
       @velocityY.times { if peutSeDeplacer(0, 1) then @y += 1 else @velocityY = 0 end }
     end
