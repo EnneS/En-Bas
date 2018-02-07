@@ -5,6 +5,9 @@ class Inventaire
     @items = Array.new(@places) {Array.new(2)} #en premier l'id en second le nombre
     vider()
 
+    @barre = Gosu::Image.new("res/barre.png")
+    @case = Gosu::Image.new("res/case.png")
+
     @images = []
     @images[0] = 0 #air
     @images.push(Gosu::Image.new("res/tiles/grass.png"))
@@ -74,24 +77,16 @@ class Inventaire
     end
   end
 
-  def items
-    i = 0
-    puts "\ninv"
-    while i < @places do
-        puts @items[i][0].to_s + " : " + @items[i][1].to_s
-      i += 1
-    end
-    puts "\n"
-  end
-
   def draw
+    @barre.draw(1920-@barre.width, 0, 3)
     i = 0
     while i < @places do
-        if @items[i][0] != -1 #si l'emplacement contient un item
-          @images[@items[i][0]].draw(100+(100*i), 50, 3)
+      @case.draw((1920-@case.width-(@barre.width/6)), 1080/4/@places + ((1080/@places)*i), 4)
 
-          nb = Gosu::Image.from_text @items[i][1].to_s, 30
-          nb.draw(135 + (100*i), 50, 3)
+        if @items[i][0] != -1 #si l'emplacement contient un item
+          @images[@items[i][0]].draw((1920-(@images[1].width)-(@case.width/2)-(@barre.width/6)), 1080/4/@places + ((1080/@places)*i) + 16, 5, 2, 2)
+
+          $font.draw(@items[i][1].to_s, 1870,  1080/4/@places + ((1080/@places)*i) + 60, 6)
         end
         i += 1
     end
