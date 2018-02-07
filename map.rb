@@ -103,10 +103,10 @@ class Map
   def setBlock(x, y, v)
     o = @data[x][y]
     @data[x][y] = v
-    addBlockToWaitList(x-1, y)
-    addBlockToWaitList(x+1, y)
-    addBlockToWaitList(x, y-1)
-    addBlockToWaitList(x, y+1)
+    #addBlockToWaitList(x-1, y)
+    #addBlockToWaitList(x+1, y)
+    #addBlockToWaitList(x, y-1)
+    #addBlockToWaitList(x, y+1)
   end
 
   def interpolate(a, b, x)
@@ -252,11 +252,11 @@ class Map
           t += check(caves, i-1, j+1)
 
           if caves[i][j]
-              caves2[i][j] = (t < death ? false : true) 
+              caves2[i][j] = (t < death ? false : true)
           else
               caves2[i][j] = (t > birth ? true : false)
           end
-        end 
+        end
       end
       caves, caves2 = caves2, caves
     end
@@ -282,9 +282,9 @@ class Map
 
   def draw(posX, posY)
     # Définition des blocs du tableau à draw
-    debutX = (posX / 60) - 25
+    debutX = (posX / 60) - 34
     debutY = (posY / 60) - 16
-    finX = debutX + 50
+    finX = debutX + 68
     finY = debutY + 32
 
     # L'index ne peut pas être négatif (min = 0)
@@ -306,6 +306,14 @@ class Map
     end
   end
 
+  def ground(x)
+    i = 0
+    while i < @data[0].size-1 && @data[x][i] == 0 do
+      i+= 1
+    end
+    return i
+  end
+
   def update(i, j, state)
     @data[i][j] = state
   end
@@ -313,10 +321,69 @@ class Map
   def solid(x, y)
     #Test pour le bloc du bas gauche/droite et haut gauche/droite s'il est solide
     # On ne peut aussi pas dépasser les limites de la map
-    if x < 0 || x > (@data.size-1)*(30*2) || @data[x / (30*2)][y / (30*2)] != 0 || @data[((x+58) / (30*2))][y / (30*2)] != 0 || @data[x / (30*2)][(y-64) / (30*2)] !=0 || @data[((x+58) / (30*2))][(y-64) / (30*2)] != 0
+    if x < 0 || x > (@data.size-1)*(30*2) || y > (@data[0].size-1)*60 || @data[x / (30*2)][y / (30*2)] != 0 || @data[((x+58) / (30*2))][y / (30*2)] != 0 || @data[x / (30*2)][(y-64) / (30*2)] !=0 || @data[((x+58) / (30*2))][(y-64) / (30*2)] != 0
       return true
     else
       return false
     end
+  end
+
+
+  def trouveBloc(cursor_x,cursor_y,camera_x, camera_y,hero_x,hero_y)
+
+
+    blocTrouve = false
+    cursor_r_x = camera_x+cursor_x
+    cursor_r_y = camera_y+cursor_y
+    bloc_x = hero_x+30
+    bloc_y = hero_y-60
+
+    #calcul coef directeur
+    c = ((hero_y-60)-cursor_r_y)/((hero_x+30)-cursor_r_x)
+
+    while !blocTrouve
+
+      if cursor_r_x < hero_x
+        bloc_x-=1
+        bloc_y+= -(c)
+      else
+        bloc_x+=1
+        bloc_y+=(c)
+      end
+
+
+      #puts bloc_x.
+      x = (bloc_x/60).floor
+      y = (bloc_y/60).floor
+
+      if @data[x][y] != Tiles::Air
+        blocTrouve = true
+      end
+    end
+
+    return x,y
+
+  end
+
+=begin
+
+  def trouveBloc(cursor_x,cursor_y,camera_x, camera_y,hero_x,hero_y)
+
+    cursor_r_x = camera_x+cursor_x
+    cursor_r_y = camera_y+cursor_y
+    #bloc_x = hero_x+30
+    #bloc_y = hero_y-60
+
+    x = (cursor_r_x/60).floor
+    y = (cursor_r_y/60).floor
+
+    return x,y
+
+  end
+
+=end
+
+  def detruireBloc(bloc_x,bloc_y)
+    setBlock(bloc_x,bloc_y,0)
   end
 end
