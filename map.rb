@@ -359,7 +359,7 @@ class Map
       x = (bloc_x/64).floor
       y = (bloc_y/64).floor
 
-      puts x.to_s+" . "+ y.to_s
+      #puts x.to_s+" . "+ y.to_s
 
       if @data[x][y] == 1 || @data[x][y] == 2 || @data[x][y] == 3
         blocTrouve = true
