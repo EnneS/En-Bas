@@ -11,7 +11,7 @@ class Window < Gosu::Window
     @map = Map.new()
     @map.generate(3, 200, 40, 8, 7, 64)
     #@map.load()
-    @hero = Hero.new(100, 100, @map)
+    @hero = Hero.new(100, 250, @map)
     @inventaire = Inventaire.new(10)
     @inventaire.store(1, 4)
     @inventaire.store(2, 7)
