@@ -5,7 +5,7 @@ class Inventaire
  1 : Grass
  2 : Dirt
  3 : Stone
-
+ 4 : Pioche
 =end
 attr_reader :selected, :items
 
@@ -22,6 +22,7 @@ attr_reader :selected, :items
     @images.push(Gosu::Image.new("res/tiles/grass.png"))
     @images.push(Gosu::Image.new("res/tiles/dirt.png"))
     @images.push(Gosu::Image.new("res/tiles/stone.png"))
+    @images.push(Gosu::Image.new("res/tiles/pioche.png"))
 
     @selected = 0
   end

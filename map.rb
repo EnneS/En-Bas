@@ -148,8 +148,8 @@ class Map
 
     for x in 0..w-1
       for y in 0..h-1
-        @data[x][y] = Tiles::Air 
-        for i in 0..layers.size-1       
+        @data[x][y] = Tiles::Air
+        for i in 0..layers.size-1
           if y >= precomputed[i][x]
             @data[x][y] = layers[i].material
           end
@@ -184,11 +184,11 @@ class Map
           t += check(caves, i-1, j+1, w, h)
 
           if caves[i][j]
-              caves2[i][j] = (t < death ? false : true) 
+              caves2[i][j] = (t < death ? false : true)
           else
               caves2[i][j] = (t > birth ? true : false)
           end
-        end 
+        end
       end
       caves, caves2 = caves2, caves
 =begin
@@ -241,6 +241,14 @@ def draw(posX, posY)
   end
 end
 
+  def ground(x)
+    i = 0
+    while i < @data[0].size-1 && @data[x][i] == 0 do
+      i+= 1
+    end
+    return i
+  end
+
   def update(i, j, state)
     @data[i][j] = state
   end
@@ -273,11 +281,11 @@ end
       if cursor_r_x < hero_x
         bloc_x-=1
         bloc_y+= -(c)
-      else 
+      else
         bloc_x+=1
         bloc_y+=(c)
-      end 
-     
+      end
+
 
       #puts bloc_x.
       x = (bloc_x/60).floor
@@ -285,12 +293,12 @@ end
 
       if @data[x][y] != Tiles::Air
         blocTrouve = true
-      end 
+      end
     end
 
     return x,y
 
-  end 
+  end
 
 =begin
 
@@ -306,13 +314,11 @@ end
 
     return x,y
 
-  end 
+  end
 
 =end
 
   def detruireBloc(bloc_x,bloc_y)
     setBlock(bloc_x,bloc_y,0)
-  end 
-
-
+  end
 end
