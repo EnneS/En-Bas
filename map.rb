@@ -90,7 +90,7 @@ class Map
   end
 
   def setBlock(x, y, v)
-    o = @data[x][y]
+    #o = @data[x][y]
     @data[x][y] = v
     #addBlockToWaitList(x-1, y)
     #addBlockToWaitList(x+1, y)
@@ -275,11 +275,10 @@ end
     cursor_r_y = camera_y+cursor_y
     bloc_x = hero_x
     bloc_y = hero_y
-    x = 0
-    y = 0
 
     #calcul coef directeur
     c = ((hero_y)-cursor_r_y)/((hero_x)-cursor_r_x)
+    nbBloc = 0
 
     while !blocTrouve
 
@@ -289,44 +288,50 @@ end
       else
         bloc_x+=1
         bloc_y+=(c)
-<<<<<<< HEAD
       end 
-=======
-      end
 
->>>>>>> 965ebc76be41399b110646341216d68690fba7be
-
-      xlast = x
-      ylast = y
-     
       x = (bloc_x/60).floor
       y = (bloc_y/60).floor
 
-      if @data[x][y] != Tiles::Air
+      puts x.to_s+" . "+ y.to_s
+
+      if @data[x][y] == 1 || @data[x][y] == 2 || @data[x][y] == 3
         blocTrouve = true
       end
     end
 
-    return x,y
-<<<<<<< HEAD
+    if ((x-(hero_x/60).floor).abs < 5) && ((y-(hero_y/60).floor).abs < 5)
+      return x,y
+    else
+      return -1,-1
+    end
   
   end 
-=======
 
-  end
->>>>>>> 965ebc76be41399b110646341216d68690fba7be
+  def trouveBlocP(cursor_x,cursor_y,camera_x, camera_y,hero_x,hero_y)
 
-  def trouveBloc(cursor_x,cursor_y,camera_x, camera_y,hero_x,hero_y,z)
+    #puts hero_x.to_s+" . "+hero_y.to_s
 
     cursor_r_x = camera_x+cursor_x
     cursor_r_y = camera_y+cursor_y
-    #bloc_x = hero_x+30
-    #bloc_y = hero_y-60
 
     x = (cursor_r_x/60).floor
     y = (cursor_r_y/60).floor
 
-    return x,y
+    #puts cursor_r_y.to_s+" . "+cursor_r_x.to_s
+
+    hero_xb = (hero_x/60).floor
+    hero_yb = (hero_y/60).floor
+
+    #puts hero_xb.to_s+" . "+hero_yb.to_s
+    #puts x.to_s+" . "+ y.to_s
+
+    #if (x = hero_xb && y = hero_yb) || (x = hero_xb && y = (hero_yb-1)) || (x = (hero_xb+1) && y = hero_yb) || (x = (hero_xb+1) && y = hero_yb-1)
+    #  return -1,-1
+    #        puts "SUPER"
+    #else
+      return x,y
+    #end
 
   end
 
@@ -339,4 +344,5 @@ end
   def detruireBloc(bloc_x,bloc_y)
     setBlock(bloc_x,bloc_y,0)
   end
+
 end
