@@ -106,6 +106,12 @@ class Map
     @shadow = Gosu::Image.new("res/tiles/shadow.png", {:tileable => true })
   end
 
+  def _dump lvl
+    [@w, @h, @data, @lightmap, @images, @transparency, @shadow].join ':'
+  end
+  def self._load args
+    new(*args.split(':'))
+  end
   def setBlock(x, y, v)
     if v>=0 || v>=9
       @data[x][y] = v
@@ -123,13 +129,6 @@ class Map
     return a * (1 - f) + b * f;
   end
 
-  def load()
-    File.open("terrain.map") do |file|
-      @data = Marshal.load(file)
-      @w = @data.size
-      @h = @data[0].size
-    end
-  end
   def lightValue(x, y)
     if y < 0 then return 32 end
     if y >= @h then return -1 end
@@ -162,7 +161,7 @@ class Map
         modified = true
       end
     end
-    if modified && stack_lvl < 64
+    if modified && stack_lvl < 128
       updateLight(x, y+1, stack_lvl + 1)
       updateLight(x, y-1, stack_lvl + 1)
       updateLight(x-1, y, stack_lvl + 1)
@@ -177,6 +176,11 @@ class Map
       while @data[i][j+1] == Tiles::Air
         @lightmap[i][j] = 31
         j += 1
+      end
+    end
+    for i in 0..@w-1
+      for j in 0..@h-1
+        updateLight(i, j, 0)
       end
     end
     for i in 0..@w-1
@@ -291,11 +295,13 @@ class Map
     b = 1
     x = 0
     y = 0
+    v = 31
     while nbCoffres > 0
-      while b != Tiles::Air
+      while b != Tiles::Air || v >= 32 - @transparency[0] 
         x = $rng.Random(w)
-        y = $rng.Random(h - sea_lvl) + sea_lvl
-        b = data[x][y]
+        y = $rng.Random(h)
+        b = @data[x][y]
+        v = @lightmap[x][y]
       end
       y -= 1
       while b == Tiles::Air
@@ -304,9 +310,6 @@ class Map
       end
       @data[x][y] = Tiles::Chest
       nbCoffres -= 1;
-    end
-    File.open("terrain.map", "w+") do |file|
-      Marshal.dump(@data, file)
     end
   end
 

@@ -1,9 +1,8 @@
 require 'set'
-
 class Window < Gosu::Window
 
   def initialize(width, height)
-    super(width, height, false)
+    super(width, height, true)
     self.caption = "Hardcore Survival"
 
     $font = Gosu::Font.new(self, "res/pokemon_pixel_font.ttf", 40)
@@ -20,8 +19,8 @@ class Window < Gosu::Window
     #@grotte1 = Gosu::Font.new("res/fond.png")
 
     @map = Map.new()
-    @map.generate(3, 3000, 128, 8, 7, 60)
-    #@map.load()
+    generate()   
+
     @hero = Hero.new((((@map.data.size-1)/2)*64)-1, (@map.ground((@map.data.size-1)/2)*64)-1, @map)
     @inventaire = Inventaire.new(6)
     @inventaire.store(4, 1)
@@ -41,6 +40,18 @@ class Window < Gosu::Window
     @x3 = 0
     @x4 = 0  
 
+  end
+  def generate()
+    @map.generate(3, 3000, 128, 8, 7, 60)
+    File.open("terrain.map", "w+") do |file|
+      Marshal.dump(@map, file)
+    end
+  end
+
+  def load()
+    File.open("terrain.map") do |file|
+      @map = Marshal.load(file)
+    end
   end
 
   def update
@@ -121,6 +132,7 @@ class Window < Gosu::Window
       end
     end
     #mobs
+    puts @mobs.size
     if @mobs.size < @mobCap
       spawnMob()
     end
@@ -134,8 +146,23 @@ class Window < Gosu::Window
   end
   
   def spawnMob()
-    for i in 0..10
+    xr = $rng.Random(40) - 20
+    yr = $rng.Random(40) - 20
+    x = xr*64 + @camera_x
+    y = yr*64 + @camera_y
 
+    if xr > 0
+      x += Gosu::screen_width()
+    end
+
+    if yr > 0
+      y += Gosu::screen_height()
+    end
+     xb = x / 64
+     yb = y / 64
+    print xb.to_s + " " + yb.to_s
+    if @map.data[xb][yb] == Tiles::Air
+      @mobs.add(Monstre.new(0, x, y, @map, @hero))
     end
   end
   
@@ -150,7 +177,7 @@ class Window < Gosu::Window
       # Le jeu a commencé : on affiche le background, la profondeur, l'inventaire
       # le héro et la map
 
-      col = Gosu::Color.new(0, 255, 255, 255)
+      col = Gosu::Color.new(150, 255, 255, 255)
 
       off1 = -@move*0.5
       if off1 + @x1 >= @bg1.width*2.2
@@ -186,17 +213,19 @@ class Window < Gosu::Window
 
       @bgn.draw(0, 0, -2,1,1,col)
 
-      @bg1.draw(off1+@x1, 183, -3, 2.2,2.2)
-      @bg2.draw(off2+@x2, 0, -4,2.2,2.2)
-      @bg3.draw(off3+@x3, 0, -5, 2.2,2.2)
-      @bg4.draw(off4+@x4, 0, -6, 2.2,2.2)
+      yoff = min(0, 128*64 - @hero.y)*0.2
+
+      @bg1.draw(off1+@x1, 183 + yoff, -3, 2.2,2.2)
+      @bg2.draw(off2+@x2, 0 + yoff, -4,2.2,2.2)
+      @bg3.draw(off3+@x3, 0 + yoff, -5, 2.2,2.2)
+      @bg4.draw(off4+@x4, 0 + yoff, -6, 2.2,2.2)
 
 
       @bgn.draw(0, 0, -2,1,1,col)
-      @bg1.draw(off1+@x1-@bg1.width*2.2, 183, -3, 2.2,2.2)
-      @bg2.draw(off2+@x2-@bg2.width*2.2, 0, -4,2.2,2.2)
-      @bg3.draw(off3+@x3-@bg3.width*2.2, 0, -5, 2.2,2.2)
-      @bg4.draw(off4+@x4-@bg4.width*2.2, 0, -6, 2.2,2.2)
+      @bg1.draw(off1+@x1-@bg1.width*2.2, 183 + yoff, -3, 2.2,2.2)
+      @bg2.draw(off2+@x2-@bg2.width*2.2, 0 + yoff, -4,2.2,2.2)
+      @bg3.draw(off3+@x3-@bg3.width*2.2, 0 + yoff, -5, 2.2,2.2)
+      @bg4.draw(off4+@x4-@bg4.width*2.2, 0 + yoff, -6, 2.2,2.2)
 
       #Profondeur du joueur
       $fontXL.draw("Profondeur : " + (@hero.y/60).to_s, 20, 20, 5)
@@ -205,6 +234,9 @@ class Window < Gosu::Window
       Gosu.translate(-@camera_x, -@camera_y) do
         @hero.draw
         @map.draw(@hero.x, @hero.y)
+        @mobs.each do |m|
+          m.draw()
+        end
       end
 
     end
