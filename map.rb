@@ -438,7 +438,7 @@ class Map
     espaceHero = ((x == hero_xb && y == hero_yb) || (x == hero_xb && y == (hero_yb-1)) || (x == (hero_xb+1) && y == hero_yb) || (x == (hero_xb+1) && y == hero_yb-1))
     blocAdjacent = (@data[x-1][y] != Tiles::Air) || (@data[x+1][y] != Tiles::Air) || (@data[x][y-1] != Tiles::Air) || (@data[x][y+1] != Tiles::Air)
 
-    if espaceHero || !blocAdjacent || @data[x][y] == Tiles::Air
+    if espaceHero || !blocAdjacent || @data[x][y] != Tiles::Air
       return -1,-1
     else
       return x,y
