@@ -11,10 +11,10 @@ class Monstre
       @x = x
       @y = y
 
-      @speed = 5
+      @speed = 4
 
-      @focusRangeIdle = 20
-      @focusRangeActive = 30
+      @focusRangeIdle = 10
+      @focusRangeActive = 15
 
       @hero = hero
 
@@ -84,7 +84,10 @@ class Monstre
         move_x.times {
           if peutSeDeplacer(1, 0)
             @x += 1
-          end }
+          else
+            jump()
+          end
+        }
       end
   
       if move_x < 0
@@ -94,7 +97,10 @@ class Monstre
         (-move_x).times {
           if peutSeDeplacer(-1, 0)
             @x -= 1
-          end }
+          else
+            jump()
+          end
+        }
       end
   
       # Gravité
@@ -116,7 +122,7 @@ class Monstre
     end
 
     def HeroInRange(distance)
-      return ((@hero.x-@x).abs<= distance) && ((@hero.y-@y).abs<=distance)
+      return ((@hero.x-@x).abs<= distance*64) && ((@hero.y-@y).abs<=distance*64)
     end
 
     def IA_Terre
@@ -126,6 +132,7 @@ class Monstre
           @delay = $rng.Random(3000) + 500
           @xt = $rng.Random(3) - 1
           @yt = 0
+          lastMovement = n
         else
           update(@speed * @xt)
         end

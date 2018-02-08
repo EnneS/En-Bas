@@ -1,4 +1,3 @@
-require 'pp'
 
 module Tiles
   Air = 0
@@ -100,17 +99,26 @@ class Map
     @transparency[3] = 9
     @transparency[7] = -5
 
-
-    
-
     @shadow = Gosu::Image.new("res/tiles/shadow.png", {:tileable => true })
   end
 
-  def _dump lvl
-    [@w, @h, @data, @lightmap, @images, @transparency, @shadow].join ':'
+  def save()
+    File.open("terrain.map", "w+") do |file|
+      Marshal.dump(@data, file)
+    end
+    File.open("lumieres.ltm", "w+") do |file|
+      Marshal.dump(@lightmap, file)
+    end
   end
-  def self._load args
-    new(*args.split(':'))
+  def load()
+    File.open("terrain.map") do |file|
+      @data = Marshal.load(file)
+    end
+    @w = @data.size
+    @h = @data[0].size
+    File.open("lumieres.ltm") do |file|
+      @lightmap = Marshal.load(file)
+    end
   end
   def setBlock(x, y, v)
     if v>=0 || v>=9

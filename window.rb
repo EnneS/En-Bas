@@ -19,8 +19,8 @@ class Window < Gosu::Window
     #@grotte1 = Gosu::Font.new("res/fond.png")
 
     @map = Map.new()
-    generate()   
-
+    #generate()   
+    @map.load()
     @hero = Hero.new((((@map.data.size-1)/2)*64)-1, (@map.ground((@map.data.size-1)/2)*64)-1, @map)
     @inventaire = Inventaire.new(6)
     @inventaire.store(4, 1)
@@ -43,15 +43,7 @@ class Window < Gosu::Window
   end
   def generate()
     @map.generate(3, 3000, 128, 8, 7, 60)
-    File.open("terrain.map", "w+") do |file|
-      Marshal.dump(@map, file)
-    end
-  end
-
-  def load()
-    File.open("terrain.map") do |file|
-      @map = Marshal.load(file)
-    end
+    @map.save
   end
 
   def update
@@ -74,9 +66,9 @@ class Window < Gosu::Window
       temp = @hero.x
 
       move_x = 0
-      move_x -= 6 if Gosu.button_down? Gosu::KB_LEFT
-      move_x += 6 if Gosu.button_down? Gosu::KB_RIGHT
-      move_x *= 2 if Gosu::button_down?(Gosu::KbLeftShift)
+      move_x -= 9 if Gosu.button_down? Gosu::KB_LEFT
+      move_x += 9 if Gosu.button_down? Gosu::KB_RIGHT
+      #move_x *= 2 if Gosu::button_down?(Gosu::KbLeftShift)
       @hero.update(move_x)
       @hero.jump if Gosu::button_down?(Gosu::KbSpace)
 
@@ -85,8 +77,8 @@ class Window < Gosu::Window
 
       # Viewport ! Il s'agit d'un tableau avec les coordonnées max possible de la fenêtre (en l'occurence la taille de la map)
       # Si on arrive aux extrêmités il faut arrêter le scroll (on utilise ainsi min et max par rapport à la taille de la fenêtre)
-      @camera_x = [[@hero.x - self.width / 2, 0].max, (@map.data.size)*64 - self.width].min
-      @camera_y = [[@hero.y - self.height / 2, 0].max, (@map.data[0].size)*64 - self.height].min
+      @camera_x = [[@hero.x - Gosu::screen_width() / 2, 0].max, (@map.w)*64 - Gosu::screen_width()].min
+      @camera_y = [[@hero.y - Gosu::screen_height() / 2, 0].max, (@map.h)*64 - Gosu::screen_height()].min
 
     end
 
@@ -132,7 +124,6 @@ class Window < Gosu::Window
       end
     end
     #mobs
-    puts @mobs.size
     if @mobs.size < @mobCap
       spawnMob()
     end
@@ -146,23 +137,20 @@ class Window < Gosu::Window
   end
   
   def spawnMob()
-    xr = $rng.Random(40) - 20
-    yr = $rng.Random(40) - 20
-    x = xr*64 + @camera_x
-    y = yr*64 + @camera_y
+    xr = $rng.Random(60) - 30
+    yr = $rng.Random(60) - 30
+    x = xr + @camera_x/64  
+    y = yr + @camera_y/64
 
     if xr > 0
-      x += Gosu::screen_width()
+      x += Gosu::screen_width()/64
     end
 
     if yr > 0
-      y += Gosu::screen_height()
+      y += Gosu::screen_height()/64
     end
-     xb = x / 64
-     yb = y / 64
-    print xb.to_s + " " + yb.to_s
-    if @map.data[xb][yb] == Tiles::Air
-      @mobs.add(Monstre.new(0, x, y, @map, @hero))
+    if @map.data[x][y] == Tiles::Air
+      @mobs.add(Monstre.new(0, x*64, y*64, @map, @hero))
     end
   end
   
@@ -228,7 +216,7 @@ class Window < Gosu::Window
       @bg4.draw(off4+@x4-@bg4.width*2.2, 0 + yoff, -6, 2.2,2.2)
 
       #Profondeur du joueur
-      $fontXL.draw("Profondeur : " + (@hero.y/60).to_s, 20, 20, 5)
+      $fontXL.draw("Profondeur : " + (@hero.y/64).to_s, 20, 20, 5)
 
       @inventaire.draw
       Gosu.translate(-@camera_x, -@camera_y) do
