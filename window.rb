@@ -40,10 +40,10 @@ class Window < Gosu::Window
     @bg4 = Gosu::Image.new("res/4.png", {:tileable => true, :retro => true})
     @bgn = Gosu::Image.new("res/black.png", {:tileable => true, :retro => true})
 
-    #@grotte1 = Gosu::Font.new("res/fond.png")
+    @coeur = Gosu::Image.new("res/heart.png", {:tileable => true, :retro => true})
 
     @map = Map.new()
-    #generate()
+
     @inventaire = Inventaire.new(6)
     @inventaire.store(4, 1)
 
@@ -362,6 +362,11 @@ class Window < Gosu::Window
       #Profondeur du joueur
       $fontXL.draw("Profondeur : " + (@hero.y/(32*$scale)).round.to_s, 20, 20, 5)
 
+      #Vie
+      @coeur.draw(20, 80, 5)
+      $font.draw((@hero.pv).to_s, 60, 80, 5)
+
+      #Inventaire
       @inventaire.draw
       Gosu.translate(-@camera_x, -@camera_y) do
         @hero.draw

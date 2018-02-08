@@ -1,5 +1,5 @@
 class Hero
-  attr_reader :x, :y
+  attr_reader :x, :y, :pv
   attr_accessor :dernierBlocCasse, :dernierBlocPoser
 
   def initialize(x, y, map)
@@ -16,7 +16,8 @@ class Hero
     @y = y
     @velocityY = 0
 
-    @sprinting = false
+    @pv = 100
+
     # création d'un tableau qui contiendra les différentes images du héros
     @images = []
     # on ajoute les 4 images dans le tableau
@@ -89,7 +90,7 @@ class Hero
     end
 
     if move_x < 0
-      
+
       # Bruitage
       if @map.solid(@x,@y+1) && @lastPlay<((Time.now.to_f*1000.0).to_i)-350
         @pas.play(1,1,false)
