@@ -296,7 +296,7 @@ class Window < Gosu::Window
       @bg4.draw(off4+@x4-@bg4.width*2.2, 0 + yoff, -6, 2.2,2.2)
 
       #Profondeur du joueur
-      $fontXL.draw("Profondeur : " + (@hero.y/64).to_s, 20, 20, 5)
+      $fontXL.draw("Profondeur : " + (@hero.y/(32*$scale)).round.to_s, 20, 20, 5)
 
       @inventaire.draw
       Gosu.translate(-@camera_x, -@camera_y) do
