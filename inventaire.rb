@@ -28,7 +28,7 @@ attr_reader :selected, :items
     @images.push(Gosu::Image.new("res/tiles/dirt.png"))
     @images.push(Gosu::Image.new("res/tiles/stone.png"))
     @images.push(Gosu::Image.new("res/tiles/pioche.png"))
-    @images.push(Gosu::Image.new("res/tiles/chest.png"))
+    @images[7] = Gosu::Image.new("res/tiles/chest.png")
 
     (0..3).each do |i|
       @images[(8.to_s+i.to_s).to_i] = Gosu::Image.new("res/tiles/torch_000"+i.to_s+".png", {:tileable => true })

@@ -446,7 +446,7 @@ class Map
       b = 0.01
     end
     c = a/b
-    
+
     cx = 1
     cy = c
     cl = (cx**2 + cy**2)**0.5
