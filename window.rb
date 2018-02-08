@@ -37,7 +37,7 @@ class Window < Gosu::Window
     @mobCap = 30
     @mobs = Set.new()
 
-    @gameStarted = true
+    @gameStarted = false
 
     @move = 0
 
