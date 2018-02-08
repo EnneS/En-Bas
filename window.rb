@@ -8,7 +8,7 @@ class Window < Gosu::Window
     $font = Gosu::Font.new(self, "res/pokemon_pixel_font.ttf", 40)
     $fontXL = Gosu::Font.new(self, "res/pokemon_pixel_font.ttf", 70)
 
-    @title = Gosu::Image.from_text('En   Bas', 90, {:font => 'res/pokemon_pixel_font.ttf'})
+    @title = Gosu::Image.from_text('En   Bas', 120, {:font => 'res/pokemon_pixel_font.ttf'})
     @hoverJouer = 1
     @jouer = Gosu::Image.from_text('Jouer !', 60, {:font => 'res/pokemon_pixel_font.ttf'})
     @credits = Gosu::Image.from_text('Credits', 60, {:font => 'res/pokemon_pixel_font.ttf'})
