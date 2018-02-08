@@ -25,11 +25,7 @@ class Window < Gosu::Window
     #@grotte1 = Gosu::Font.new("res/fond.png")
 
     @map = Map.new()
-<<<<<<< HEAD
     #generate()   
-=======
-    #@map.generate(3, 3000, 128, 8, 7, 60)
->>>>>>> fdc4a8f2b5b703c0266e2605574c7ebb750ff04e
     @map.load()
     @hero = Hero.new((((@map.data.size-1)/2)*64)-1, (@map.ground((@map.data.size-1)/2)*64)-1, @map)
     @inventaire = Inventaire.new(6)
@@ -38,14 +34,10 @@ class Window < Gosu::Window
     @cursor = Gosu::Image.new("res/cursor.png")
     @camera_x = @camera_y = 0
 
-<<<<<<< HEAD
     @mobCap = 30
     @mobs = Set.new()
 
     @gameStarted = true
-=======
-    @gameStarted = false
->>>>>>> fdc4a8f2b5b703c0266e2605574c7ebb750ff04e
 
     @move = 0
 
@@ -142,7 +134,6 @@ class Window < Gosu::Window
           end
 
         end
-<<<<<<< HEAD
       end
     end
     #mobs
@@ -156,12 +147,6 @@ class Window < Gosu::Window
         m.IA_Terre()
       end
     end
-=======
-
-      end
-
-    end # end du else
->>>>>>> fdc4a8f2b5b703c0266e2605574c7ebb750ff04e
   end
   
   def spawnMob()
