@@ -143,35 +143,35 @@ class Monstre
 
     def IA_Terre
       n = (Time.now.to_f*1000.0).to_i
-      if @focus == nil
-        if n - @lastMovement > @delay
+      if n - @lastMovement > @delay
+        if @focus == nil
           @delay = $rng.Random(3000) + 500
-          @xt = $rng.Random(3) - 1
+          @xt = ($rng.Random(5) - 2)*$scale*32 + @x
           @yt = 0
-          lastMovement = n
+          @lastMovement = n
+          @speed = 3
         else
-          update(@speed * @xt)
-        end
-        if HeroInRange(@focusRangeIdle)
-          @focus = @hero
-          @delay = 200
+          @delay = $rng.Random(300) + 200
+          @xt = ($rng.Random(5) - 2)*$scale*32 + @hero.x
+          @yt = 0
+          @lastMovement = n
+          @speed = 8
         end
       else
-        if n - @lastMovement > @delay
-          @delay = $rng.Random(300) + 200
-          if @hero.x > @x
-            @xt = 1
-          else
-            @xt = -1
-          end
-          @yt = 0
-          lastMovement = n
-        else
-          update(@speed*@xt*2)
-          if !HeroInRange(@focusRangeActive)
-            @focus = nil
-          end
+        xf = @xt - @x
+        if xf != 0
+          xf /= xf.abs
         end
+        
+        update((xf*@speed).to_i)
+      end
+      if @focus == nil && HeroInRange(@focusRangeIdle)
+        @focus = @hero
+        @delay = 200
+      end
+      if @focus != nil && HeroInRange(@focusRangeActive)
+        @focus = @hero
+        @delay = 200
       end
     end
 

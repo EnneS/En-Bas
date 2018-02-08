@@ -186,6 +186,7 @@ class Map
       vb = lightValue(x, y+1)
       vl = lightValue(x-1, y)
       vr = lightValue(x+1, y)
+=begin
       if @data[x][y] == Tiles::Air
         if y > 0 && @data[x][y-1] != Tiles::Air
           vu = 0
@@ -200,6 +201,7 @@ class Map
           vr = 0
         end
       end
+=end
       mv = max(max(vu, vb),max(vl, vr))
 
       @lightmap[x][y] = max(0, min(32 - @transparency[0] - 1, mv - @transparency[@data[x][y]] + @light[@data[x][y]]))
@@ -421,10 +423,17 @@ class Map
     cursor_r_x = camera_x+cursor_x
     cursor_r_y = camera_y+cursor_y
     center_x = hero_x + 24
-    center_y = hero_y - 52
+    center_y = hero_y - 70
 
     #calcul coef directeur
-    c = ((center_y)-cursor_r_y)/((center_x)-cursor_r_x).to_f
+    if ((center_y)-cursor_r_y) - ((center_x)-cursor_r_x) == 0
+      c = -9999.0
+    elsif ((center_y)-cursor_r_y) + ((center_x)-cursor_r_x) == 0
+      c = 9999.0
+    else
+      c = ((center_y)-cursor_r_y)/((center_x)-cursor_r_x).to_f
+    end
+
     cx = 1
     cy = c
     cl = (cx**2 + cy**2)**0.5
