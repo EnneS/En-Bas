@@ -5,6 +5,10 @@ class Hero
   def initialize(x, y, map)
     @map = map
 
+    #gestion bruitage
+    @pas = Gosu::Sample.new("res/song/pas.wav")
+    @lastPlay = (Time.now.to_f*1000.0).to_i
+
     @dernierBlocCasse = (Time.now.to_f*1000).to_i
     @dernierBlocPoser = (Time.now.to_f*1000).to_i
 
@@ -68,6 +72,13 @@ class Hero
 
     # Mouvement horizontal, se déplace si le prochain bloc dans la direction n'est pas solide
     if move_x > 0
+
+      # Bruitage
+      if @map.solid(@x,@y+1) && @lastPlay<((Time.now.to_f*1000.0).to_i)-350
+        @pas.play(1,1,false)
+        @lastPlay = (Time.now.to_f*1000.0).to_i
+      end
+
       index = indices[Gosu::milliseconds / 100 % indices.size]
       @direction = 1
       @image = @imagesDroite[index]
@@ -78,6 +89,12 @@ class Hero
     end
 
     if move_x < 0
+      
+      # Bruitage
+      if @map.solid(@x,@y+1) && @lastPlay<((Time.now.to_f*1000.0).to_i)-350
+        @pas.play(1,1,false)
+        @lastPlay = (Time.now.to_f*1000.0).to_i
+      end
       index = indices[Gosu::milliseconds / 100 % indices.size]
       @direction = -1
       @image = @imagesGauche[index]
