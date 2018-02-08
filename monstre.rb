@@ -140,6 +140,14 @@ class Monstre
           @focus = @hero
         end
       else
+        if n - @lastMovement > @delay
+          @delay = $rng.Random(3000) + 500
+          @xt = $rng.Random(3) - 1
+          @yt = 0
+          lastMovement = n
+        else
+          update(@speed * @xt)
+        end
         if @hero.x > @x
           @xt = 1
         else
