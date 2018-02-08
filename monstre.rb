@@ -7,7 +7,7 @@ class Monstre
 
       @noms = Array.new(3)
       @noms[0] = "loup"
-
+      @noms[1] = "bat"
       @x = x
       @y = y
 
@@ -32,6 +32,7 @@ class Monstre
       @direction = 1
 
       nom = @noms[type]
+
       @imagesDroite = []
       @imagesDroite.push(Gosu::Image.new("res/mobs/" + nom + "/droite1.png",{ :retro => true}))
       @imagesDroite.push(Gosu::Image.new("res/mobs/" + nom + "/droite2.png",{ :retro => true}))
@@ -52,23 +53,26 @@ class Monstre
       @imagesGauche.push(Gosu::Image.new("res/mobs/" + nom + "/gauche7.png",{ :retro => true}))
       @imagesGauche.push(Gosu::Image.new("res/mobs/" + nom + "/gauche8.png",{ :retro => true}))
 
+      if @type == 0
+        @imagesFace = []
+        @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face1.png",{ :retro => true}))
+        @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face2.png",{ :retro => true}))
+        @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face3.png",{ :retro => true}))
+        @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face4.png",{ :retro => true}))
+        @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face5.png",{ :retro => true}))
+        @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face6.png",{ :retro => true}))
+        @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face7.png",{ :retro => true}))
+        @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face8.png",{ :retro => true}))
+        @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face9.png",{ :retro => true}))
+        @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face10.png",{ :retro => true}))
+        @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face11.png",{ :retro => true}))
+        @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face12.png",{ :retro => true}))
 
-      @imagesFace = []
-      @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face1.png",{ :retro => true}))
-      @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face2.png",{ :retro => true}))
-      @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face3.png",{ :retro => true}))
-      @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face4.png",{ :retro => true}))
-      @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face5.png",{ :retro => true}))
-      @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face6.png",{ :retro => true}))
-      @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face7.png",{ :retro => true}))
-      @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face8.png",{ :retro => true}))
-      @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face9.png",{ :retro => true}))
-      @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face10.png",{ :retro => true}))
-      @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face11.png",{ :retro => true}))
-      @imagesFace.push(Gosu::Image.new("res/mobs/" + nom + "/face12.png",{ :retro => true}))
-
-
-      @image = @imagesFace[0]
+        @image = @imagesFace[0]
+      end
+      if @type == 1
+        @image = @ImageDroite[0]
+      end
     end
 
     def draw
@@ -77,7 +81,12 @@ class Monstre
 
     def peutSeDeplacer(offs_x, offs_y)
       # Regarde dans les directions (offs_x et offs_y) si le prochain bloc est solide
-      not @map.solidLoup(@x + offs_x, @y + offs_y) and not @map.solidLoup(@x + offs_x, @y + offs_y - 45)
+      if @type == 0
+        return !@map.solidLoup(@x + offs_x, @y + offs_y) && !@map.solidLoup(@x + offs_x, @y + offs_y - 45)
+      end
+      if @type == 1
+        return !@map.solidBat(@x + offs_x, @y + offs_y) && !@map.solidBat(@x + offs_x, @y + offs_y - 45)
+      end
     end
 
     def update(move_x)
@@ -132,6 +141,50 @@ class Monstre
       end
     end
 
+    def updateAir(move_x, move_y)
+      if move_y > 0
+        move_y.times {
+          if peutSeDeplacer(0, 1)
+            @y += 1
+          end
+        }
+      end
+
+      if move_y < 0
+        (-move_y).times {
+          if peutSeDeplacer(0, -1)
+            @y -= 1
+          end
+        }
+      end
+
+      if (move_x == 0)
+        index = indicesIdle[Gosu::milliseconds / 90 % indicesIdle.size]
+        @image = @imagesDroite[index]
+      end
+
+      if move_x > 0
+        index = indicesRun[Gosu::milliseconds / 90 % indicesRun.size]
+        @image = @imagesDroite[index]
+        move_x.times {
+          if peutSeDeplacer(1, 0)
+            @x += 1
+          end
+        }
+      end
+
+      if move_x < 0
+        index = indicesRun[Gosu::milliseconds / 90 % indicesRun.size]
+        @image = @imagesGauche[index]
+        (-move_x).times {
+          if peutSeDeplacer(-1, 0)
+            @x -= 1
+          end
+        }
+      end
+
+    end
+
     def jump
       if @map.solidLoup(@x, @y +1) # il saute seulement s'il n'est pas dans les airs
         @velocityY = -21
@@ -165,6 +218,47 @@ class Monstre
         end
 
         update((xf*@speed).to_i)
+      end
+      if @focus == nil && HeroInRange(@focusRangeIdle)
+        @focus = @hero
+        @delay = 200
+      end
+      if @focus != nil && HeroInRange(@focusRangeActive)
+        @focus = @hero
+        @delay = 200
+      end
+    end
+    def IA_Air
+      n = (Time.now.to_f*1000.0).to_i
+      if n - @lastMovement > @delay
+        if @focus == nil
+          @delay = $rng.Random(2000) + 300
+          @xt = ($rng.Random(11) - 5)*$scale*32 + @x
+          @yt = ($rng.Random(11) - 5)*$scale*32 + @y
+          @lastMovement = n
+          @speed = 3
+        else
+          @delay = $rng.Random(1000) + 200
+
+          dist = ((@x - @hero.x)**2 + (@y - @hero.y)**2)**0.5
+
+          @xt = ($rng.Random(dist/2 + 1) - dist/4)*$scale*32 + @hero.x
+          @yt = ($rng.Random(dist/2 + 1) - dist/4)*$scale*32 + @hero.y
+
+
+          @lastMovement = n
+          @speed = 8
+        end
+      else
+        xf = @xt - @x
+        if xf != 0
+          xf /= xf.abs
+        end
+        yf = @yt - @y
+        if yf != 0
+          yf /= yf.abs
+        end
+        updateAir((xf*@speed).to_i, (yf*@speed).to_i)
       end
       if @focus == nil && HeroInRange(@focusRangeIdle)
         @focus = @hero

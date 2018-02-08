@@ -418,6 +418,15 @@ class Map
       return false
     end
   end
+  def solidBat(x, y)
+    #Test pour le bloc du bas gauche/droite et haut gauche/droite s'il est solide
+    # On ne peut aussi pas dépasser les limites de la map
+    if x < 0 || x > (@data.size-3)*(32*$scale) || y > (@data[0].size-3)*(32*$scale) || @data[x / (32*$scale)][y / (32*$scale)] != 0 || @data[(x+110) / (32*$scale)][y / (32*$scale)] != 0 || @data[x / (32*$scale)][(y-40) / (32*$scale)] !=0 || @data[(x+50) / (32*$scale)][(y) / (32*$scale)] !=0 || @data[(x+110) / (32*$scale)][(y-40) / (32*$scale)] !=0
+      return true
+    else
+      return false
+    end
+  end
 
   def trouveBloc(cursor_x,cursor_y,camera_x, camera_y,hero_x,hero_y)
 
