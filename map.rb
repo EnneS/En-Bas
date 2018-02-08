@@ -89,6 +89,13 @@ class Map
   attr_reader :w, :h, :data, :lightmap, :images, :transparency, :shadow
 
   def initialize()
+
+
+    #gestion bruitage
+    @casse = Gosu::Sample.new("res/song/casse.wav")
+    @pose = Gosu::Sample.new("res/song/pose.wav")
+    #@lastPlay = (Time.now.to_f*1000.0).to_i
+
     @images = Array.new(90)
     @images[0] = 0 # air
     @images[1] = Gosu::Image.new("res/tiles/grass.png", {:tileable => true })
@@ -515,27 +522,30 @@ class Map
     if id==80
       if (@data[bloc_x][bloc_y+1] != Tiles::Air)
         setBlock(bloc_x,bloc_y,80)
-        puts "Lol"
+        @pose.play(1,0.8,false)
         return
       end
       if (@data[bloc_x-1][bloc_y] != Tiles::Air)
-        puts "G"
         setBlock(bloc_x,bloc_y,100)
+        @pose.play(1,0.8,false)
         return
       end
       if (@data[bloc_x+1][bloc_y] != Tiles::Air)
         setBlock(bloc_x,bloc_y,90)
+        @pose.play(1,0.8,false)
         return
       end
       return
     end
 
     setBlock(bloc_x,bloc_y,id)
+    @pose.play(1,0.8,false)
 
   end
 
   def detruireBloc(bloc_x,bloc_y)
     setBlock(bloc_x,bloc_y,0)
+    @casse.play(1,0.8,false)
   end
 
 end
