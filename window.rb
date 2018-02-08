@@ -1,18 +1,31 @@
 class Window < Gosu::Window
 
-  WIDTH, HEIGHT = 1920, 1080
-
   def initialize(width, height)
-    super
+    super(width, height, false)
     self.caption = "Hardcore Survival"
 
     $font = Gosu::Font.new(self, "res/pokemon_pixel_font.ttf", 40)
     $fontXL = Gosu::Font.new(self, "res/pokemon_pixel_font.ttf", 70)
+
+    @title = Gosu::Image.from_text('En   Bas', 90, {:font => 'res/pokemon_pixel_font.ttf'})
+    @hoverJouer = 1
+    @jouer = Gosu::Image.from_text('Jouer !', 60, {:font => 'res/pokemon_pixel_font.ttf'})
+    @credits = Gosu::Image.from_text('Credits', 60, {:font => 'res/pokemon_pixel_font.ttf'})
+    @quitter = Gosu::Image.from_text('Quitter', 60, {:font => 'res/pokemon_pixel_font.ttf'})
+
     @gamebackground_image = Gosu::Image.new("res/blue.jpg")
 
+    @bg1 = Gosu::Image.new("res/1.png", {:tileable => true, :retro => true })
+    @bg2 = Gosu::Image.new("res/2.png", {:tileable => true, :retro => true })
+    @bg3 = Gosu::Image.new("res/3.png", {:tileable => true, :retro => true })
+    @bg4 = Gosu::Image.new("res/4.png", {:tileable => true, :retro => true})
+    @bgn = Gosu::Image.new("res/black.png", {:tileable => true, :retro => true})
+
+    #@grotte1 = Gosu::Font.new("res/fond.png")
+
     @map = Map.new()
-    @map.generate(3, 3000, 128, 8, 7, 60)
-    #@map.load()
+    #@map.generate(3, 3000, 128, 8, 7, 60)
+    @map.load()
     @hero = Hero.new((((@map.data.size-1)/2)*64)-1, (@map.ground((@map.data.size-1)/2)*64)-1, @map)
     @inventaire = Inventaire.new(6)
     @inventaire.store(4, 1)
@@ -20,7 +33,15 @@ class Window < Gosu::Window
     @cursor = Gosu::Image.new("res/cursor.png")
     @camera_x = @camera_y = 0
 
-    @gameStarted = true
+    @gameStarted = false
+
+    @move = 0
+
+    @x1 = 0
+    @x2 = 0
+    @x3 = 0
+    @x4 = 0
+
   end
 
   def update
@@ -35,11 +56,21 @@ class Window < Gosu::Window
     if @gameStarted == false
       # Evénements du menu
       #
-      #
-      #
+
+      @move +=5
+      if mouse_x > (1920/2)-(@jouer.width/2) && mouse_x < (1920/2)+(@jouer.width/2) && mouse_y > 600 - @jouer.height && mouse_y < 600
+        @jouer = Gosu::Image.from_text('Jouer !',70, {:font => 'res/pokemon_pixel_font.ttf'})
+        if Gosu.button_down? Gosu::MsLeft
+          @gameStarted = true
+        end
+     else
+       @jouer = Gosu::Image.from_text('Jouer !',60, {:font => 'res/pokemon_pixel_font.ttf'})
+     end
 
     else
       # Actions du héro
+      temp = @hero.x
+
       move_x = 0
       move_x -= 6 if Gosu.button_down? Gosu::KB_LEFT
       move_x += 6 if Gosu.button_down? Gosu::KB_RIGHT
@@ -47,78 +78,180 @@ class Window < Gosu::Window
       @hero.update(move_x)
       @hero.jump if Gosu::button_down?(Gosu::KbSpace)
 
+      @move += move_x if temp != @hero.x
+
+
       # Viewport ! Il s'agit d'un tableau avec les coordonnées max possible de la fenêtre (en l'occurence la taille de la map)
       # Si on arrive aux extrêmités il faut arrêter le scroll (on utilise ainsi min et max par rapport à la taille de la fenêtre)
-      @camera_x = [[@hero.x - WIDTH / 2, 0].max, (@map.data.size)*64 - WIDTH].min
-      @camera_y = [[@hero.y - HEIGHT / 2, 0].max, (@map.data[0].size)*64 - HEIGHT].min
-
-    end
+      @camera_x = [[@hero.x - self.width / 2, 0].max, (@map.data.size)*64 - self.width].min
+      @camera_y = [[@hero.y - self.height / 2, 0].max, (@map.data[0].size)*64 - self.height].min
 
 
-    if button_down?(Gosu::MsLeft)
+      if button_down?(Gosu::MsLeft)
 
-      cursor_x = self.mouse_x
-      cursor_y = self.mouse_y
+        cursor_x = self.mouse_x
+        cursor_y = self.mouse_y
 
-      v = @inventaire.idItem(@inventaire.selected)
+        v = @inventaire.idItem(@inventaire.selected)
 
-      if (v != 4) && (v != 5)
+        if (v != 4) && (v != 5)
 
-        x,y = @map.trouveBlocP(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
+          x,y = @map.trouveBlocP(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
 
-        if @hero.dernierBlocPoser < (Time.now.to_f*1000).to_i-500 and x != -1 and y != -1
+          if @hero.dernierBlocPoser < (Time.now.to_f*1000).to_i-500 and x != -1 and y != -1
 
-          bloc_x, bloc_y = @map.trouveBlocP(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
-          #puts bloc_x.to_s+" . "+bloc_y.to_s
-          @map.poserBloc(bloc_x,bloc_y,v)
-          @inventaire.pick(v,1)
-          @hero.dernierBlocPoser = (Time.now.to_f*1000).to_i
+            bloc_x, bloc_y = @map.trouveBlocP(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
+            #puts bloc_x.to_s+" . "+bloc_y.to_s
+            @map.poserBloc(bloc_x,bloc_y,v)
+            @inventaire.pick(v,1)
+            @hero.dernierBlocPoser = (Time.now.to_f*1000).to_i
 
-        end
-
-      end
-
-      if v == 4
-
-        x,y = @map.trouveBloc(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
-
-        if @hero.dernierBlocCasse < (Time.now.to_f*1000).to_i-500 and x != -1 and y != -1
-          bloc_x, bloc_y = @map.trouveBloc(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
-          id = @map.data[bloc_x][bloc_y]
-
-          @map.detruireBloc(bloc_x,bloc_y)
-          if @map.data[bloc_x][bloc_y] == 0
-            @inventaire.store(id,1)
           end
-          @hero.dernierBlocCasse = (Time.now.to_f*1000).to_i
 
         end
+
+        if v == 4
+
+          x,y = @map.trouveBloc(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
+
+          if @hero.dernierBlocCasse < (Time.now.to_f*1000).to_i-500 and x != -1 and y != -1
+            bloc_x, bloc_y = @map.trouveBloc(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
+            id = @map.data[bloc_x][bloc_y]
+
+            @map.detruireBloc(bloc_x,bloc_y)
+            if @map.data[bloc_x][bloc_y] == 0
+              @inventaire.store(id,1)
+            end
+            @hero.dernierBlocCasse = (Time.now.to_f*1000).to_i
+          end
+
+        end
+
       end
 
-
-    end
+    end # end du else
   end
 
   def draw
     @cursor.draw self.mouse_x, self.mouse_y, 99
+
     if @gameStarted == false
       # Le jeu n'a pas commencé :
       # Affichage du menu
-      $fontXL.draw("Jouer !", (WIDTH/2)-30, HEIGHT/2, 0)
 
+      @title.draw_rot(1920/2, 200, 1, 0.5, 0.5)
+      @jouer.draw_rot(1920/2, 600, 1, 0.5, 0.5, 1, @hoverJouer)
+      @credits.draw_rot(1920/2, 700, 1, 0.5, 0.5)
+      @quitter.draw_rot(1920/2, 800, 1, 0.5, 0.5)
+
+      off1 = -@move*0.5
+      if off1 + @x1 >= @bg1.width*2.2
+        @x1-=@bg1.width*2.2
+      end
+      if off1 + @x1 < (@bg1.width*2.2 - 2300)
+        @x1+=@bg1.width*2.2
+      end
+
+      off2 = -@move*0.25
+      if off2 + @x2 >= @bg2.width*2.2
+        @x2-=@bg2.width*2.2
+      end
+      if off2 + @x2 < (@bg2.width*2.2 - 2300)
+        @x2+=@bg2.width*2.2
+      end
+
+      off3 = -@move*0.125
+      if off3 + @x3 >= @bg3.width*2.2
+        @x3-=@bg3.width*2.2
+      end
+      if off3 + @x3 < (@bg3.width*2.2 - 2300)
+        @x3+=@bg3.width*2.2
+      end
+
+      off4 = -@move*0.0625
+      if off4 + @x4 >= @bg4.width*2.2
+        @x4-=@bg4.width*2.2
+      end
+      if off4 + @x4 < (@bg4.width*2.2 - 2300)
+        @x4+=@bg4.width*2.2
+      end
+
+      col = Gosu::Color.new(0, 255, 255, 255)
+
+      @bgn.draw(0, 0, -2,1,1,col)
+
+      @bg1.draw(off1+@x1, 183, -3, 2.2,2.2)
+      @bg2.draw(off2+@x2, 0, -4,2.2,2.2)
+      @bg3.draw(off3+@x3, 0, -5, 2.2,2.2)
+      @bg4.draw(off4+@x4, 0, -6, 2.2,2.2)
+
+
+      @bgn.draw(0, 0, -2,1,1,col)
+      @bg1.draw(off1+@x1-@bg1.width*2.2, 183, -3, 2.2,2.2)
+      @bg2.draw(off2+@x2-@bg2.width*2.2, 0, -4,2.2,2.2)
+      @bg3.draw(off3+@x3-@bg3.width*2.2, 0, -5, 2.2,2.2)
+      @bg4.draw(off4+@x4-@bg4.width*2.2, 0, -6, 2.2,2.2)
     else
       # Le jeu a commencé : on affiche le background, la profondeur, l'inventaire
       # le héro et la map
-      @gamebackground_image.draw 0, 0, -2
+
+      col = Gosu::Color.new(0, 255, 255, 255)
+
+      off1 = -@move*0.5
+      if off1 + @x1 >= @bg1.width*2.2
+        @x1-=@bg1.width*2.2
+      end
+      if off1 + @x1 < (@bg1.width*2.2 - 2300)
+        @x1+=@bg1.width*2.2
+      end
+
+      off2 = -@move*0.25
+      if off2 + @x2 >= @bg2.width*2.2
+        @x2-=@bg2.width*2.2
+      end
+      if off2 + @x2 < (@bg2.width*2.2 - 2300)
+        @x2+=@bg2.width*2.2
+      end
+
+      off3 = -@move*0.125
+      if off3 + @x3 >= @bg3.width*2.2
+        @x3-=@bg3.width*2.2
+      end
+      if off3 + @x3 < (@bg3.width*2.2 - 2300)
+        @x3+=@bg3.width*2.2
+      end
+
+      off4 = -@move*0.0625
+      if off4 + @x4 >= @bg4.width*2.2
+        @x4-=@bg4.width*2.2
+      end
+      if off4 + @x4 < (@bg4.width*2.2 - 2300)
+        @x4+=@bg4.width*2.2
+      end
+
+      @bgn.draw(0, 0, -2,1,1,col)
+
+      @bg1.draw(off1+@x1, 183, -3, 2.2,2.2)
+      @bg2.draw(off2+@x2, 0, -4,2.2,2.2)
+      @bg3.draw(off3+@x3, 0, -5, 2.2,2.2)
+      @bg4.draw(off4+@x4, 0, -6, 2.2,2.2)
+
+
+      @bgn.draw(0, 0, -2,1,1,col)
+      @bg1.draw(off1+@x1-@bg1.width*2.2, 183, -3, 2.2,2.2)
+      @bg2.draw(off2+@x2-@bg2.width*2.2, 0, -4,2.2,2.2)
+      @bg3.draw(off3+@x3-@bg3.width*2.2, 0, -5, 2.2,2.2)
+      @bg4.draw(off4+@x4-@bg4.width*2.2, 0, -6, 2.2,2.2)
 
       #Profondeur du joueur
-      $fontXL.draw("Profondeur : " + (@hero.y/60).to_s, 20, 20, 5)
+      $fontXL.draw("Profondeur : " + (@hero.y/64).to_s, 20, 20, 5)
 
       @inventaire.draw
       Gosu.translate(-@camera_x, -@camera_y) do
         @hero.draw
         @map.draw(@hero.x, @hero.y)
       end
+
     end
   end
 

@@ -25,24 +25,24 @@ class Hero
     @direction = 1
 
     @imagesDroite = []
-    @imagesDroite.push(Gosu::Image.new("res/hero/droite1.png"))
-    @imagesDroite.push(Gosu::Image.new("res/hero/droite2.png"))
-    @imagesDroite.push(Gosu::Image.new("res/hero/droite3.png"))
-    @imagesDroite.push(Gosu::Image.new("res/hero/droite4.png"))
-    @imagesDroite.push(Gosu::Image.new("res/hero/droite5.png"))
+    @imagesDroite.push(Gosu::Image.new("res/hero/droite1.png",{ :retro => true}))
+    @imagesDroite.push(Gosu::Image.new("res/hero/droite2.png",{ :retro => true}))
+    @imagesDroite.push(Gosu::Image.new("res/hero/droite3.png",{ :retro => true}))
+    @imagesDroite.push(Gosu::Image.new("res/hero/droite4.png",{ :retro => true}))
+    @imagesDroite.push(Gosu::Image.new("res/hero/droite5.png",{ :retro => true}))
 
     @imagesGauche = []
-    @imagesGauche.push(Gosu::Image.new("res/hero/gauche1.png"))
-    @imagesGauche.push(Gosu::Image.new("res/hero/gauche2.png"))
-    @imagesGauche.push(Gosu::Image.new("res/hero/gauche3.png"))
-    @imagesGauche.push(Gosu::Image.new("res/hero/gauche4.png"))
-    @imagesGauche.push(Gosu::Image.new("res/hero/gauche5.png"))
+    @imagesGauche.push(Gosu::Image.new("res/hero/gauche1.png",{ :retro => true}))
+    @imagesGauche.push(Gosu::Image.new("res/hero/gauche2.png",{ :retro => true}))
+    @imagesGauche.push(Gosu::Image.new("res/hero/gauche3.png",{ :retro => true}))
+    @imagesGauche.push(Gosu::Image.new("res/hero/gauche4.png",{ :retro => true}))
+    @imagesGauche.push(Gosu::Image.new("res/hero/gauche5.png",{ :retro => true}))
 
     @imagesFace = []
-    @imagesFace.push(Gosu::Image.new("res/hero/face1.png"))
-    @imagesFace.push(Gosu::Image.new("res/hero/face2.png"))
-    @imagesFace.push(Gosu::Image.new("res/hero/face3.png"))
-    @imagesFace.push(Gosu::Image.new("res/hero/face4.png"))
+    @imagesFace.push(Gosu::Image.new("res/hero/face1.png",{ :retro => true}))
+    @imagesFace.push(Gosu::Image.new("res/hero/face2.png",{ :retro => true}))
+    @imagesFace.push(Gosu::Image.new("res/hero/face3.png",{ :retro => true}))
+    @imagesFace.push(Gosu::Image.new("res/hero/face4.png",{ :retro => true}))
   end
 
   def draw
@@ -55,19 +55,20 @@ class Hero
   end
 
   def update(move_x)
-    indices = [0] * 5 + [1] * 4 + [2] * 6 + [3] * 8
-    index = indices[Gosu::milliseconds / 20 % indices.size]
+    indices = [0] * 1 + [1] * 1 + [2] * 1 + [3] * 1
 
     # Actualisation de l'image en fonction de la direction
     if (move_x == 0)
+      index = indices[Gosu::milliseconds / 300 % indices.size]
       @image = @imagesFace[index]
     end
     if (@velocityY < 0)
-    #SAUT   @image = @jump
+    #SAUT ANIMATION  @image = @jump
     end
 
     # Mouvement horizontal, se déplace si le prochain bloc dans la direction n'est pas solide
     if move_x > 0
+      index = indices[Gosu::milliseconds / 100 % indices.size]
       @direction = 1
       @image = @imagesDroite[index]
       move_x.times {
@@ -77,6 +78,7 @@ class Hero
     end
 
     if move_x < 0
+      index = indices[Gosu::milliseconds / 100 % indices.size]
       @direction = -1
       @image = @imagesGauche[index]
       (-move_x).times {

@@ -24,6 +24,10 @@ attr_reader :selected, :items
     @images.push(Gosu::Image.new("res/tiles/stone.png"))
     @images.push(Gosu::Image.new("res/tiles/pioche.png"))
 
+#    @image.push(Gosu:Image.new )
+#    @imagesTransparant = 
+
+
     @selected = 0
   end
 
@@ -104,7 +108,7 @@ attr_reader :selected, :items
     @barre.draw(1920-@barre.width, 0, 3)
     i = 0
     while i < @places do
-      @case.draw((1920-@case.width-(@barre.width/6)), 1080/4/@places + ((1080/@places)*i), 4)
+      @case.draw((1920-@case.width-(@barre.width/6)), (1080/4) / @places + ((1080/@places)*i), 4)
 
         if @items[i][0] != -1 #si l'emplacement contient un item
           @images[@items[i][0]].draw((1920-(@images[1].width)-(@case.width/2)-(@barre.width/6)), 1080/4/@places + ((1080/@places)*i) + 16, 6, 2, 2)
