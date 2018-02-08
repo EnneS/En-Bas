@@ -13,6 +13,8 @@ class Window < Gosu::Window
     @jouer = Gosu::Image.from_text('Jouer !', 60, {:font => 'res/pokemon_pixel_font.ttf'})
     @credits = Gosu::Image.from_text('Credits', 60, {:font => 'res/pokemon_pixel_font.ttf'})
     @quitter = Gosu::Image.from_text('Quitter', 60, {:font => 'res/pokemon_pixel_font.ttf'})
+    @chargement = Gosu::Image.from_text('Chargement...', 80, {:font => 'res/pokemon_pixel_font.ttf'})
+
 
     @gamebackground_image = Gosu::Image.new("res/blue.jpg")
 
@@ -26,8 +28,6 @@ class Window < Gosu::Window
 
     @map = Map.new()
     #generate()
-    @map.load()
-    @hero = Hero.new((((@map.data.size-1)/2)*(32*$scale))-1, (@map.ground((@map.data.size-1)/2)*(32*$scale))-1, @map)
     @inventaire = Inventaire.new(6)
     @inventaire.store(4, 1)
 
@@ -51,6 +51,7 @@ class Window < Gosu::Window
   def generate()
     @map.generate(3, 3000, 128, 8, 7, 60)
     @map.save
+    @hero = Hero.new((((@map.data.size-1)/2)*(32*$scale))-1, (@map.ground((@map.data.size-1)/2)*(32*$scale))-1, @map)
   end
 
   def update
@@ -68,15 +69,33 @@ class Window < Gosu::Window
       @move +=5
 
 
-      # Bouton jouer
+      # Bouton nouvelle partie
       if mouse_x > (1920/2)-(@jouer.width/2) && mouse_x < (1920/2)+(@jouer.width/2) && mouse_y > 600 - @jouer.height && mouse_y < 600
-        @jouer = Gosu::Image.from_text('Jouer !',70, {:font => 'res/pokemon_pixel_font.ttf'})
+        @jouer = Gosu::Image.from_text('Nouvelle partie ',70, {:font => 'res/pokemon_pixel_font.ttf'})
         if Gosu.button_down? Gosu::MsLeft
+          generate()
           @gameStarted = true
         end
      else
-       @jouer = Gosu::Image.from_text('Jouer !',60, {:font => 'res/pokemon_pixel_font.ttf'})
+       @jouer = Gosu::Image.from_text('Nouvelle partie',60, {:font => 'res/pokemon_pixel_font.ttf'})
      end
+
+      # Bouton continuer
+        if mouse_x > (1920/2)-(@credits.width/2) && mouse_x < (1920/2)+(@credits.width/2) && mouse_y > 700 - @credits.height/2 && mouse_y < 700 + @credits.height/2
+          @credits = Gosu::Image.from_text('Continuer',70, {:font => 'res/pokemon_pixel_font.ttf'})
+          if Gosu.button_down? Gosu::MsLeft
+
+            # load de la map et création du héro
+            @map.load()
+            @hero = Hero.new((((@map.data.size-1)/2)*(32*$scale))-1, (@map.ground((@map.data.size-1)/2)*(32*$scale))-1, @map)
+
+            # lancement de la partie
+            @gameStarted = true
+
+          end
+       else
+         @credits = Gosu::Image.from_text('Continuer',60, {:font => 'res/pokemon_pixel_font.ttf'})
+      end
 
      # Bouton quitter
        if mouse_x > (1920/2)-(@quitter.width/2) && mouse_x < (1920/2)+(@quitter.width/2) && mouse_y > 800 - @quitter.height/2 && mouse_y < 800 + @quitter.height/2
@@ -113,8 +132,8 @@ class Window < Gosu::Window
 
       # Viewport ! Il s'agit d'un tableau avec les coordonnées max possible de la fenêtre (en l'occurence la taille de la map)
       # Si on arrive aux extrêmités il faut arrêter le scroll (on utilise ainsi min et max par rapport à la taille de la fenêtre)
-      @camera_x = [[@hero.x - 1920 / 2, 0].max, (@map.w)*64 - 1920].min
-      @camera_y = [[@hero.y - 1080 / 2, 0].max, (@map.h)*64 - 1080].min
+      @camera_x = [[@hero.x - 1920 / 2, 0].max, ((@map.w)-3)*48 - 1920].min
+      @camera_y = [[@hero.y - 1080 / 2, 0].max, ((@map.h)-3)*48 - 1080].min
 
 
       if button_down?(Gosu::MsLeft)
@@ -157,16 +176,16 @@ class Window < Gosu::Window
 
         end
       end
-    end
-    #mobs
-    if @mobs.size < @mobCap
-      spawnMob()
-    end
-    @mobs.each do |m|
-      if !m.HeroInRange(50)
-        @mobs.delete(m)
-      else
-        m.IA_Terre()
+      #mobs
+      if @mobs.size < @mobCap
+        spawnMob()
+      end
+      @mobs.each do |m|
+        if !m.HeroInRange(50)
+          @mobs.delete(m)
+        else
+          m.IA_Terre()
+        end
       end
     end
   end
@@ -193,6 +212,7 @@ class Window < Gosu::Window
     @cursor.draw self.mouse_x, self.mouse_y, 99
 
     if @gameStarted == false
+
       # Le jeu n'a pas commencé :
       # Affichage du menu
 
@@ -303,7 +323,7 @@ class Window < Gosu::Window
       @bg4.draw(off4+@x4-@bg4.width*2.2, 0 + yoff, -6, 2.2,2.2)
 
       #Profondeur du joueur
-      $fontXL.draw("Profondeur : " + (@hero.y/64).to_s, 20, 20, 5)
+      $fontXL.draw("Profondeur : " + (@hero.y/(32*$scale)).round.to_s, 20, 20, 5)
 
       @inventaire.draw
       Gosu.translate(-@camera_x, -@camera_y) do

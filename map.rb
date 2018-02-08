@@ -108,7 +108,7 @@ class Map
     @transparency[2] = 7
     @transparency[3] = 9
     @transparency[7] = -5
-    
+
     (0..3).each do |i|
       @transparency[(8.to_s+i.to_s).to_i] = 1
       @transparency[(9.to_s+i.to_s).to_i] = 1
@@ -193,7 +193,7 @@ class Map
         if y < @h-1 && @data[x][y+1] != Tiles::Air
            vb = 0
         end
-        if x > 0 && @data[x-1][y] != Tiles::Air 
+        if x > 0 && @data[x-1][y] != Tiles::Air
           vl = 0
         end
         if x < @w-1 && @data[x+1][y] != Tiles::Air
@@ -408,13 +408,12 @@ class Map
   def solid(x, y)
     #Test pour le bloc du bas gauche/droite et haut gauche/droite s'il est solide
     # On ne peut aussi pas dépasser les limites de la map
-    if x < 0 || x > (@data.size-1)*(32*$scale) || y > (@data[0].size-1)*(32*$scale) || @data[x / (32*$scale)][y / (32*$scale)] != 0 || @data[((x+60) / (32*$scale))][y / (32*$scale)] != 0 || @data[x / (32*$scale)][(y-70) / (32*$scale)] !=0 || @data[(x+60) / (32*$scale)][(y-70) / (32*$scale)] !=0
+    if x < 0 || x > (@data.size-3)*(32*$scale) || y > (@data[0].size-3)*(32*$scale) || @data[x / (32*$scale)][y / (32*$scale)] != 0 || @data[(x+56) / (32*$scale)][y / (32*$scale)] != 0 || @data[x / (32*$scale)][(y-70) / (32*$scale)] !=0 || @data[(x+48) / (32*$scale)][(y) / (32*$scale)] !=0 || @data[(x+56) / (32*$scale)][(y-70) / (32*$scale)] !=0
       return true
     else
       return false
     end
   end
-
 
   def trouveBloc(cursor_x,cursor_y,camera_x, camera_y,hero_x,hero_y)
 
@@ -533,7 +532,7 @@ class Map
     end
 
     setBlock(bloc_x,bloc_y,id)
-    
+
   end
 
   def detruireBloc(bloc_x,bloc_y)
