@@ -55,11 +55,11 @@ class Hero
   end
 
   def update(move_x)
-    indices = [0] * 5 + [1] * 4 + [2] * 6 + [3] * 8
-    index = indices[Gosu::milliseconds / 20 % indices.size]
+    indices = [0] * 1 + [1] * 1 + [2] * 1 + [3] * 1
 
     # Actualisation de l'image en fonction de la direction
     if (move_x == 0)
+      index = indices[Gosu::milliseconds / 300 % indices.size]
       @image = @imagesFace[index]
     end
     if (@velocityY < 0)
@@ -68,6 +68,7 @@ class Hero
 
     # Mouvement horizontal, se déplace si le prochain bloc dans la direction n'est pas solide
     if move_x > 0
+      index = indices[Gosu::milliseconds / 100 % indices.size]
       @direction = 1
       @image = @imagesDroite[index]
       move_x.times {
@@ -77,6 +78,7 @@ class Hero
     end
 
     if move_x < 0
+      index = indices[Gosu::milliseconds / 100 % indices.size]
       @direction = -1
       @image = @imagesGauche[index]
       (-move_x).times {

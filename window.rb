@@ -165,6 +165,7 @@ class Window < Gosu::Window
       end
 
       @bgn.draw(0, 0, -2,1,1,col)
+
       @bg1.draw(off1+@x1, 183, -3, 2.2,2.2)
       @bg2.draw(off2+@x2, 0, -4,2.2,2.2)
       @bg3.draw(off3+@x3, 0, -5, 2.2,2.2)
