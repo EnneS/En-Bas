@@ -5,6 +5,22 @@ class Window < Gosu::Window
     super(width, height, true)
     self.caption = "Hardcore Survival"
 
+    @start_time = Time.now
+    @tempsEcoule = 0
+    @dureSon = 10
+    
+    @song0 = Gosu::Song.new("res/song/Imminent.mp3")
+    @song1 = Gosu::Song.new("res/song/Nebulous.mp3")
+    @song2 = Gosu::Song.new("res/song/Youthful.mp3")
+
+    @ind = 0
+      
+    @song0.volume = 0.5
+    @song1.volume = 0.5
+    @song2.volume = 0.5
+
+    @song1.play(true) 
+
     $font = Gosu::Font.new(self, "res/pokemon_pixel_font.ttf", 40)
     $fontXL = Gosu::Font.new(self, "res/pokemon_pixel_font.ttf", 70)
 
@@ -54,7 +70,31 @@ class Window < Gosu::Window
     @hero = Hero.new((((@map.data.size-1)/2)*(32*$scale))-1, (@map.ground((@map.data.size-1)/2)*(32*$scale))-1, @map)
   end
 
+  def playSong()
+    @ind+=1
+    @ind%=2
+    puts "New song : "+@ind.to_s
+
+    @song0.play(true) && @song1.stop && @song2.stop if @ind == 0
+    @song1.play(true) && @song0.stop && @song2.stop if @ind == 1
+    @song2.play(true) && @song0.stop && @song1.stop if @ind == 2
+
+    @dureSon = $rng.Random(120)+60
+    putc @dureSon.to_s
+  end
+
+
   def update
+     ##gestion des sons
+     if (Time.now-@start_time) > @dureSon 
+        playSong 
+        puts (Time.now-@start_time).to_s
+        @start_time = Time.now
+      end
+
+
+
+
     @inventaire.setSelected(0) if Gosu::button_down?(Gosu::Kb1)
     @inventaire.setSelected(1) if Gosu::button_down?(Gosu::Kb2)
     @inventaire.setSelected(2) if Gosu::button_down?(Gosu::Kb3)
@@ -64,8 +104,6 @@ class Window < Gosu::Window
 
     if @gameStarted == false
       # Evénements du menu
-      #
-
       @move +=5
 
 
