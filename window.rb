@@ -2,7 +2,7 @@ require 'set'
 class Window < Gosu::Window
 
   def initialize(width, height)
-    super(width, height, true)
+    super(width, height, false)
     self.caption = "Hardcore Survival"
 
     @start_time = Time.now
