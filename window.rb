@@ -130,7 +130,7 @@ class Window < Gosu::Window
       # Le jeu a commencé : on affiche le background, la profondeur, l'inventaire
       # le héro et la map
 
-      col = Gosu::Color.new(0, 255, 255, 255)
+      col = Gosu::Color.new(160, 255, 255, 255)
 
       off1 = -@move*0.5
       if off1 + @x1 >= @bg1.width*2.2

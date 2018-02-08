@@ -9,6 +9,10 @@ module Tiles
   Water = 5
   Lava = 6
   Chest = 7
+  Torch1 = 80
+  Torch2 = 81
+  Torch3 = 82
+  Torch3 = 83
 
 end
 def min(a, b)
@@ -86,22 +90,38 @@ class Map
   attr_reader :w, :h, :data, :lightmap, :images, :transparency, :shadow
 
   def initialize()
-    @images = Array.new(8)
+    @images = Array.new(90)
     @images[0] = 0 # air
     @images[1] = Gosu::Image.new("res/tiles/grass.png", {:tileable => true })
     @images[2] = Gosu::Image.new("res/tiles/dirt.png", {:tileable => true })
     @images[3] = Gosu::Image.new("res/tiles/stone.png", {:tileable => true })
     @images[7] = Gosu::Image.new("res/tiles/chest.png", {:tileable => true })
+    @images[80] = Gosu::Image.new("res/tiles/torch_0000.png", {:tileable => true })
+    @images[81] = Gosu::Image.new("res/tiles/torch_0001.png", {:tileable => true })
+    @images[82] = Gosu::Image.new("res/tiles/torch_0002.png", {:tileable => true })
+    @images[83] = Gosu::Image.new("res/tiles/torch_0003.png", {:tileable => true })
 
-    @transparency = Array.new(8)
+    @transparency = Array.new(90)
     @transparency[0] = 1
     @transparency[1] = 7
     @transparency[2] = 7
     @transparency[3] = 9
     @transparency[7] = -5
+    @transparency[80] = 1
+    @transparency[81] = 1
+    @transparency[82] = 1
+    @transparency[83] = 1
 
-
-    
+    @light = Array.new(90)
+    @light[0] = 0
+    @light[1] = 0
+    @light[2] = 0
+    @light[3] = 0
+    @light[7] = 15
+    @light[80] = 20
+    @light[81] = 20
+    @light[82] = 20
+    @light[83] = 20
 
     @shadow = Gosu::Image.new("res/tiles/shadow.png", {:tileable => true })
   end
@@ -146,8 +166,11 @@ class Map
     end
 
     vu = lightValue(x, y-1)
-    if vu >= 32 - @transparency[0]
-      @lightmap[x][y] = 32 - @transparency[@data[x][y]]
+    if vu >= 32 - @transparency[0] 
+      puts "transparency : "+ @transparency[@data[x][y]].to_s
+      puts "light : "+@light[@data[x][y]].to_s
+      puts "id : "+@data[x][y].to_s
+      @lightmap[x][y] = 32 - @transparency[@data[x][y]].to_i + @light[@data[x][y]]
       if @lightmap[x][y] != v
         modified = true
       end
@@ -157,7 +180,7 @@ class Map
       vr = lightValue(x+1, y)
       mv = max(max(vu, vb),max(vl, vr))
 
-      @lightmap[x][y] = max(0, mv - @transparency[@data[x][y]])
+      @lightmap[x][y] = max(0, mv - @transparency[@data[x][y]].to_i + @light[@data[x][y]])
       if @lightmap[x][y] != v
         modified = true
       end
@@ -310,6 +333,12 @@ class Map
     end
   end
 
+  def getIdTorch
+    indices = [0] * 1 + [1] * 1 + [2] * 1 + [3] * 1
+    index = indices[Gosu::milliseconds / 300 % indices.size]
+    return (8.to_s+index.to_s).to_i
+  end
+
   def draw(posX, posY)
     # Définition des blocs du tableau à draw
     debutX = (posX / 64) - 34
@@ -327,8 +356,19 @@ class Map
 
     for i in debutX..finX
       for j in debutY..finY
-        if i >= 0 && j >= 0 && @data[i][j] != Tiles::Air # S'il ne s'agit pas d'un block d'air
+        puts @data[i][j].to_s
+        if i >= 0 && j >= 0 && @data[i][j] != Tiles::Air && @data[i][j] <80 # S'il ne s'agit pas d'un block d'air
           @images[@data[i][j]].draw(2*i*(@images[@data[i][j]].width), 2*j*(@images[@data[i][j]].height), -1, 2, 2) # on le dessine en fonction de sa position dans le tableau
+          alpha = 255 - (@lightmap[i][j] * 8)
+          col = Gosu::Color.new(alpha, 255, 255, 255)
+          @shadow.draw(2*i*(@shadow.width), 2*j*(@shadow.height), -1, 2, 2, col)
+        end 
+        if i >= 0 && j >= 0 && @data[i][j] >=80 &&  @data[i][j] <=83
+
+
+          puts @images[getIdTorch].to_s
+          
+          @images[getIdTorch].draw(2*i*(@images[getIdTorch].width), 2*j*(@images[getIdTorch].height), -1, 2, 2) # on le dessine en fonction de sa position dans le tableau
           alpha = 255 - (@lightmap[i][j] * 8)
           col = Gosu::Color.new(alpha, 255, 255, 255)
           @shadow.draw(2*i*(@shadow.width), 2*j*(@shadow.height), -1, 2, 2, col)
@@ -445,7 +485,6 @@ class Map
     end
 
   end
-
 
   def poserBloc(bloc_x,bloc_y,id)
     #puts id.to_s
