@@ -8,7 +8,7 @@ class Window < Gosu::Window
     $font = Gosu::Font.new(self, "res/pokemon_pixel_font.ttf", 40)
     $fontXL = Gosu::Font.new(self, "res/pokemon_pixel_font.ttf", 70)
 
-    @title = Gosu::Image.from_text('En   Bas', 90, {:font => 'res/pokemon_pixel_font.ttf'})
+    @title = Gosu::Image.from_text('En   Bas', 120, {:font => 'res/pokemon_pixel_font.ttf'})
     @hoverJouer = 1
     @jouer = Gosu::Image.from_text('Jouer !', 60, {:font => 'res/pokemon_pixel_font.ttf'})
     @credits = Gosu::Image.from_text('Credits', 60, {:font => 'res/pokemon_pixel_font.ttf'})
@@ -25,9 +25,9 @@ class Window < Gosu::Window
     #@grotte1 = Gosu::Font.new("res/fond.png")
 
     @map = Map.new()
-    #generate()   
+    #generate()
     @map.load()
-    @hero = Hero.new((((@map.data.size-1)/2)*64)-1, (@map.ground((@map.data.size-1)/2)*64)-1, @map)
+    @hero = Hero.new((((@map.data.size-1)/2)*(32*$scale))-1, (@map.ground((@map.data.size-1)/2)*(32*$scale))-1, @map)
     @inventaire = Inventaire.new(6)
     @inventaire.store(4, 1)
 
@@ -47,13 +47,13 @@ class Window < Gosu::Window
     @x4 = 0
 
   end
+
   def generate()
     @map.generate(3, 3000, 128, 8, 7, 60)
     @map.save
   end
 
   def update
-    close if Gosu::button_down?(Gosu::KbEscape)
     @inventaire.setSelected(0) if Gosu::button_down?(Gosu::Kb1)
     @inventaire.setSelected(1) if Gosu::button_down?(Gosu::Kb2)
     @inventaire.setSelected(2) if Gosu::button_down?(Gosu::Kb3)
@@ -66,6 +66,9 @@ class Window < Gosu::Window
       #
 
       @move +=5
+
+
+      # Bouton jouer
       if mouse_x > (1920/2)-(@jouer.width/2) && mouse_x < (1920/2)+(@jouer.width/2) && mouse_y > 600 - @jouer.height && mouse_y < 600
         @jouer = Gosu::Image.from_text('Jouer !',70, {:font => 'res/pokemon_pixel_font.ttf'})
         if Gosu.button_down? Gosu::MsLeft
@@ -75,7 +78,19 @@ class Window < Gosu::Window
        @jouer = Gosu::Image.from_text('Jouer !',60, {:font => 'res/pokemon_pixel_font.ttf'})
      end
 
+     # Bouton quitter
+       if mouse_x > (1920/2)-(@quitter.width/2) && mouse_x < (1920/2)+(@quitter.width/2) && mouse_y > 800 - @quitter.height/2 && mouse_y < 800 + @quitter.height/2
+         @quitter = Gosu::Image.from_text('Quitter',70, {:font => 'res/pokemon_pixel_font.ttf'})
+         if Gosu.button_down? Gosu::MsLeft
+           close
+         end
+      else
+        @quitter = Gosu::Image.from_text('Quitter',60, {:font => 'res/pokemon_pixel_font.ttf'})
+     end
+
     else
+      @gameStarted = false if Gosu::button_down?(Gosu::KbEscape)
+
       # Actions du héro
       temp = @hero.x
 
@@ -148,11 +163,11 @@ class Window < Gosu::Window
       end
     end
   end
-  
+
   def spawnMob()
     xr = $rng.Random(60) - 30
     yr = $rng.Random(60) - 30
-    x = xr + @camera_x/64  
+    x = xr + @camera_x/64
     y = yr + @camera_y/64
 
     if xr > 0
@@ -166,7 +181,7 @@ class Window < Gosu::Window
       @mobs.add(Monstre.new(0, x*64, y*64, @map, @hero))
     end
   end
-  
+
   def draw
     @cursor.draw self.mouse_x, self.mouse_y, 99
 

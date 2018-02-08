@@ -1,4 +1,4 @@
-
+$scale = 1.5 # scale des blocs (32pixels * $scale)
 module Tiles
   Air = 0
   Grass = 1
@@ -183,7 +183,7 @@ class Map
     end
     lightmap[x][y] = 0
     vu = lightValue(x, y-1)
-    if vu >= 32 - @transparency[0] 
+    if vu >= 32 - @transparency[0]
       @lightmap[x][y] = 32 - @transparency[@data[x][y]].to_i + @light[@data[x][y]]
       if @lightmap[x][y] != v
         modified = true
@@ -335,7 +335,7 @@ class Map
     y = 0
     v = 31
     while nbCoffres > 0
-      while b != Tiles::Air || v >= 32 - @transparency[0] 
+      while b != Tiles::Air || v >= 32 - @transparency[0]
         x = $rng.Random(w)
         y = $rng.Random(h)
         b = @data[x][y]
@@ -359,11 +359,11 @@ class Map
 
   def draw(posX, posY)
     # Définition des blocs du tableau à draw
-    debutX = (posX / 64) - 34
-    debutY = (posY / 64) - 16
+    debutX = ((posX / 48) - 34).floor
+    debutY = ((posY / 48) - 16).floor
+
     finX = debutX + 68
     finY = debutY + 32
-
     # L'index ne peut pas être négatif (min = 0)
     debutX = (debutX < 0)? 0 : debutX
     debutY = (debutY < 0)? 0 : debutY
@@ -375,17 +375,19 @@ class Map
     for i in debutX..finX
       for j in debutY..finY
         if i >= 0 && j >= 0 && @data[i][j] != Tiles::Air && @data[i][j] <80 # S'il ne s'agit pas d'un block d'air
-          @images[@data[i][j]].draw(2*i*(@images[@data[i][j]].width), 2*j*(@images[@data[i][j]].height), -1, 2, 2) # on le dessine en fonction de sa position dans le tableau
+          @images[@data[i][j]].draw($scale*i*(@images[@data[i][j]].width), $scale*j*(@images[@data[i][j]].height), -1, $scale, $scale) # on le dessine en fonction de sa position dans le tableau
           alpha = 255 - (@lightmap[i][j] * 8)
           col = Gosu::Color.new(alpha, 255, 255, 255)
+
           @shadow.draw(2*i*(@shadow.width), 2*j*(@shadow.height), -1, 2, 2, col)
         end 
         if i >= 0 && j >= 0 && @data[i][j] >=80 &&  @data[i][j] <=103
           
           @images[getIdTorch(@data[i][j]/10)].draw(2*i*(@images[getIdTorch(@data[i][j]/10)].width), 2*j*(@images[getIdTorch(@data[i][j]/10)].height), -1, 2, 2) # on le dessine en fonction de sa position dans le tableau
+
           alpha = 255 - (@lightmap[i][j] * 8)
           col = Gosu::Color.new(alpha, 255, 255, 255)
-          @shadow.draw(2*i*(@shadow.width), 2*j*(@shadow.height), -1, 2, 2, col)
+          @shadow.draw($scale*i*(@shadow.width), $scale*j*(@shadow.height), -1, $scale, $scale, col)
         end
       end
     end
@@ -393,7 +395,7 @@ class Map
 
   def ground(x)
     i = 0
-    while i < @data[0].size-1 && @data[x][i] == 0 do
+    while i < @data[0].size-1 && @data[x][i] == 0 && @data[x+1][i] == 0 do
       i+= 1
     end
     return i
@@ -402,7 +404,7 @@ class Map
   def solid(x, y)
     #Test pour le bloc du bas gauche/droite et haut gauche/droite s'il est solide
     # On ne peut aussi pas dépasser les limites de la map
-    if x < 0 || x > (@data.size-1)*(32*2) || y > (@data[0].size-1)*64 || @data[x / (32*2)][y / (32*2)] != 0 || @data[((x+60) / (32*2))][y / (32*2)] != 0 || @data[x / (32*2)][(y-70) / (32*2)] !=0 || @data[(x+60) / (32*2)][(y-70) / (32*2)] !=0
+    if x < 0 || x > (@data.size-1)*(32*$scale) || y > (@data[0].size-1)*(32*$scale) || @data[x / (32*$scale)][y / (32*$scale)] != 0 || @data[((x+60) / (32*$scale))][y / (32*$scale)] != 0 || @data[x / (32*$scale)][(y-70) / (32*$scale)] !=0 || @data[(x+60) / (32*$scale)][(y-70) / (32*$scale)] !=0
       return true
     else
       return false
@@ -427,8 +429,8 @@ class Map
     cx /= cl
     cy /= cl
 
-    bloc_x = center_x / 64.to_f
-    bloc_y = center_y / 64.to_f
+    bloc_x = center_x / (32*$scale).to_f
+    bloc_y = center_y / (32*$scale).to_f
 
     inc = 0
     while !blocTrouve
@@ -466,7 +468,7 @@ class Map
 
     end
 
-    if ((x-(hero_x/64).floor).abs < 5) && ((y-(hero_y/64).floor).abs < 5)
+    if ((x-(hero_x/(32*$scale)).floor).abs < 5) && ((y-(hero_y/(32*$scale)).floor).abs < 5)
       return x,y
     else
       return -1,-1
@@ -481,13 +483,13 @@ class Map
     cursor_r_x = camera_x+cursor_x
     cursor_r_y = camera_y+cursor_y
 
-    x = (cursor_r_x/64).floor
-    y = (cursor_r_y/64).floor
+    x = (cursor_r_x/(32*$scale)).floor
+    y = (cursor_r_y/(32*$scale)).floor
 
     #puts cursor_r_y.to_s+" . "+cursor_r_x.to_s
 
-    hero_xb = (hero_x/64).floor
-    hero_yb = (hero_y/64).floor
+    hero_xb = (hero_x/(32*$scale)).floor
+    hero_yb = (hero_y/(32*$scale)).floor
 
     espaceHero = ((x == hero_xb && y == hero_yb) || (x == hero_xb && y == (hero_yb-1)) || (x == (hero_xb+1) && y == hero_yb) || (x == (hero_xb+1) && y == hero_yb-1))
     blocAdjacent = (@data[x-1][y] != Tiles::Air) || (@data[x+1][y] != Tiles::Air) || (@data[x][y-1] != Tiles::Air) || (@data[x][y+1] != Tiles::Air)
