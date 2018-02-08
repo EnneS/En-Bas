@@ -72,16 +72,16 @@ class Monstre
     end
 
     def draw
-      @image.draw(@x - 30, @y - @image.height*1.5, ZOrder::Hero, 2, 2) # on le draw à partir du bas du sprite (utile pour la collision)
+      @image.draw(@x - 20, @y - @image.height*3, ZOrder::Hero, 3, 3) # on le draw à partir du bas du sprite (utile pour la collision)
     end
 
     def peutSeDeplacer(offs_x, offs_y)
       # Regarde dans les directions (offs_x et offs_y) si le prochain bloc est solide
-      not @map.solid(@x + offs_x, @y + offs_y) and not @map.solid(@x + offs_x, @y + offs_y - 45)
+      not @map.solidLoup(@x + offs_x, @y + offs_y) and not @map.solidLoup(@x + offs_x, @y + offs_y - 45)
     end
 
     def update(move_x)
-      indices = [0] * 1 + [1] * 2 + [2] * 3 + [3] * 4
+      indices = [0] * 1 + [1] * 2 + [2] * 3 + [3] * 4 + [4] * 30
       index = indices[Gosu::milliseconds / 300 % indices.size]
 
       # Actualisation de l'image en fonction de la direction
@@ -94,7 +94,7 @@ class Monstre
 
       # Mouvement horizontal, se déplace si le prochain bloc dans la direction n'est pas solide
       if move_x > 0
-        index = indices[Gosu::milliseconds / 100 % indices.size]
+        index = indices[Gosu::milliseconds / 300 % indices.size]
         @direction = 1
         @image = @imagesDroite[index]
         move_x.times {
@@ -107,7 +107,7 @@ class Monstre
       end
 
       if move_x < 0
-        index = indices[Gosu::milliseconds / 100 % indices.size]
+        index = indices[Gosu::milliseconds / 300 % indices.size]
         @direction = -1
         @image = @imagesGauche[index]
         (-move_x).times {
@@ -132,7 +132,7 @@ class Monstre
     end
 
     def jump
-      if @map.solid(@x, @y +1) # il saute seulement s'il n'est pas dans les airs
+      if @map.solidLoup(@x, @y +1) # il saute seulement s'il n'est pas dans les airs
         @velocityY = -21
       end
     end
@@ -162,7 +162,7 @@ class Monstre
         if xf != 0
           xf /= xf.abs
         end
-        
+
         update((xf*@speed).to_i)
       end
       if @focus == nil && HeroInRange(@focusRangeIdle)
