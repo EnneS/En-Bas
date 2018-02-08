@@ -97,6 +97,9 @@ class Map
     @transparency[2] = 7
     @transparency[3] = 9
 
+
+    
+
     @shadow = Gosu::Image.new("res/tiles/shadow.png", {:tileable => true })
   end
 

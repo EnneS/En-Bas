@@ -25,24 +25,24 @@ class Hero
     @direction = 1
 
     @imagesDroite = []
-    @imagesDroite.push(Gosu::Image.new("res/hero/droite1.png"))
-    @imagesDroite.push(Gosu::Image.new("res/hero/droite2.png"))
-    @imagesDroite.push(Gosu::Image.new("res/hero/droite3.png"))
-    @imagesDroite.push(Gosu::Image.new("res/hero/droite4.png"))
-    @imagesDroite.push(Gosu::Image.new("res/hero/droite5.png"))
+    @imagesDroite.push(Gosu::Image.new("res/hero/droite1.png",{ :retro => true}))
+    @imagesDroite.push(Gosu::Image.new("res/hero/droite2.png",{ :retro => true}))
+    @imagesDroite.push(Gosu::Image.new("res/hero/droite3.png",{ :retro => true}))
+    @imagesDroite.push(Gosu::Image.new("res/hero/droite4.png",{ :retro => true}))
+    @imagesDroite.push(Gosu::Image.new("res/hero/droite5.png",{ :retro => true}))
 
     @imagesGauche = []
-    @imagesGauche.push(Gosu::Image.new("res/hero/gauche1.png"))
-    @imagesGauche.push(Gosu::Image.new("res/hero/gauche2.png"))
-    @imagesGauche.push(Gosu::Image.new("res/hero/gauche3.png"))
-    @imagesGauche.push(Gosu::Image.new("res/hero/gauche4.png"))
-    @imagesGauche.push(Gosu::Image.new("res/hero/gauche5.png"))
+    @imagesGauche.push(Gosu::Image.new("res/hero/gauche1.png",{ :retro => true}))
+    @imagesGauche.push(Gosu::Image.new("res/hero/gauche2.png",{ :retro => true}))
+    @imagesGauche.push(Gosu::Image.new("res/hero/gauche3.png",{ :retro => true}))
+    @imagesGauche.push(Gosu::Image.new("res/hero/gauche4.png",{ :retro => true}))
+    @imagesGauche.push(Gosu::Image.new("res/hero/gauche5.png",{ :retro => true}))
 
     @imagesFace = []
-    @imagesFace.push(Gosu::Image.new("res/hero/face1.png"))
-    @imagesFace.push(Gosu::Image.new("res/hero/face2.png"))
-    @imagesFace.push(Gosu::Image.new("res/hero/face3.png"))
-    @imagesFace.push(Gosu::Image.new("res/hero/face4.png"))
+    @imagesFace.push(Gosu::Image.new("res/hero/face1.png",{ :retro => true}))
+    @imagesFace.push(Gosu::Image.new("res/hero/face2.png",{ :retro => true}))
+    @imagesFace.push(Gosu::Image.new("res/hero/face3.png",{ :retro => true}))
+    @imagesFace.push(Gosu::Image.new("res/hero/face4.png",{ :retro => true}))
   end
 
   def draw

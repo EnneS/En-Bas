@@ -8,7 +8,16 @@ class Window < Gosu::Window
 
     $font = Gosu::Font.new(self, "res/pokemon_pixel_font.ttf", 40)
     $fontXL = Gosu::Font.new(self, "res/pokemon_pixel_font.ttf", 70)
+    
     @gamebackground_image = Gosu::Image.new("res/blue.jpg")
+    
+    @bg1 = Gosu::Image.new("res/1.png", {:tileable => true, :retro => true })
+    @bg2 = Gosu::Image.new("res/2.png", {:tileable => true, :retro => true })
+    @bg3 = Gosu::Image.new("res/3.png", {:tileable => true, :retro => true })
+    @bg4 = Gosu::Image.new("res/4.png", {:tileable => true, :retro => true})
+    @bgn = Gosu::Image.new("res/black.png", {:tileable => true, :retro => true})
+
+    #@grotte1 = Gosu::Font.new("res/fond.png")
 
     @map = Map.new()
     @map.generate(3, 3000, 128, 8, 7, 60)
@@ -109,7 +118,15 @@ class Window < Gosu::Window
     else
       # Le jeu a commencé : on affiche le background, la profondeur, l'inventaire
       # le héro et la map
-      @gamebackground_image.draw 0, 0, -2
+
+      col = Gosu::Color.new(175, 255, 255, 255)
+
+      @bgn.draw(0, 0, -2,1,1,col)
+      @bg1.draw(0, 183, -3, 2.2,2.2)
+      @bg2.draw(0, 0, -4,2.2,2.2)
+      @bg3.draw(0, 0, -5, 2.2,2.2)
+      @bg4.draw(0, 0, -6, 2.,2.2)
+
 
       #Profondeur du joueur
       $fontXL.draw("Profondeur : " + (@hero.y/60).to_s, 20, 20, 5)
