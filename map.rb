@@ -426,14 +426,16 @@ class Map
     center_y = hero_y - 70
 
     #calcul coef directeur
-    if ((center_y)-cursor_r_y) - ((center_x)-cursor_r_x) == 0
-      c = -9999.0
-    elsif ((center_y)-cursor_r_y) + ((center_x)-cursor_r_x) == 0
-      c = 9999.0
-    else
-      c = ((center_y)-cursor_r_y)/((center_x)-cursor_r_x).to_f
+    a = ((center_y)-cursor_r_y).to_f
+    b = ((center_x)-cursor_r_x).to_f
+    if a >= -0.1 && a <= 0.1
+      a = 0.01
     end
-
+    if b >= -0.1 && b <= 0.1
+      b = 0.01
+    end
+    c = a/b
+    
     cx = 1
     cy = c
     cl = (cx**2 + cy**2)**0.5
