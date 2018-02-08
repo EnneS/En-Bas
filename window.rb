@@ -8,18 +8,18 @@ class Window < Gosu::Window
     @start_time = Time.now
     @tempsEcoule = 0
     @dureSon = 10
-    
+
     @song0 = Gosu::Song.new("res/song/Imminent.mp3")
     @song1 = Gosu::Song.new("res/song/Nebulous.mp3")
     @song2 = Gosu::Song.new("res/song/Youthful.mp3")
 
     @ind = 0
-      
+
     @song0.volume = 0.5
     @song1.volume = 0.5
     @song2.volume = 0.5
 
-    @song1.play(true) 
+    @song1.play(true)
 
     $font = Gosu::Font.new(self, "res/pokemon_pixel_font.ttf", 40)
     $fontXL = Gosu::Font.new(self, "res/pokemon_pixel_font.ttf", 70)
@@ -86,8 +86,8 @@ class Window < Gosu::Window
 
   def update
      ##gestion des sons
-     if (Time.now-@start_time) > @dureSon 
-        playSong 
+     if (Time.now-@start_time) > @dureSon
+        playSong
         puts (Time.now-@start_time).to_s
         @start_time = Time.now
       end
@@ -162,7 +162,7 @@ class Window < Gosu::Window
       #move_x *= 2 if Gosu::button_down?(Gosu::KbLeftShift)
       @hero.update(move_x)
       if Gosu::button_down?(Gosu::KbSpace) || Gosu.button_down?(Gosu::KB_UP) || Gosu.button_down?(Gosu::KB_Z)
-        @hero.jump 
+        @hero.jump
       end
 
       @move += move_x if temp != @hero.x
@@ -180,8 +180,7 @@ class Window < Gosu::Window
         cursor_y = self.mouse_y
 
         v = @inventaire.idItem(@inventaire.selected)
-
-        if (v != 4) && (v != 5)
+        if (v != 4) && (v != 5) && (v!=-1)
 
           x,y = @map.trouveBlocP(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
 

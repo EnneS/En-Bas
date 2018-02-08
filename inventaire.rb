@@ -64,7 +64,7 @@ attr_reader :selected, :items
     emplacement = contains(id)
     if emplacement != -1 and @items[emplacement][1] >= nb
       @items[emplacement][1] -= nb
-      if @items[emplacement][1] == nb
+      if @items[emplacement][1] == 0
         @items[emplacement][0] = -1
         @items[emplacement][1] = -1
       end
