@@ -108,7 +108,7 @@ class Map
     @transparency[2] = 7
     @transparency[3] = 9
     @transparency[7] = -5
-    
+
     (0..3).each do |i|
       @transparency[(8.to_s+i.to_s).to_i] = 1
       @transparency[(9.to_s+i.to_s).to_i] = 1
@@ -380,9 +380,9 @@ class Map
           col = Gosu::Color.new(alpha, 255, 255, 255)
 
           @shadow.draw(2*i*(@shadow.width), 2*j*(@shadow.height), -1, 2, 2, col)
-        end 
+        end
         if i >= 0 && j >= 0 && @data[i][j] >=80 &&  @data[i][j] <=103
-          
+
           @images[getIdTorch(@data[i][j]/10)].draw(2*i*(@images[getIdTorch(@data[i][j]/10)].width), 2*j*(@images[getIdTorch(@data[i][j]/10)].height), -1, 2, 2) # on le dessine en fonction de sa position dans le tableau
 
           alpha = 255 - (@lightmap[i][j] * 8)
@@ -521,7 +521,7 @@ class Map
     end
 
     setBlock(bloc_x,bloc_y,id)
-    
+
   end
 
   def detruireBloc(bloc_x,bloc_y)
