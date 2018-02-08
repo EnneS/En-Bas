@@ -18,6 +18,7 @@ attr_reader :selected, :items
 
     store(80,50)
 
+    @selection = Gosu::Image.new("res/tiles/barre.png")
     @barre = Gosu::Image.new("res/barre.png")
     @case = Gosu::Image.new("res/case.png")
 
@@ -112,6 +113,9 @@ attr_reader :selected, :items
   end
 
   def draw
+
+    @selection.draw((1920-@case.width-(@barre.width/6)), (1080/4) / @places + ((1080/@places)*@selected), 5)
+
     @barre.draw(1920-@barre.width, 0, 3)
     i = 0
     while i < @places do

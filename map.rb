@@ -151,9 +151,7 @@ class Map
     end
   end
   def setBlock(x, y, v)
-    if v>=0 || v>=9
-      @data[x][y] = v
-    end
+    @data[x][y] = v
     updateLight(x, y, 0)
     #addBlockToWaitList(x-1, y)
     #addBlockToWaitList(x+1, y)
@@ -176,30 +174,37 @@ class Map
   end
 
   def updateLight(x, y, stack_lvl)
-    modified = false
     v = lightValue(x, y)
     if v < 0 || v == 32
       return
     end
-    lightmap[x][y] = 0
+    @lightmap[x][y] = 0
     vu = lightValue(x, y-1)
     if vu >= 32 - @transparency[0]
-      @lightmap[x][y] = 32 - @transparency[@data[x][y]].to_i + @light[@data[x][y]]
-      if @lightmap[x][y] != v
-        modified = true
-      end
+      @lightmap[x][y] = min(32 - @transparency[0], 32 - @transparency[@data[x][y]] + @light[@data[x][y]])
     else
       vb = lightValue(x, y+1)
       vl = lightValue(x-1, y)
       vr = lightValue(x+1, y)
+      if @data[x][y] == Tiles::Air
+        if y > 0 && @data[x][y-1] != Tiles::Air
+          vu = 0
+        end
+        if y < @h-1 && @data[x][y+1] != Tiles::Air
+           vb = 0
+        end
+        if x > 0 && @data[x-1][y] != Tiles::Air
+          vl = 0
+        end
+        if x < @w-1 && @data[x+1][y] != Tiles::Air
+          vr = 0
+        end
+      end
       mv = max(max(vu, vb),max(vl, vr))
 
-      @lightmap[x][y] = max(0, mv - @transparency[@data[x][y]].to_i + @light[@data[x][y]])
-      if @lightmap[x][y] != v
-        modified = true
-      end
+      @lightmap[x][y] = max(0, min(32 - @transparency[0] - 1, mv - @transparency[@data[x][y]] + @light[@data[x][y]]))
     end
-    if modified && stack_lvl < 128
+    if @lightmap[x][y] != v && stack_lvl < 128
       updateLight(x, y+1, stack_lvl + 1)
       updateLight(x, y-1, stack_lvl + 1)
       updateLight(x-1, y, stack_lvl + 1)
@@ -403,7 +408,7 @@ class Map
   def solid(x, y)
     #Test pour le bloc du bas gauche/droite et haut gauche/droite s'il est solide
     # On ne peut aussi pas dépasser les limites de la map
-    if x < 0 || x > (@data.size-1)*(32*$scale) || y > (@data[0].size-1)*(32*$scale) || @data[x / (32*$scale)][y / (32*$scale)] != 0 || @data[(x+56) / (32*$scale)][y / (32*$scale)] != 0 || @data[x / (32*$scale)][(y-70) / (32*$scale)] !=0 || @data[(x+48) / (32*$scale)][(y) / (32*$scale)] !=0
+    if x < 0 || x > (@data.size-3)*(32*$scale) || y > (@data[0].size-3)*(32*$scale) || @data[x / (32*$scale)][y / (32*$scale)] != 0 || @data[(x+56) / (32*$scale)][y / (32*$scale)] != 0 || @data[x / (32*$scale)][(y-70) / (32*$scale)] !=0 || @data[(x+48) / (32*$scale)][(y) / (32*$scale)] !=0 || @data[(x+56) / (32*$scale)][(y-70) / (32*$scale)] !=0
       return true
     else
       return false
