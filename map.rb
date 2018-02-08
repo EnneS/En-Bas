@@ -422,10 +422,17 @@ class Map
     cursor_r_x = camera_x+cursor_x
     cursor_r_y = camera_y+cursor_y
     center_x = hero_x + 24
-    center_y = hero_y - 52
+    center_y = hero_y - 70
 
     #calcul coef directeur
-    c = ((center_y)-cursor_r_y)/((center_x)-cursor_r_x).to_f
+    if ((center_y)-cursor_r_y) - ((center_x)-cursor_r_x) == 0
+      c = -9999.0
+    elsif ((center_y)-cursor_r_y) + ((center_x)-cursor_r_x) == 0
+      c = 9999.0
+    else
+      c = ((center_y)-cursor_r_y)/((center_x)-cursor_r_x).to_f
+    end
+
     cx = 1
     cy = c
     cl = (cx**2 + cy**2)**0.5
