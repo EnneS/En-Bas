@@ -378,6 +378,7 @@ class Map
 
     inc = 0
     while !blocTrouve
+
       if inc > 5
         return -1, -1
       end
