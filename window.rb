@@ -125,8 +125,8 @@ class Window < Gosu::Window
 
       # Viewport ! Il s'agit d'un tableau avec les coordonnées max possible de la fenêtre (en l'occurence la taille de la map)
       # Si on arrive aux extrêmités il faut arrêter le scroll (on utilise ainsi min et max par rapport à la taille de la fenêtre)
-      @camera_x = [[@hero.x - 1920 / 2, 0].max, (@map.w-3)*64 - 1920].min
-      @camera_y = [[@hero.y - 1080 / 2, 0].max, (@map.h-3)*64 - 1080].min
+      @camera_x = [[@hero.x - 1920 / 2, 0].max, ((@map.w)-3)*48 - 1920].min
+      @camera_y = [[@hero.y - 1080 / 2, 0].max, ((@map.h)-3)*48 - 1080].min
 
 
       if button_down?(Gosu::MsLeft)
