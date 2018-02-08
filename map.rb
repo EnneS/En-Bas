@@ -186,6 +186,7 @@ class Map
       vb = lightValue(x, y+1)
       vl = lightValue(x-1, y)
       vr = lightValue(x+1, y)
+=begin
       if @data[x][y] == Tiles::Air
         if y > 0 && @data[x][y-1] != Tiles::Air
           vu = 0
@@ -200,6 +201,7 @@ class Map
           vr = 0
         end
       end
+=end
       mv = max(max(vu, vb),max(vl, vr))
 
       @lightmap[x][y] = max(0, min(32 - @transparency[0] - 1, mv - @transparency[@data[x][y]] + @light[@data[x][y]]))
