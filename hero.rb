@@ -63,7 +63,7 @@ class Hero
       @image = @imagesFace[index]
     end
     if (@velocityY < 0)
-    #SAUT   @image = @jump
+    #SAUT ANIMATION  @image = @jump
     end
 
     # Mouvement horizontal, se déplace si le prochain bloc dans la direction n'est pas solide
