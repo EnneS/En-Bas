@@ -174,12 +174,9 @@ class Map
     if v < 0 || v == 32
       return
     end
-
+    lightmap[x][y] = 0
     vu = lightValue(x, y-1)
     if vu >= 32 - @transparency[0] 
-      puts "transparency : "+ @transparency[@data[x][y]].to_s
-      puts "light : "+@light[@data[x][y]].to_s
-      puts "id : "+@data[x][y].to_s
       @lightmap[x][y] = 32 - @transparency[@data[x][y]].to_i + @light[@data[x][y]]
       if @lightmap[x][y] != v
         modified = true
@@ -370,7 +367,6 @@ class Map
 
     for i in debutX..finX
       for j in debutY..finY
-        puts @data[i][j].to_s
         if i >= 0 && j >= 0 && @data[i][j] != Tiles::Air && @data[i][j] <80 # S'il ne s'agit pas d'un block d'air
           @images[@data[i][j]].draw(2*i*(@images[@data[i][j]].width), 2*j*(@images[@data[i][j]].height), -1, 2, 2) # on le dessine en fonction de sa position dans le tableau
           alpha = 255 - (@lightmap[i][j] * 8)
@@ -378,9 +374,6 @@ class Map
           @shadow.draw(2*i*(@shadow.width), 2*j*(@shadow.height), -1, 2, 2, col)
         end 
         if i >= 0 && j >= 0 && @data[i][j] >=80 &&  @data[i][j] <=83
-
-
-          puts @images[getIdTorch].to_s
           
           @images[getIdTorch].draw(2*i*(@images[getIdTorch].width), 2*j*(@images[getIdTorch].height), -1, 2, 2) # on le dessine en fonction de sa position dans le tableau
           alpha = 255 - (@lightmap[i][j] * 8)
