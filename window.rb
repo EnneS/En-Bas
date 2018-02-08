@@ -361,11 +361,11 @@ class Window < Gosu::Window
       @bg4.draw(off4+@x4-@bg4.width*2.2, 0 + yoff, -6, 2.2,2.2)
 
       #Profondeur du joueur
-      $fontXL.draw("Profondeur : " + (@hero.y/(32*$scale)).round.to_s, 20, 20, 5)
+      $font.draw("Profondeur : " + (@hero.y/(32*$scale)).round.to_s, 20, 20, 5)
 
       #Vie
-      @coeur.draw(20, 80, 5)
-      $font.draw((@hero.pv).to_s, 60, 80, 5)
+      @coeur.draw(20, 60, 5)
+      $font.draw((@hero.pv).to_s, 60, 60, 5)
 
       #Inventaire
       @inventaire.draw
