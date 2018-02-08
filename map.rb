@@ -151,9 +151,7 @@ class Map
     end
   end
   def setBlock(x, y, v)
-    if v>=0 || v>=9
-      @data[x][y] = v
-    end
+    @data[x][y] = v
     updateLight(x, y, 0)
     #addBlockToWaitList(x-1, y)
     #addBlockToWaitList(x+1, y)
@@ -176,30 +174,37 @@ class Map
   end
 
   def updateLight(x, y, stack_lvl)
-    modified = false
     v = lightValue(x, y)
     if v < 0 || v == 32
       return
     end
-    lightmap[x][y] = 0
+    @lightmap[x][y] = 0
     vu = lightValue(x, y-1)
     if vu >= 32 - @transparency[0]
-      @lightmap[x][y] = 32 - @transparency[@data[x][y]].to_i + @light[@data[x][y]]
-      if @lightmap[x][y] != v
-        modified = true
-      end
+      @lightmap[x][y] = min(32 - @transparency[0], 32 - @transparency[@data[x][y]] + @light[@data[x][y]])
     else
       vb = lightValue(x, y+1)
       vl = lightValue(x-1, y)
       vr = lightValue(x+1, y)
+      if @data[x][y] == Tiles::Air
+        if y > 0 && @data[x][y-1] != Tiles::Air
+          vu = 0
+        end
+        if y < @h-1 && @data[x][y+1] != Tiles::Air
+           vb = 0
+        end
+        if x > 0 && @data[x-1][y] != Tiles::Air 
+          vl = 0
+        end
+        if x < @w-1 && @data[x+1][y] != Tiles::Air
+          vr = 0
+        end
+      end
       mv = max(max(vu, vb),max(vl, vr))
 
-      @lightmap[x][y] = max(0, mv - @transparency[@data[x][y]].to_i + @light[@data[x][y]])
-      if @lightmap[x][y] != v
-        modified = true
-      end
+      @lightmap[x][y] = max(0, min(32 - @transparency[0] - 1, mv - @transparency[@data[x][y]] + @light[@data[x][y]]))
     end
-    if modified && stack_lvl < 128
+    if @lightmap[x][y] != v && stack_lvl < 128
       updateLight(x, y+1, stack_lvl + 1)
       updateLight(x, y-1, stack_lvl + 1)
       updateLight(x-1, y, stack_lvl + 1)
