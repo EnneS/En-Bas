@@ -2,7 +2,7 @@ require 'set'
 class Window < Gosu::Window
 
   def initialize(width, height)
-    super(width, height, true)
+    super(width, height, false)
     self.caption = "Hardcore Survival"
 
     $font = Gosu::Font.new(self, "res/pokemon_pixel_font.ttf", 40)
@@ -106,8 +106,8 @@ class Window < Gosu::Window
 
       # Viewport ! Il s'agit d'un tableau avec les coordonnées max possible de la fenêtre (en l'occurence la taille de la map)
       # Si on arrive aux extrêmités il faut arrêter le scroll (on utilise ainsi min et max par rapport à la taille de la fenêtre)
-      @camera_x = [[@hero.x - Gosu::screen_width() / 2, 0].max, (@map.w)*64 - Gosu::screen_width()].min
-      @camera_y = [[@hero.y - Gosu::screen_height() / 2, 0].max, (@map.h)*64 - Gosu::screen_height()].min
+      @camera_x = [[@hero.x - 1920 / 2, 0].max, (@map.w)*64 - 1920].min
+      @camera_y = [[@hero.y - 1080 / 2, 0].max, (@map.h)*64 - 1080].min
 
 
       if button_down?(Gosu::MsLeft)
@@ -226,7 +226,7 @@ class Window < Gosu::Window
         @x4+=@bg4.width*2.2
       end
 
-      col = Gosu::Color.new(0, 255, 255, 255)
+      col = Gosu::Color.new(160, 255, 255, 255)
 
       @bgn.draw(0, 0, -2,1,1,col)
 
