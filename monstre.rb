@@ -1,10 +1,10 @@
 class Monstre
 
-  DIST_RECO_E = 30
-  DIST_RECO_S = 20
+  DIST_RECO_E = 20
+  DIST_RECO_S = 30
 
-  DIST_BLOCAGE_X = 2
-  DIST_BLOCAGE_Y = 2
+  DIST_BLOCAGE_X = 3
+  DIST_BLOCAGE_Y = 3
 
   NB_FRAME_DEBLOCAGE = 150
   DELAI_TEMPORISATION_ATTAQUE = 900
@@ -14,7 +14,7 @@ class Monstre
   PV = 100
 
 
-  def initialize(hero, x, y,velocityX, velocityY, )
+  def initialize(hero, x, y, velocityX, velocityY, )
 
     @hero = hero
 

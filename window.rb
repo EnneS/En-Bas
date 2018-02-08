@@ -125,7 +125,7 @@ class Window < Gosu::Window
       @bg1.draw(0, 183, -3, 2.2,2.2)
       @bg2.draw(0, 0, -4,2.2,2.2)
       @bg3.draw(0, 0, -5, 2.2,2.2)
-      @bg4.draw(0, 0, -6, 2.,2.2)
+      @bg4.draw(0, 0, -6, 2.2,2.2)
 
 
       #Profondeur du joueur
