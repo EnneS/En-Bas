@@ -1,16 +1,38 @@
-class Hero
-    attr_reader :x, :y
+class Monstre
+    attr_reader :x, :y, :type
   
-    def initialize(x, y, nom, map)
+    def initialize(type, x, y, map, hero)
       @map = map
-  
+      @type = type
+
+      noms = Array.new(3)
+      noms[0] = "loup"
+
       @x = x
       @y = y
+      @speed = 5
+
+      @focusRangeIdle = 20
+      @focusRangeActive = 30
+
+      @hero = hero
+
       @velocityY = 0
+
+      @focus = nil
+
       @image = @imagesFace[1]
-  
+
+      @dateDerniereAttaque = (Time.now.to_f*1000,0).to_i
+      @lastMovement = (Time.now.to_f*1000,0).to_i
+      
+      @xt = 0
+      @yt = 0
+      @delay = 2500
+
       @direction = 1
-  
+      
+      nom = noms[type]
       @imagesDroite = []
       @imagesDroite.push(Gosu::Image.new("res/mobs/" + nom + "/droite1.png",{ :retro => true}))
       @imagesDroite.push(Gosu::Image.new("res/mobs/" + nom + "/droite2.png",{ :retro => true}))
@@ -42,11 +64,11 @@ class Hero
     end
   
     def update(move_x)
-      indices = [0] * 5 + [1] * 4 + [2] * 6 + [3] * 8
-      index = indices[Gosu::milliseconds / 20 % indices.size]
+      indices = [0] * 1 + [1] * 1 + [2] * 1 + [3] * 1
   
       # Actualisation de l'image en fonction de la direction
       if (move_x == 0)
+        index = indices[Gosu::milliseconds / 300 % indices.size]
         @image = @imagesFace[index]
       end
       if (@velocityY < 0)
@@ -55,6 +77,7 @@ class Hero
   
       # Mouvement horizontal, se déplace si le prochain bloc dans la direction n'est pas solide
       if move_x > 0
+        index = indices[Gosu::milliseconds / 100 % indices.size]
         @direction = 1
         @image = @imagesDroite[index]
         move_x.times {
@@ -64,6 +87,7 @@ class Hero
       end
   
       if move_x < 0
+        index = indices[Gosu::milliseconds / 100 % indices.size]
         @direction = -1
         @image = @imagesGauche[index]
         (-move_x).times {
@@ -87,6 +111,36 @@ class Hero
     def jump
       if @map.solid(@x, @y +1) # il saute seulement s'il n'est pas dans les airs
         @velocityY = -21
+      end
+    end
+
+    def HeroInRange(distance)
+      return ((@hero.x-@x).abs<= distance) && ((@hero.y-@y).abs<=distance)
+    end
+
+    def IA_Terre
+      if @focus == nil
+        n = (Time.now.to_f*1000,0).to_i
+        if n - @lastMovement > @delay
+          @delay = $rng.Random(3000) + 500
+          @xt = $rng.Random(3) - 1
+          @yt = 0
+        else
+          update(@speed * @xt)
+        end
+        if HeroInRange(@focusRangeIdle)
+          @focus = @hero
+        end
+      else
+        if @hero.x > @x
+          @xt = 1
+        else
+          @xt = -1
+        end
+        update(@speed*@xt*@2)
+        if !HeroInRange(@focusRangeActive)
+          @focus = nil
+        end
       end
     end
   

@@ -1,9 +1,11 @@
+require 'set'
+
 class Window < Gosu::Window
 
-  WIDTH, HEIGHT = 1920, 1080
-
   def initialize(width, height)
-    super
+    super(width, height, false)
+    @width = width
+    @height = height
     self.caption = "Hardcore Survival"
 
     $font = Gosu::Font.new(self, "res/pokemon_pixel_font.ttf", 40)
@@ -28,6 +30,9 @@ class Window < Gosu::Window
 
     @cursor = Gosu::Image.new("res/cursor.png")
     @camera_x = @camera_y = 0
+
+    @mobCap = 30
+    @mobs = Set.new()
 
     @gameStarted = true
   end
@@ -58,8 +63,8 @@ class Window < Gosu::Window
 
       # Viewport ! Il s'agit d'un tableau avec les coordonnées max possible de la fenêtre (en l'occurence la taille de la map)
       # Si on arrive aux extrêmités il faut arrêter le scroll (on utilise ainsi min et max par rapport à la taille de la fenêtre)
-      @camera_x = [[@hero.x - WIDTH / 2, 0].max, (@map.data.size)*64 - WIDTH].min
-      @camera_y = [[@hero.y - HEIGHT / 2, 0].max, (@map.data[0].size)*64 - HEIGHT].min
+      @camera_x = [[@hero.x - @width / 2, 0].max, (@map.data.size)*64 - @width].min
+      @camera_y = [[@hero.y - @height / 2, 0].max, (@map.data[0].size)*64 - @height].min
 
     end
 
@@ -103,11 +108,26 @@ class Window < Gosu::Window
 
         end
       end
-
+    end
+    #mobs
+    if @mobs.size < @mobCap
+      spawnMob()
+    end
+    @mobs.each do |m|
+      if !m.HeroInRange(50)
+        @mobs.delete(m)
+      else
+        m.IA_Terre()
+      end
+    end
+  end
+  
+  def spawnMob()
+    for i in 0..10
 
     end
   end
-
+  
   def draw
     @cursor.draw self.mouse_x, self.mouse_y, 99
     if @gameStarted == false
