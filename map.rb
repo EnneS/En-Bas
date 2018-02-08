@@ -22,9 +22,9 @@ class RNG
 
   def initialize(seed)
     @seed = seed
-    @m = 2**31
-    @a = 1103515245
-    @c = 12345
+    @m = 2**32
+    @a = 1664525
+    @c = 1013904223
   end
   def Random(max)
     @seed = (@a * @seed + @c) % @m;
@@ -86,18 +86,19 @@ class Map
   attr_reader :w, :h, :data, :lightmap, :images, :transparency, :shadow
 
   def initialize()
-    @images = Array.new(4)
+    @images = Array.new(8)
     @images[0] = 0 # air
     @images[1] = Gosu::Image.new("res/tiles/grass.png", {:tileable => true })
     @images[2] = Gosu::Image.new("res/tiles/dirt.png", {:tileable => true })
     @images[3] = Gosu::Image.new("res/tiles/stone.png", {:tileable => true })
-    @images[7] = Gosu::Image.new("res/tiles/stone.png", {:tileable => true })
+    @images[7] = Gosu::Image.new("res/tiles/chest.png", {:tileable => true })
 
-    @transparency = Array.new(4)
+    @transparency = Array.new(8)
     @transparency[0] = 1
     @transparency[1] = 7
     @transparency[2] = 7
     @transparency[3] = 9
+    @transparency[7] = -5
 
     @shadow = Gosu::Image.new("res/tiles/shadow.png", {:tileable => true })
   end
@@ -283,22 +284,22 @@ class Map
 
     puts "Hiding treasures..."
 
-    nbCoffres = $rng.Random(2000) + 6000
+    nbCoffres = $rng.Random(1000) + 3000
     b = 1
     x = 0
     y = 0
     while nbCoffres > 0
       while b != Tiles::Air
         x = $rng.Random(w)
-        y = $rng.Random(h)
+        y = $rng.Random(h - sea_lvl) + sea_lvl
         b = data[x][y]
       end
-      y += 1
+      y -= 1
       while b == Tiles::Air
-        y -= 1
-        b = @data[x][y-1]
+        y += 1
+        b = @data[x][y+1]
       end
-      @data[i][j] = Tiles::Chest
+      @data[x][y] = Tiles::Chest
       nbCoffres -= 1;
     end
     File.open("terrain.map", "w+") do |file|
@@ -327,7 +328,7 @@ class Map
           @images[@data[i][j]].draw(2*i*(@images[@data[i][j]].width), 2*j*(@images[@data[i][j]].height), -1, 2, 2) # on le dessine en fonction de sa position dans le tableau
           alpha = 255 - (@lightmap[i][j] * 8)
           col = Gosu::Color.new(alpha, 255, 255, 255)
-          #@shadow.draw(2*i*(@shadow.width), 2*j*(@shadow.height), -1, 2, 2, col)
+          @shadow.draw(2*i*(@shadow.width), 2*j*(@shadow.height), -1, 2, 2, col)
         end
       end
     end
@@ -357,35 +358,39 @@ class Map
     blocTrouve = false
     cursor_r_x = camera_x+cursor_x
     cursor_r_y = camera_y+cursor_y
-    bloc_x = hero_x
-    bloc_y = hero_y
+    center_x = hero_x + 24
+    center_y = hero_y - 52
 
     #calcul coef directeur
-    c = ((hero_y)-cursor_r_y)/((hero_x)-cursor_r_x)
+    c = ((center_y)-cursor_r_y)/((center_x)-cursor_r_x).to_f
+    cx = 1
+    cy = c
+    cl = (cx**2 + cy**2)**0.5
 
-    exit = 500
+    cx /= cl
+    cy /= cl
 
+    bloc_x = center_x / 64.to_f
+    bloc_y = center_y / 64.to_f
+
+    inc = 0
     while !blocTrouve
-
-      exit -= 1
-
-      if exit < 0
-        return -1,-1
+      if inc > 5
+        return -1, -1
       end
 
-
       if cursor_r_x < hero_x
-        bloc_x-=1
-        bloc_y+= -(c)
+        bloc_x -= cx
+        bloc_y -= cy
       else
-        bloc_x+=1
-        bloc_y+=(c)
+        bloc_x += cx
+        bloc_y += cy
       end
       #puts x.to_s+" . "+ y.to_s
 
       #puts bloc_x.
-      x = (bloc_x/64).floor
-      y = (bloc_y/64).floor
+      x = bloc_x.floor
+      y = bloc_y.floor
 
       #puts x.to_s+" . "+ y.to_s
 
@@ -398,7 +403,7 @@ class Map
       if x>@w || y>@h
        blocTrouve = true
       end
-     
+      inc += 1
     end
 
     if ((x-(hero_x/64).floor).abs < 5) && ((y-(hero_y/64).floor).abs < 5)
@@ -423,9 +428,6 @@ class Map
 
     hero_xb = (hero_x/64).floor
     hero_yb = (hero_y/64).floor
-
-    puts "HERO"+hero_xb.to_s+" . "+hero_yb.to_s
-    puts "BLOC"+x.to_s+" . "+ y.to_s
 
     espaceHero = ((x == hero_xb && y == hero_yb) || (x == hero_xb && y == (hero_yb-1)) || (x == (hero_xb+1) && y == hero_yb) || (x == (hero_xb+1) && y == hero_yb-1))
     blocAdjacent = (@data[x-1][y] != Tiles::Air) || (@data[x+1][y] != Tiles::Air) || (@data[x][y-1] != Tiles::Air) || (@data[x][y+1] != Tiles::Air)
