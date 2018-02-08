@@ -5,6 +5,7 @@ require_relative 'hero'
 require_relative 'window'
 require_relative 'map'
 require_relative 'inventaire'
+require_relative 'monstre'
 
 WindowWidth = 1920
 WindowHeight = 1080
