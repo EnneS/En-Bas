@@ -29,12 +29,11 @@ attr_reader :selected, :items
     @images.push(Gosu::Image.new("res/tiles/pioche.png"))
     @images.push(Gosu::Image.new("res/tiles/chest.png"))
 
-    @images[80] = Gosu::Image.new("res/tiles/torch_0000.png", {:tileable => true })
-    @images[81] = Gosu::Image.new("res/tiles/torch_0001.png", {:tileable => true })
-    @images[82] = Gosu::Image.new("res/tiles/torch_0002.png", {:tileable => true })
-    @images[83] = Gosu::Image.new("res/tiles/torch_0003.png", {:tileable => true })
-
-
+    (0..3).each do |i|
+      @images[(8.to_s+i.to_s).to_i] = Gosu::Image.new("res/tiles/torch_000"+i.to_s+".png", {:tileable => true })
+      @images[(9.to_s+i.to_s).to_i] = Gosu::Image.new("res/tiles/torch_right000"+i.to_s+".png", {:tileable => true })
+      @images[(10.to_s+i.to_s).to_i] = Gosu::Image.new("res/tiles/torch_left000"+i.to_s+".png", {:tileable => true })
+    end
 
     @selected = 0
   end

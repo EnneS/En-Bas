@@ -95,10 +95,12 @@ class Map
     @images[2] = Gosu::Image.new("res/tiles/dirt.png", {:tileable => true })
     @images[3] = Gosu::Image.new("res/tiles/stone.png", {:tileable => true })
     @images[7] = Gosu::Image.new("res/tiles/chest.png", {:tileable => true })
-    @images[80] = Gosu::Image.new("res/tiles/torch_0000.png", {:tileable => true })
-    @images[81] = Gosu::Image.new("res/tiles/torch_0001.png", {:tileable => true })
-    @images[82] = Gosu::Image.new("res/tiles/torch_0002.png", {:tileable => true })
-    @images[83] = Gosu::Image.new("res/tiles/torch_0003.png", {:tileable => true })
+
+    (0..3).each do |i|
+      @images[(8.to_s+i.to_s).to_i] = Gosu::Image.new("res/tiles/torch_000"+i.to_s+".png", {:tileable => true })
+      @images[(9.to_s+i.to_s).to_i] = Gosu::Image.new("res/tiles/torch_right000"+i.to_s+".png", {:tileable => true })
+      @images[(10.to_s+i.to_s).to_i] = Gosu::Image.new("res/tiles/torch_left000"+i.to_s+".png", {:tileable => true })
+    end
 
     @transparency = Array.new(90)
     @transparency[0] = 1
@@ -106,10 +108,13 @@ class Map
     @transparency[2] = 7
     @transparency[3] = 9
     @transparency[7] = -5
-    @transparency[80] = 1
-    @transparency[81] = 1
-    @transparency[82] = 1
-    @transparency[83] = 1
+    
+    (0..3).each do |i|
+      @transparency[(8.to_s+i.to_s).to_i] = 1
+      @transparency[(9.to_s+i.to_s).to_i] = 1
+      @transparency[(10.to_s+i.to_s).to_i] = 1
+    end
+
 
     @light = Array.new(90)
     @light[0] = 0
@@ -117,10 +122,12 @@ class Map
     @light[2] = 0
     @light[3] = 0
     @light[7] = 15
-    @light[80] = 20
-    @light[81] = 20
-    @light[82] = 20
-    @light[83] = 20
+
+    (0..3).each do |i|
+      @light[(8.to_s+i.to_s).to_i] = 20
+      @light[(9.to_s+i.to_s).to_i] = 20
+      @light[(10.to_s+i.to_s).to_i] = 20
+    end
 
     @shadow = Gosu::Image.new("res/tiles/shadow.png", {:tileable => true })
   end
@@ -344,10 +351,10 @@ class Map
     end
   end
 
-  def getIdTorch
+  def getIdTorch(x)
     indices = [0] * 1 + [1] * 1 + [2] * 1 + [3] * 1
     index = indices[Gosu::milliseconds / 300 % indices.size]
-    return (8.to_s+index.to_s).to_i
+    return (x.to_s+index.to_s).to_i
   end
 
   def draw(posX, posY)
@@ -373,9 +380,9 @@ class Map
           col = Gosu::Color.new(alpha, 255, 255, 255)
           @shadow.draw(2*i*(@shadow.width), 2*j*(@shadow.height), -1, 2, 2, col)
         end 
-        if i >= 0 && j >= 0 && @data[i][j] >=80 &&  @data[i][j] <=83
+        if i >= 0 && j >= 0 && @data[i][j] >=80 &&  @data[i][j] <=103
           
-          @images[getIdTorch].draw(2*i*(@images[getIdTorch].width), 2*j*(@images[getIdTorch].height), -1, 2, 2) # on le dessine en fonction de sa position dans le tableau
+          @images[getIdTorch(@data[i][j]/10)].draw(2*i*(@images[getIdTorch(@data[i][j]/10)].width), 2*j*(@images[getIdTorch(@data[i][j]/10)].height), -1, 2, 2) # on le dessine en fonction de sa position dans le tableau
           alpha = 255 - (@lightmap[i][j] * 8)
           col = Gosu::Color.new(alpha, 255, 255, 255)
           @shadow.draw(2*i*(@shadow.width), 2*j*(@shadow.height), -1, 2, 2, col)
@@ -494,8 +501,25 @@ class Map
   end
 
   def poserBloc(bloc_x,bloc_y,id)
-    #puts id.to_s
+    if id==80
+      if (@data[bloc_x][bloc_y+1] != Tiles::Air)
+        setBlock(bloc_x,bloc_y,80)
+        puts "Lol"
+        return
+      end
+      if (@data[bloc_x-1][bloc_y] != Tiles::Air)
+        setBlock(bloc_x,bloc_y,100)
+        return
+      end
+      if (@data[bloc_x+1][bloc_y] != Tiles::Air)
+        setBlock(bloc_x,bloc_y,90)
+        return
+      end
+      return
+    end
+
     setBlock(bloc_x,bloc_y,id)
+    
   end
 
   def detruireBloc(bloc_x,bloc_y)
