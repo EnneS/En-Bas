@@ -174,7 +174,7 @@ class Map
     if v < 0 || v == 32
       return
     end
-
+    lightmap[x][y] = 0
     vu = lightValue(x, y-1)
     if vu >= 32 - @transparency[0] 
       @lightmap[x][y] = 32 - @transparency[@data[x][y]].to_i + @light[@data[x][y]]
