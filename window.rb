@@ -2,7 +2,7 @@ require 'set'
 class Window < Gosu::Window
 
   def initialize(width, height)
-    super(width, height, false)
+    super(width, height, true)
     self.caption = "Hardcore Survival"
 
     $font = Gosu::Font.new(self, "res/pokemon_pixel_font.ttf", 40)
@@ -95,11 +95,18 @@ class Window < Gosu::Window
       temp = @hero.x
 
       move_x = 0
-      move_x -= 9 if Gosu.button_down? Gosu::KB_LEFT
-      move_x += 9 if Gosu.button_down? Gosu::KB_RIGHT
+      if Gosu.button_down?(Gosu::KB_LEFT) || Gosu.button_down?(Gosu::KB_Q)
+        move_x -= 9
+      end
+
+      if Gosu.button_down?(Gosu::KB_RIGHT) || Gosu.button_down?(Gosu::KB_D)
+        move_x += 9
+      end
       #move_x *= 2 if Gosu::button_down?(Gosu::KbLeftShift)
       @hero.update(move_x)
-      @hero.jump if Gosu::button_down?(Gosu::KbSpace)
+      if Gosu::button_down?(Gosu::KbSpace) || Gosu.button_down?(Gosu::KB_UP) || Gosu.button_down?(Gosu::KB_Z)
+        @hero.jump 
+      end
 
       @move += move_x if temp != @hero.x
 
