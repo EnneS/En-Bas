@@ -6,6 +6,8 @@ class Inventaire
  2 : Dirt
  3 : Stone
  4 : Pioche
+ 5 : Chest
+ 6 : Torche
 =end
 attr_reader :selected, :items
 
@@ -14,18 +16,24 @@ attr_reader :selected, :items
     @items = Array.new(@places) {Array.new(2)} #en premier l'id en second le nombre
     vider()
 
+    store(80,50)
+
     @barre = Gosu::Image.new("res/barre.png")
     @case = Gosu::Image.new("res/case.png")
 
-    @images = []
+    @images = [@images = Array.new(90)]
     @images[0] = 0 #air
     @images.push(Gosu::Image.new("res/tiles/grass.png"))
     @images.push(Gosu::Image.new("res/tiles/dirt.png"))
     @images.push(Gosu::Image.new("res/tiles/stone.png"))
     @images.push(Gosu::Image.new("res/tiles/pioche.png"))
+    @images.push(Gosu::Image.new("res/tiles/chest.png"))
 
-#    @image.push(Gosu:Image.new )
-#    @imagesTransparant = 
+    @images[80] = Gosu::Image.new("res/tiles/torch_0000.png", {:tileable => true })
+    @images[81] = Gosu::Image.new("res/tiles/torch_0001.png", {:tileable => true })
+    @images[82] = Gosu::Image.new("res/tiles/torch_0002.png", {:tileable => true })
+    @images[83] = Gosu::Image.new("res/tiles/torch_0003.png", {:tileable => true })
+
 
 
     @selected = 0
