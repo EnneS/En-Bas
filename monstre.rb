@@ -81,11 +81,12 @@ class Monstre
     end
 
     def update(move_x)
-      indices = [0] * 1 + [1] * 2 + [2] * 3 + [3] * 4 + [4] * 30
-      index = indices[Gosu::milliseconds / 300 % indices.size]
+      indicesRun = [0,1,2,3,4,5,6,7]
+      indicesIdle = [0,1,2,3,4,5,6,7,8,9,10,11]
 
       # Actualisation de l'image en fonction de la direction
       if (move_x == 0)
+        index = indicesIdle[Gosu::milliseconds / 150 % indicesIdle.size]
         @image = @imagesFace[index]
       end
       if (@velocityY < 0)
@@ -94,7 +95,7 @@ class Monstre
 
       # Mouvement horizontal, se déplace si le prochain bloc dans la direction n'est pas solide
       if move_x > 0
-        index = indices[Gosu::milliseconds / 300 % indices.size]
+        index = indicesRun[Gosu::milliseconds / 150 % indicesRun.size]
         @direction = 1
         @image = @imagesDroite[index]
         move_x.times {
@@ -107,7 +108,7 @@ class Monstre
       end
 
       if move_x < 0
-        index = indices[Gosu::milliseconds / 300 % indices.size]
+        index = indicesRun[Gosu::milliseconds / 150 % indicesRun.size]
         @direction = -1
         @image = @imagesGauche[index]
         (-move_x).times {
