@@ -108,7 +108,7 @@ class Map
     @transparency[2] = 7
     @transparency[3] = 9
     @transparency[7] = -5
-    
+
     (0..3).each do |i|
       @transparency[(8.to_s+i.to_s).to_i] = 1
       @transparency[(9.to_s+i.to_s).to_i] = 1
@@ -187,24 +187,7 @@ class Map
       vl = lightValue(x-1, y)
       vr = lightValue(x+1, y)
 
-=begin      
-      if @data[x][y] == Tiles::Air
-        if y > 0 && @data[x][y-1] != Tiles::Air
-          vu = 0
-        end
-        if y < @h-1 && @data[x][y+1] != Tiles::Air
-           vb = 0
-        end
-        if x > 0 && @data[x-1][y] != Tiles::Air 
-          vl = 0
-        end
-        if x < @w-1 && @data[x+1][y] != Tiles::Air
-          vr = 0
-        end
-      end
-
-=end
-      mv = max(max(vu, vb),max(vl, vr))
+      mv = [vu, vb, vl, vr].max
 
       @lightmap[x][y] = max(0, min(32 - @transparency[0] - 1, mv - @transparency[@data[x][y]] + @light[@data[x][y]]))
     end
@@ -412,13 +395,22 @@ class Map
   def solid(x, y)
     #Test pour le bloc du bas gauche/droite et haut gauche/droite s'il est solide
     # On ne peut aussi pas dépasser les limites de la map
-    if x < 0 || x > (@data.size-1)*(32*$scale) || y > (@data[0].size-1)*(32*$scale) || @data[x / (32*$scale)][y / (32*$scale)] != 0 || @data[((x+60) / (32*$scale))][y / (32*$scale)] != 0 || @data[x / (32*$scale)][(y-70) / (32*$scale)] !=0 || @data[(x+60) / (32*$scale)][(y-70) / (32*$scale)] !=0
+    if x < 0 || x > (@data.size-3)*(32*$scale) || y > (@data[0].size-3)*(32*$scale) || @data[x / (32*$scale)][y / (32*$scale)] != 0 || @data[(x+56) / (32*$scale)][y / (32*$scale)] != 0 || @data[x / (32*$scale)][(y-70) / (32*$scale)] !=0 || @data[(x+48) / (32*$scale)][(y) / (32*$scale)] !=0 || @data[(x+56) / (32*$scale)][(y-70) / (32*$scale)] !=0
       return true
     else
       return false
     end
   end
 
+  def solidLoup(x, y)
+    #Test pour le bloc du bas gauche/droite et haut gauche/droite s'il est solide
+    # On ne peut aussi pas dépasser les limites de la map
+    if x < 0 || x > (@data.size-3)*(32*$scale) || y > (@data[0].size-3)*(32*$scale) || @data[x / (32*$scale)][y / (32*$scale)] != 0 || @data[(x+110) / (32*$scale)][y / (32*$scale)] != 0 || @data[x / (32*$scale)][(y-40) / (32*$scale)] !=0 || @data[(x+50) / (32*$scale)][(y) / (32*$scale)] !=0 || @data[(x+110) / (32*$scale)][(y-40) / (32*$scale)] !=0
+      return true
+    else
+      return false
+    end
+  end
 
   def trouveBloc(cursor_x,cursor_y,camera_x, camera_y,hero_x,hero_y)
 
@@ -426,10 +418,19 @@ class Map
     cursor_r_x = camera_x+cursor_x
     cursor_r_y = camera_y+cursor_y
     center_x = hero_x + 24
-    center_y = hero_y - 52
+    center_y = hero_y - 70
 
     #calcul coef directeur
-    c = ((center_y)-cursor_r_y)/((center_x)-cursor_r_x).to_f
+    a = ((center_y)-cursor_r_y).to_f
+    b = ((center_x)-cursor_r_x).to_f
+    if a >= -0.1 && a <= 0.1
+      a = 0.01
+    end
+    if b >= -0.1 && b <= 0.1
+      b = 0.01
+    end
+    c = a/b
+    
     cx = 1
     cy = c
     cl = (cx**2 + cy**2)**0.5
@@ -530,7 +531,7 @@ class Map
     end
 
     setBlock(bloc_x,bloc_y,id)
-    
+
   end
 
   def detruireBloc(bloc_x,bloc_y)
