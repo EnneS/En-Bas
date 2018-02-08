@@ -128,7 +128,7 @@ class Map
     @light[1] = 0
     @light[2] = 0
     @light[3] = 0
-    @light[7] = 15
+    @light[7] = 3
 
     (0..3).each do |i|
       @light[(8.to_s+i.to_s).to_i] = 20

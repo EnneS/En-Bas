@@ -2,7 +2,7 @@ require 'set'
 class Window < Gosu::Window
 
   def initialize(width, height)
-    super(width, height, false)
+    super(width, height, true)
     self.caption = "Hardcore Survival"
 
     @start_time = Time.now
@@ -204,8 +204,13 @@ class Window < Gosu::Window
             bloc_x, bloc_y = @map.trouveBloc(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
             id = @map.data[bloc_x][bloc_y]
 
-            
-            @inventaire.store(id,1)
+            if id != 7
+              @inventaire.store(id,1)
+            else
+              prng = Random.new
+              @inventaire.store(80,prng.rand(10))
+            end 
+
             @map.detruireBloc(bloc_x,bloc_y)
 
          
