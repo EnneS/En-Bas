@@ -13,9 +13,14 @@ class Monstre
 
       @speed = 4
 
-      @focusRangeIdle = 10
-      @focusRangeActive = 15
-
+      if @type == 0
+        @focusRangeIdle = 10
+        @focusRangeActive = 15
+      end
+      if @type == 1
+        @focusRangeIdle = 20
+        @focusRangeActive = 25
+      end
       @hero = hero
 
       @velocityY = 0
@@ -71,7 +76,7 @@ class Monstre
         @image = @imagesFace[0]
       end
       if @type == 1
-        @image = @ImageDroite[0]
+        @image = @imagesDroite[0]
       end
     end
 
@@ -142,6 +147,7 @@ class Monstre
     end
 
     def updateAir(move_x, move_y)
+      indices = [0,1,2,3,4,5,6,7]
       if move_y > 0
         move_y.times {
           if peutSeDeplacer(0, 1)
@@ -159,12 +165,12 @@ class Monstre
       end
 
       if (move_x == 0)
-        index = indicesIdle[Gosu::milliseconds / 90 % indicesIdle.size]
+        index = indices[Gosu::milliseconds / 40 % indices.size]
         @image = @imagesDroite[index]
       end
 
       if move_x > 0
-        index = indicesRun[Gosu::milliseconds / 90 % indicesRun.size]
+        index = indices[Gosu::milliseconds / 40 % indices.size]
         @image = @imagesDroite[index]
         move_x.times {
           if peutSeDeplacer(1, 0)
@@ -174,7 +180,7 @@ class Monstre
       end
 
       if move_x < 0
-        index = indicesRun[Gosu::milliseconds / 90 % indicesRun.size]
+        index = indices[Gosu::milliseconds / 40 % indices.size]
         @image = @imagesGauche[index]
         (-move_x).times {
           if peutSeDeplacer(-1, 0)
@@ -194,7 +200,14 @@ class Monstre
     def HeroInRange(distance)
       return ((@hero.x-@x).abs<= distance*64) && ((@hero.y-@y).abs<=distance*64)
     end
-
+    def IA ()
+      if @type == 0
+        IA_Terre()
+      end
+      if @type == 1
+        IA_Air()
+      end
+    end
     def IA_Terre
       n = (Time.now.to_f*1000.0).to_i
       if n - @lastMovement > @delay
@@ -209,7 +222,7 @@ class Monstre
           @xt = ($rng.Random(5) - 2)*$scale*32 + @hero.x
           @yt = 0
           @lastMovement = n
-          @speed = 8
+          @speed = 7
         end
       else
         xf = @xt - @x
@@ -242,8 +255,8 @@ class Monstre
 
           dist = ((@x - @hero.x)**2 + (@y - @hero.y)**2)**0.5
 
-          @xt = ($rng.Random(dist/2 + 1) - dist/4)*$scale*32 + @hero.x
-          @yt = ($rng.Random(dist/2 + 1) - dist/4)*$scale*32 + @hero.y
+          @xt = ($rng.Random(dist/2 + 1) - dist/4)*$scale*4 + @hero.x
+          @yt = ($rng.Random(dist/2 + 1) - dist/4)*$scale*4 + @hero.y
 
 
           @lastMovement = n

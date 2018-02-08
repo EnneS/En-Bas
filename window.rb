@@ -50,7 +50,7 @@ class Window < Gosu::Window
     @cursor = Gosu::Image.new("res/cursor.png")
     @camera_x = @camera_y = 0
 
-    @mobCap = 30
+    @mobCap = 20
     @mobs = Set.new()
 
     @gameStarted = false
@@ -222,15 +222,15 @@ class Window < Gosu::Window
         if !m.HeroInRange(50)
           @mobs.delete(m)
         else
-          m.IA_Terre()
+          m.IA()
         end
       end
     end
   end
 
   def spawnMob()
-    xr = $rng.Random(60) - 30
-    yr = $rng.Random(60) - 30
+    xr = $rng.Random(80) - 40
+    yr = $rng.Random(80) - 40
     x = xr + @camera_x/64
     y = yr + @camera_y/64
 
@@ -242,7 +242,7 @@ class Window < Gosu::Window
       y += Gosu::screen_height()/64
     end
     if @map.data[x][y] == Tiles::Air
-      @mobs.add(Monstre.new(0, x*64, y*64, @map, @hero))
+      @mobs.add(Monstre.new($rng.Random(2), x*64, y*64, @map, @hero))
     end
   end
 
