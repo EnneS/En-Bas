@@ -1,9 +1,7 @@
 class Window < Gosu::Window
 
-  WIDTH, HEIGHT = 1920, 1080
-
   def initialize(width, height)
-    super
+    super(width, height, false)
     self.caption = "Hardcore Survival"
 
     $font = Gosu::Font.new(self, "res/pokemon_pixel_font.ttf", 40)
@@ -30,6 +28,14 @@ class Window < Gosu::Window
     @camera_x = @camera_y = 0
 
     @gameStarted = true
+
+    @move = 0
+
+    @x1 = 0
+    @x2 = 0
+    @x3 = 0
+    @x4 = 0  
+
   end
 
   def update
@@ -49,6 +55,8 @@ class Window < Gosu::Window
 
     else
       # Actions du héro
+      temp = @hero.x
+
       move_x = 0
       move_x -= 6 if Gosu.button_down? Gosu::KB_LEFT
       move_x += 6 if Gosu.button_down? Gosu::KB_RIGHT
@@ -56,10 +64,13 @@ class Window < Gosu::Window
       @hero.update(move_x)
       @hero.jump if Gosu::button_down?(Gosu::KbSpace)
 
+      @move += move_x if temp != @hero.x
+
+
       # Viewport ! Il s'agit d'un tableau avec les coordonnées max possible de la fenêtre (en l'occurence la taille de la map)
       # Si on arrive aux extrêmités il faut arrêter le scroll (on utilise ainsi min et max par rapport à la taille de la fenêtre)
-      @camera_x = [[@hero.x - WIDTH / 2, 0].max, (@map.data.size)*64 - WIDTH].min
-      @camera_y = [[@hero.y - HEIGHT / 2, 0].max, (@map.data[0].size)*64 - HEIGHT].min
+      @camera_x = [[@hero.x - self.width / 2, 0].max, (@map.data.size)*64 - self.width].min
+      @camera_y = [[@hero.y - self.height / 2, 0].max, (@map.data[0].size)*64 - self.height].min
 
     end
 
@@ -113,20 +124,58 @@ class Window < Gosu::Window
     if @gameStarted == false
       # Le jeu n'a pas commencé :
       # Affichage du menu
-      $fontXL.draw("Jouer !", (WIDTH/2)-30, HEIGHT/2, 0)
+      $fontXL.draw("Jouer !", (self.width/2)-30, self.height/2, 0)
 
     else
       # Le jeu a commencé : on affiche le background, la profondeur, l'inventaire
       # le héro et la map
 
-      col = Gosu::Color.new(175, 255, 255, 255)
+      col = Gosu::Color.new(0, 255, 255, 255)
+
+      off1 = -@move*0.5
+      if off1 + @x1 >= @bg1.width*2.2
+        @x1-=@bg1.width*2.2
+      end 
+      if off1 + @x1 < (@bg1.width*2.2 - 2300)
+        @x1+=@bg1.width*2.2
+      end
+
+      off2 = -@move*0.25
+      if off2 + @x2 >= @bg2.width*2.2
+        @x2-=@bg2.width*2.2
+      end 
+      if off2 + @x2 < (@bg2.width*2.2 - 2300)
+        @x2+=@bg2.width*2.2
+      end
+
+      off3 = -@move*0.125
+      if off3 + @x3 >= @bg3.width*2.2
+        @x3-=@bg3.width*2.2
+      end 
+      if off3 + @x3 < (@bg3.width*2.2 - 2300)
+        @x3+=@bg3.width*2.2
+      end
+
+      off4 = -@move*0.0625
+      if off4 + @x4 >= @bg4.width*2.2
+        @x4-=@bg4.width*2.2
+      end 
+      if off4 + @x4 < (@bg4.width*2.2 - 2300)
+        @x4+=@bg4.width*2.2
+      end
 
       @bgn.draw(0, 0, -2,1,1,col)
-      @bg1.draw(0, 183, -3, 2.2,2.2)
-      @bg2.draw(0, 0, -4,2.2,2.2)
-      @bg3.draw(0, 0, -5, 2.2,2.2)
-      @bg4.draw(0, 0, -6, 2.,2.2)
+      @bg1.draw(off1+@x1, 183, -3, 2.2,2.2)
+      @bg2.draw(off2+@x2, 0, -4,2.2,2.2)
+      @bg3.draw(off3+@x3, 0, -5, 2.2,2.2)
+      @bg4.draw(off4+@x4, 0, -6, 2.2,2.2)
 
+
+      @bgn.draw(0, 0, -2,1,1,col)
+      @bg1.draw(off1+@x1-@bg1.width*2.2, 183, -3, 2.2,2.2)
+      @bg2.draw(off2+@x2-@bg2.width*2.2, 0, -4,2.2,2.2)
+      @bg3.draw(off3+@x3-@bg3.width*2.2, 0, -5, 2.2,2.2)
+      @bg4.draw(off4+@x4-@bg4.width*2.2, 0, -6, 2.2,2.2)
 
       #Profondeur du joueur
       $fontXL.draw("Profondeur : " + (@hero.y/60).to_s, 20, 20, 5)
@@ -136,6 +185,7 @@ class Window < Gosu::Window
         @hero.draw
         @map.draw(@hero.x, @hero.y)
       end
+
     end
   end
 

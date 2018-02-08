@@ -378,16 +378,10 @@ class Map
 
     inc = 0
     while !blocTrouve
+
       if inc > 5
         return -1, -1
       end
-
-      exit -= 1
-
-      if exit < 0
-        return -1,-1
-      end
-
 
       if cursor_r_x < hero_x
         bloc_x -= cx
