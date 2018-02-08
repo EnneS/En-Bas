@@ -7,7 +7,9 @@ class Inventaire
  3 : Stone
  4 : Pioche
  5 : Chest
- 6 : Torche
+ 8 : Torche
+ 9 : TorcheR
+ 10 : TorcheL
 =end
 attr_reader :selected, :items
 
