@@ -27,7 +27,7 @@ class Window < Gosu::Window
     @map = Map.new()
     #generate()
     @map.load()
-    @hero = Hero.new((((@map.data.size-1)/2)*64)-1, (@map.ground((@map.data.size-1)/2)*64)-1, @map)
+    @hero = Hero.new((((@map.data.size-1)/2)*(32*$scale))-1, (@map.ground((@map.data.size-1)/2)*(32*$scale))-1, @map)
     @inventaire = Inventaire.new(6)
     @inventaire.store(4, 1)
 

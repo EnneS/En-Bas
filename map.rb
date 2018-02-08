@@ -1,4 +1,4 @@
-$scale = 2 # scale des blocs (32pixels * $scale)
+$scale = 1.5 # scale des blocs (32pixels * $scale)
 module Tiles
   Air = 0
   Grass = 1
@@ -352,11 +352,11 @@ class Map
 
   def draw(posX, posY)
     # Définition des blocs du tableau à draw
-    debutX = (posX / 64) - 34
-    debutY = (posY / 64) - 16
+    debutX = ((posX / 48) - 34).floor
+    debutY = ((posY / 48) - 16).floor
+
     finX = debutX + 68
     finY = debutY + 32
-
     # L'index ne peut pas être négatif (min = 0)
     debutX = (debutX < 0)? 0 : debutX
     debutY = (debutY < 0)? 0 : debutY
@@ -368,13 +368,12 @@ class Map
     for i in debutX..finX
       for j in debutY..finY
         if i >= 0 && j >= 0 && @data[i][j] != Tiles::Air && @data[i][j] <80 # S'il ne s'agit pas d'un block d'air
-          @images[@data[i][j]].draw($scale*i*(@images[@data[i][j]].width), 2*j*(@images[@data[i][j]].height), -1, $scale, $scale) # on le dessine en fonction de sa position dans le tableau
+          @images[@data[i][j]].draw($scale*i*(@images[@data[i][j]].width), $scale*j*(@images[@data[i][j]].height), -1, $scale, $scale) # on le dessine en fonction de sa position dans le tableau
           alpha = 255 - (@lightmap[i][j] * 8)
           col = Gosu::Color.new(alpha, 255, 255, 255)
           @shadow.draw($scale*i*(@shadow.width), $scale*j*(@shadow.height), -1, $scale, $scale, col)
         end
         if i >= 0 && j >= 0 && @data[i][j] >=80 &&  @data[i][j] <=83
-
           @images[getIdTorch].draw($scale*i*(@images[getIdTorch].width), $scale*j*(@images[getIdTorch].height), -1, $scale, $scale) # on le dessine en fonction de sa position dans le tableau
           alpha = 255 - (@lightmap[i][j] * 8)
           col = Gosu::Color.new(alpha, 255, 255, 255)
@@ -386,7 +385,7 @@ class Map
 
   def ground(x)
     i = 0
-    while i < @data[0].size-1 && @data[x][i] == 0 do
+    while i < @data[0].size-1 && @data[x][i] == 0 && @data[x+1][i] == 0 do
       i+= 1
     end
     return i
