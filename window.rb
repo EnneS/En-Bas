@@ -174,18 +174,10 @@ class Window < Gosu::Window
       # Le jeu n'a pas commencé :
       # Affichage du menu
 
-<<<<<<< HEAD
-    else
-      # Le jeu a commencé : on affiche le background, la profondeur, l'inventaire
-      # le héro et la map
-
-      col = Gosu::Color.new(160, 255, 255, 255)
-=======
       @title.draw_rot(1920/2, 200, 1, 0.5, 0.5)
       @jouer.draw_rot(1920/2, 600, 1, 0.5, 0.5, 1, @hoverJouer)
       @credits.draw_rot(1920/2, 700, 1, 0.5, 0.5)
       @quitter.draw_rot(1920/2, 800, 1, 0.5, 0.5)
->>>>>>> e1002f6a485d55afe5ee01bbb8145406b222c4d2
 
       off1 = -@move*0.5
       if off1 + @x1 >= @bg1.width*2.2
