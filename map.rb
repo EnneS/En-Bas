@@ -379,11 +379,10 @@ class Map
           alpha = 255 - (@lightmap[i][j] * 8)
           col = Gosu::Color.new(alpha, 255, 255, 255)
 
-          @shadow.draw(2*i*(@shadow.width), 2*j*(@shadow.height), -1, 2, 2, col)
+          @shadow.draw($scale*i*(@shadow.width), $scale*j*(@shadow.height), -1, $scale, $scale, col)
         end
         if i >= 0 && j >= 0 && @data[i][j] >=80 &&  @data[i][j] <=103
-
-          @images[getIdTorch(@data[i][j]/10)].draw(2*i*(@images[getIdTorch(@data[i][j]/10)].width), 2*j*(@images[getIdTorch(@data[i][j]/10)].height), -1, 2, 2) # on le dessine en fonction de sa position dans le tableau
+          @images[getIdTorch(@data[i][j]/10)].draw($scale*i*(@images[getIdTorch(@data[i][j]/10)].width), $scale*j*(@images[getIdTorch(@data[i][j]/10)].height), -1, $scale, $scale) # on le dessine en fonction de sa position dans le tableau
 
           alpha = 255 - (@lightmap[i][j] * 8)
           col = Gosu::Color.new(alpha, 255, 255, 255)
@@ -410,7 +409,6 @@ class Map
       return false
     end
   end
-
 
   def trouveBloc(cursor_x,cursor_y,camera_x, camera_y,hero_x,hero_y)
 
@@ -510,6 +508,7 @@ class Map
         return
       end
       if (@data[bloc_x-1][bloc_y] != Tiles::Air)
+        puts "G"
         setBlock(bloc_x,bloc_y,100)
         return
       end
