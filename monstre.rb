@@ -11,6 +11,7 @@ class Monstre
         @degats = 15
       end
       if @type == 1
+
         @pv = 100
         @degats = 20
       end

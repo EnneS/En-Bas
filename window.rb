@@ -208,7 +208,11 @@ class Window < Gosu::Window
           #puts "hx : " + hx.to_s + " mx : " + (m.x - 24).to_s
           dist = ((hx - m.x - 24)**2 + (hy - m.y + 32)**2)**0.5
           if ((m.x - 24) - hx)*@dir < 0 && dist < 2.5*32*$scale
+<<<<<<< HEAD
             if @hero.attack(m, 200)
+=======
+            if @hero.attack(m, 80)
+>>>>>>> 44dd6b30e225d1d8ece6fa73e6ce1c00900a7bc1
               @mobs.delete(m)
             end
           end
