@@ -273,8 +273,8 @@ class Map
     end
 
     puts "Generating caves..."
-    pStartH = 43
-    pStartL = 48
+    pStartH = 46
+    pStartL = 52
     birth = 4
     death = 4
     steps = 3

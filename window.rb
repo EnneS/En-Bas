@@ -220,7 +220,7 @@ class Window < Gosu::Window
         end
       end
       #mobs
-      if @mobs.size < @mobCap && $rng.Random(100) <= 7
+      if @mobs.size < @mobCap && $rng.Random(100) <= 10
         spawnMob()
       end
       @mobs.each do |m|
@@ -246,7 +246,10 @@ class Window < Gosu::Window
     if yr > 0
       y += Gosu::screen_height()/(32*$scale)
     end
-    if @map.data[x][y] == Tiles::Air && $rng.Random(@map.lightmap[x][y] + 10) < 10
+    x = [[x, @map.w-5].min, 5].max
+    y = [[y, @map.w-5].min, 5].max
+
+    if @map.data[x][y] == Tiles::Air && $rng.Random(@map.lightmap[x][y] + 15) < 17
       @mobs.add(Monstre.new($rng.Random(2), x*(32*$scale), y*(32*$scale), @map, @hero))
     end
   end
