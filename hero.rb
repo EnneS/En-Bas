@@ -5,12 +5,18 @@ class Hero
   def initialize(x, y, map)
     @map = map
 
+
+    @regenDelay = 4000
+    @regenRate = 600
+    @cooldown = 700
+    @invincibility = 600
+    
     #gestion bruitage
     @pas = Gosu::Sample.new("res/song/pas.wav")
     @lastPlay = (Time.now.to_f*1000.0).to_i
-
+    @lastHit = (Time.now.to_f*1000.0).to_i
+    @lastRegen = (Time.now.to_f*1000.0).to_i
     @dernierBlocCasse = (Time.now.to_f*1000).to_i
-    @dernierBlocPoser = (Time.now.to_f*1000).to_i
 
     @x = x
     @y = y
@@ -59,7 +65,31 @@ class Hero
     not @map.solid(@x + offs_x, @y + offs_y) and not @map.solid(@x + offs_x, @y + offs_y - 45)
   end
 
+  def subirDegats(degats)
+    if @lastHit < (Time.now.to_f*1000).to_i - @invincibility
+      @lastHit = (Time.now.to_f*1000).to_i
+      @pv -= degats
+      return @pv <= 0
+    end
+  end
+
+  def attack(monster, degats)
+    if @lastAttack < (Time.now.to_f*1000.0).to_i - @cooldown
+      @lastAttack = (Time.now.to_f*1000.0).to_i
+      return monster.subirDegats(degats)
+    end
+  end
+
+  def regen()
+    if @lastHit < (Time.now.to_f*1000).to_i - @regenDelay
+      if @lastRegen < (Time.now.to_f*1000).to_i - @regenRate
+        @pv+=1
+        @lastRegen = (Time.now.to_f*1000).to_i
+      end
+    end
+  end
   def update(move_x)
+    regen()
     indices = [0] * 1 + [1] * 1 + [2] * 1 + [3] * 1
 
     # Actualisation de l'image en fonction de la direction

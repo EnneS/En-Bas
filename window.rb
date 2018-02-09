@@ -184,15 +184,14 @@ class Window < Gosu::Window
 
           x,y = @map.trouveBlocP(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
 
-          if @hero.dernierBlocPoser < (Time.now.to_f*1000).to_i-500 and x != -1 and y != -1
+          #if @hero.dernierBlocPoser < (Time.now.to_f*1000).to_i-500 and x != -1 and y != -1
 
             bloc_x, bloc_y = @map.trouveBlocP(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
             #puts bloc_x.to_s+" . "+bloc_y.to_s
             @map.poserBloc(bloc_x,bloc_y,v)
             @inventaire.pick(v,1)
-            @hero.dernierBlocPoser = (Time.now.to_f*1000).to_i
 
-          end
+          #end
 
         end
 
@@ -250,7 +249,10 @@ class Window < Gosu::Window
     y = [[y, @map.w-5].min, 5].max
 
     if @map.data[x][y] == Tiles::Air && $rng.Random(@map.lightmap[x][y] + 15) < 17
-      @mobs.add(Monstre.new($rng.Random(2), x*(32*$scale), y*(32*$scale), @map, @hero))
+      m = Monstre.new($rng.Random(2), x*(32*$scale), y*(32*$scale), @map, @hero)
+      if m.peutSeDeplacer(0,0)
+        @mobs.add(m)
+      end
     end
   end
 

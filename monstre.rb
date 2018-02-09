@@ -5,6 +5,16 @@ class Monstre
       @map = map
       @type = type
 
+
+      if @type == 0
+        @vie = 200
+        @degats = 15
+      end
+      if @type == 1
+        @vie = 100
+        @degats = 20
+      end
+      @cooldown = 700
       @noms = Array.new(3)
       @noms[0] = "loup"
       @noms[1] = "bat"
@@ -27,8 +37,9 @@ class Monstre
 
       @focus = nil
 
-      @dateDerniereAttaque = (Time.now.to_f*1000.0).to_i
+      @lastAttack = (Time.now.to_f*1000.0).to_i
       @lastMovement = (Time.now.to_f*1000.0).to_i
+      @lastHit = (Time.now.to_f*1000.0).to_i
 
       @xt = 0
       @yt = 0
@@ -82,6 +93,18 @@ class Monstre
 
     def draw
       @image.draw(@x - 20, @y - @image.height*3, ZOrder::Hero, 3, 3) # on le draw à partir du bas du sprite (utile pour la collision)
+    end
+
+    def subirDegats(degats)
+      @pv -= degats
+      return @pv <= 0
+    end
+
+    def attack(hero, degats)
+      if @lastAttack < (Time.now.to_f*1000.0).to_i - @cooldown
+        @lastAttack = (Time.now.to_f*1000.0).to_i
+        return hero.subirDegats(degats)
+      end
     end
 
     def peutSeDeplacer(offs_x, offs_y)

@@ -101,6 +101,7 @@ class Map
     @images[1] = Gosu::Image.new("res/tiles/grass.png", {:tileable => true })
     @images[2] = Gosu::Image.new("res/tiles/dirt.png", {:tileable => true })
     @images[3] = Gosu::Image.new("res/tiles/stone.png", {:tileable => true })
+    @images[4] = Gosu::Image.new("res/tiles/darkStone.png", {:tileable => true })
     @images[7] = Gosu::Image.new("res/tiles/chest.png", {:tileable => true })
 
     (0..3).each do |i|
@@ -114,7 +115,8 @@ class Map
     @transparency[1] = 7
     @transparency[2] = 7
     @transparency[3] = 9
-    @transparency[7] = -5
+    @transparency[4] = 11
+    @transparency[7] = 4
 
     (0..3).each do |i|
       @transparency[(8.to_s+i.to_s).to_i] = 1
@@ -128,6 +130,7 @@ class Map
     @light[1] = 0
     @light[2] = 0
     @light[3] = 0
+    @light[4] = 0
     @light[7] = 3
 
     (0..3).each do |i|
@@ -233,7 +236,7 @@ class Map
   def generate(width_points, h, sea_lvl, wave_length_pow, nb_oct, amplitude)
     @w = (2 ** wave_length_pow)*width_points
     @h = h
-    layers = Array.new(3)
+    layers = Array.new(4)
     puts "Generating octaves..."
     layers[0] = Layer.new(Tiles::Grass, sea_lvl, nb_oct, amplitude, wave_length_pow)
     layers[0].generateNew(width_points)
@@ -241,7 +244,8 @@ class Map
     layers[1].generateOctaves(layers[0].octaves, nb_oct)
     layers[2] = Layer.new(Tiles::Stone, sea_lvl+7, nb_oct, amplitude, wave_length_pow)
     layers[2].generateOctaves(layers[0].octaves, nb_oct - 2)
-
+    layers[3] = Layer.new(Tiles::DarkStone, sea_lvl+60, 3, amplitude, 4)
+    layers[3].generateNew(width_points)
     puts "Generating terrain..."
     @data = Array.new(@w){Array.new(@h)}
 
@@ -429,73 +433,22 @@ class Map
 
   def trouveBloc(cursor_x,cursor_y,camera_x, camera_y,hero_x,hero_y)
 
-    blocTrouve = false
+    #calcul coef directeur
     cursor_r_x = camera_x+cursor_x
     cursor_r_y = camera_y+cursor_y
-    center_x = hero_x + 24
-    center_y = hero_y - 70
 
-    #calcul coef directeur
-    a = ((center_y)-cursor_r_y).to_f
-    b = ((center_x)-cursor_r_x).to_f
-    if a >= -0.1 && a <= 0.1
-      a = 0.01
-    end
-    if b >= -0.1 && b <= 0.1
-      b = 0.01
-    end
-    c = a/b
+    x = (cursor_r_x/(32*$scale)).floor
+    y = (cursor_r_y/(32*$scale)).floor
 
-    cx = 1
-    cy = c
-    cl = (cx**2 + cy**2)**0.5
+    hero_xb = (hero_x/(32*$scale)).floor
+    hero_yb = (hero_y/(32*$scale)).floor
 
-    cx /= cl
-    cy /= cl
 
-    bloc_x = center_x / (32*$scale).to_f
-    bloc_y = center_y / (32*$scale).to_f
-
-    inc = 0
-    while !blocTrouve
-
-      if inc > 5
-        return -1, -1
-      end
-
-      if cursor_r_x < hero_x
-        bloc_x -= cx
-        bloc_y -= cy
-      else
-        bloc_x += cx
-        bloc_y += cy
-      end
-      #puts x.to_s+" . "+ y.to_s
-
-      #puts bloc_x.
-      x = bloc_x.floor
-      y = bloc_y.floor
-
-      #puts x.to_s+" . "+ y.to_s
-
-      if x>=0 && y>=0 && x<@w && y<@h
-        if @data[x][y] != Tiles::Air
-          blocTrouve = true
-        end
-      end
-
-      if x>@w || y>@h
-       blocTrouve = true
-      end
-
-      inc += 1
-
-    end
-
-    if ((x-(hero_x/(32*$scale)).floor).abs < 5) && ((y-(hero_y/(32*$scale)).floor).abs < 5)
-      return x,y
-    else
+    dist = ((hero_yb - y)**2+(hero_xb - x)**2)**0.5
+    if @data[x][y] == Tiles::Air || dist > 4.5
       return -1,-1
+    else
+      return x,y
     end
 
   end
@@ -515,10 +468,12 @@ class Map
     hero_xb = (hero_x/(32*$scale)).floor
     hero_yb = (hero_y/(32*$scale)).floor
 
-    espaceHero = ((x == hero_xb && y == hero_yb) || (x == hero_xb && y == (hero_yb-1)) || (x == (hero_xb+1) && y == hero_yb) || (x == (hero_xb+1) && y == hero_yb-1))
+    dist = ((hero_yb - y)**2+(hero_xb - x)**2)**0.5
+
+    espaceHero = ((x == hero_xb && y == hero_yb) || (x == hero_xb && y == (hero_yb-1)) || (x == (hero_xb+1) && y == hero_yb) || (x == (hero_xb+1) && y == hero_yb-1) || (x == (hero_xb) && y == hero_yb-2) || (x == (hero_xb+1) && y-2 == hero_yb))
     blocAdjacent = (@data[x-1][y] != Tiles::Air) || (@data[x+1][y] != Tiles::Air) || (@data[x][y-1] != Tiles::Air) || (@data[x][y+1] != Tiles::Air)
 
-    if espaceHero || !blocAdjacent || @data[x][y] != Tiles::Air
+    if espaceHero || !blocAdjacent || @data[x][y] != Tiles::Air || dist > 4.5
       return -1,-1
     else
       return x,y
