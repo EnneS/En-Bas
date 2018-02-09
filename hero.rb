@@ -34,6 +34,9 @@ class Hero
     # de base, le héros est de face
     @image = @images[0]
 
+
+
+
     @direction = 1
 
     @imagesDroite = []
@@ -55,6 +58,12 @@ class Hero
     @imagesFace.push(Gosu::Image.new("res/hero/face2.png",{ :retro => true}))
     @imagesFace.push(Gosu::Image.new("res/hero/face3.png",{ :retro => true}))
     @imagesFace.push(Gosu::Image.new("res/hero/face4.png",{ :retro => true}))
+
+    @imagesAttack = []
+    @imagesAttack.push(Gosu::Image.new("res/hero/attack1.png",{ :retro => true}))
+    @imagesAttack.push(Gosu::Image.new("res/hero/attack2.png",{ :retro => true}))
+
+
   end
 
   def draw
@@ -90,6 +99,14 @@ class Hero
     end
   end
   def update(move_x)
+
+    indices = [0] * 1 + [1] * 1
+
+    if move_x == 1000
+      #index = indices[Gosu::milliseconds / 500 % indices.size]
+      @image = @imagesAttack[1]
+    end 
+
     regen()
     indices = [0] * 1 + [1] * 1 + [2] * 1 + [3] * 1
 
@@ -103,7 +120,7 @@ class Hero
     end
 
     # Mouvement horizontal, se déplace si le prochain bloc dans la direction n'est pas solide
-    if move_x > 0
+    if move_x > 0 && move_x != 1000
 
       # Bruitage
       if @map.solid(@x,@y+1) && @lastPlay<((Time.now.to_f*1000.0).to_i)-350

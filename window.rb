@@ -82,7 +82,6 @@ class Window < Gosu::Window
     @song2.play(true) && @song0.stop && @song1.stop if @ind == 2
 
     @dureSon = $rng.Random(120)+60
-    puts @dureSon.to_s
   end
 
 
@@ -102,7 +101,6 @@ class Window < Gosu::Window
      ##gestion des sons
      if (Time.now-@start_time) > @dureSon
         playSong
-        puts (Time.now-@start_time).to_s
         @start_time = Time.now
       end
 
@@ -188,6 +186,9 @@ class Window < Gosu::Window
       @camera_y = [[@hero.y - 1080 / 2, 0].max, ((@map.h)-3)*48 - 1080].min
 
       if button_down?(Gosu::MsLeft)
+
+        @hero.update(1000)
+
         cursor_x = self.mouse_x
         cursor_y = self.mouse_y
 
@@ -217,7 +218,10 @@ class Window < Gosu::Window
             end
           end
         end
+
       end
+
+
 
       if button_down?(Gosu::MsRight)
 
