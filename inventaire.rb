@@ -19,6 +19,7 @@ attr_reader :selected, :items
     vider()
 
     store(80,5)
+    store(3,999)
 
     @selection = Gosu::Image.new("res/tiles/barre.png")
     @barre = Gosu::Image.new("res/barre.png")

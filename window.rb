@@ -67,7 +67,7 @@ class Window < Gosu::Window
   end
 
   def generate()
-    @map.generate(3, 3000, 128, 8, 7, 60)
+    @map.generate(3, 500, 128, 8, 7, 60)
     @map.save
     @hero = Hero.new((((@map.data.size-1)/2)*(32*$scale))-1, (@map.ground((@map.data.size-1)/2)*(32*$scale))-1, @map)
   end
@@ -158,7 +158,7 @@ class Window < Gosu::Window
       temp = @hero.x
 
       move_x = 0
-      if Gosu.button_down?(Gosu::KB_LEFT) || Gosu.button_down?(Gosu::KB_Q)
+      if Gosu.button_down?(Gosu::KB_LEFT) || Gosu.button_down?(Gosu::KB_A)
         move_x -= 9
       end
 
@@ -167,7 +167,7 @@ class Window < Gosu::Window
       end
       #move_x *= 2 if Gosu::button_down?(Gosu::KbLeftShift)
       @hero.update(move_x)
-      if Gosu::button_down?(Gosu::KbSpace) || Gosu.button_down?(Gosu::KB_UP) || Gosu.button_down?(Gosu::KB_Z)
+      if Gosu::button_down?(Gosu::KbSpace) || Gosu.button_down?(Gosu::KB_UP) || Gosu.button_down?(Gosu::KB_W)
         @hero.jump
       end
 
