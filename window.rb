@@ -2,8 +2,8 @@ require 'set'
 class Window < Gosu::Window
 
   def initialize(width, height)
-    super(width, height, true)
-    self.caption = "Hardcore Survival"
+    super(width, height, false)
+    self.caption = "En Bas"
 
     @start_time = Time.now
     @tempsEcoule = 0
@@ -346,7 +346,7 @@ class Window < Gosu::Window
         @x4+=@bg4.width*2.2
       end
 
-      col = Gosu::Color.new(160, 255, 255, 255)
+      col = Gosu::Color.new(100, 255, 255, 255)
 
       @bgn.draw(0, 0, -2,1,1,col)
 
@@ -365,7 +365,7 @@ class Window < Gosu::Window
       # Le jeu a commencé : on affiche le background, la profondeur, l'inventaire
       # le héro et la map
 
-      col = Gosu::Color.new(150, 255, 255, 255)
+      col = Gosu::Color.new(100, 255, 255, 255)
 
       off1 = -@move*0.5
       if off1 + @x1 >= @bg1.width*2.2
