@@ -35,39 +35,39 @@ class Hero
     @image = @images[0]
 
 
-
-
+    @offsetA = 0
     @direction = 1
 
     @imagesDroite = []
-    @imagesDroite.push(Gosu::Image.new("res/hero/droite1.png",{ :retro => true}))
-    @imagesDroite.push(Gosu::Image.new("res/hero/droite2.png",{ :retro => true}))
-    @imagesDroite.push(Gosu::Image.new("res/hero/droite3.png",{ :retro => true}))
-    @imagesDroite.push(Gosu::Image.new("res/hero/droite4.png",{ :retro => true}))
-    @imagesDroite.push(Gosu::Image.new("res/hero/droite5.png",{ :retro => true}))
+    @imagesDroite.push(Gosu::Image.new("res/hero/droite1.png",{:tileable => true, :retro => true}))
+    @imagesDroite.push(Gosu::Image.new("res/hero/droite2.png",{:tileable => true, :retro => true}))
+    @imagesDroite.push(Gosu::Image.new("res/hero/droite3.png",{:tileable => true, :retro => true}))
+    @imagesDroite.push(Gosu::Image.new("res/hero/droite4.png",{:tileable => true, :retro => true}))
+    @imagesDroite.push(Gosu::Image.new("res/hero/droite5.png",{:tileable => true, :retro => true}))
 
     @imagesGauche = []
-    @imagesGauche.push(Gosu::Image.new("res/hero/gauche1.png",{ :retro => true}))
-    @imagesGauche.push(Gosu::Image.new("res/hero/gauche2.png",{ :retro => true}))
-    @imagesGauche.push(Gosu::Image.new("res/hero/gauche3.png",{ :retro => true}))
-    @imagesGauche.push(Gosu::Image.new("res/hero/gauche4.png",{ :retro => true}))
-    @imagesGauche.push(Gosu::Image.new("res/hero/gauche5.png",{ :retro => true}))
+    @imagesGauche.push(Gosu::Image.new("res/hero/gauche1.png",{:tileable => true, :retro => true}))
+    @imagesGauche.push(Gosu::Image.new("res/hero/gauche2.png",{:tileable => true, :retro => true}))
+    @imagesGauche.push(Gosu::Image.new("res/hero/gauche3.png",{:tileable => true, :retro => true}))
+    @imagesGauche.push(Gosu::Image.new("res/hero/gauche4.png",{:tileable => true, :retro => true}))
+    @imagesGauche.push(Gosu::Image.new("res/hero/gauche5.png",{:tileable => true, :retro => true}))
 
     @imagesFace = []
-    @imagesFace.push(Gosu::Image.new("res/hero/face1.png",{ :retro => true}))
-    @imagesFace.push(Gosu::Image.new("res/hero/face2.png",{ :retro => true}))
-    @imagesFace.push(Gosu::Image.new("res/hero/face3.png",{ :retro => true}))
-    @imagesFace.push(Gosu::Image.new("res/hero/face4.png",{ :retro => true}))
+    @imagesFace.push(Gosu::Image.new("res/hero/face1.png",{:tileable => true, :retro => true}))
+    @imagesFace.push(Gosu::Image.new("res/hero/face2.png",{:tileable => true, :retro => true}))
+    @imagesFace.push(Gosu::Image.new("res/hero/face3.png",{:tileable => true, :retro => true}))
+    @imagesFace.push(Gosu::Image.new("res/hero/face4.png",{:tileable => true, :retro => true}))
 
     @imagesAttack = []
-    @imagesAttack.push(Gosu::Image.new("res/hero/attack1.png",{ :retro => true}))
-    @imagesAttack.push(Gosu::Image.new("res/hero/attack2.png",{ :retro => true}))
+    @imagesAttack.push(Gosu::Image.new("res/hero/attack2.png",{:retro => true}))
+    @imagesAttack.push(Gosu::Image.new("res/hero/attack2G.png",{:retro => true}))
 
 
   end
 
   def draw
-    @image.draw(@x - 30, @y - @image.height*1.5, ZOrder::Hero, 1.5, 1.5) # on le draw à partir du bas du sprite (utile pour la collision)
+    @image.draw(@x - 30 + @offsetA, @y - @image.height*1.5, ZOrder::Hero, 1.5, 1.5) # on le draw à partir du bas du sprite (utile pour la collision)
+    @offsetA = 0
   end
 
   def peutSeDeplacer(offs_x, offs_y)
@@ -104,8 +104,12 @@ class Hero
 
     if move_x == 1000
       #index = indices[Gosu::milliseconds / 500 % indices.size]
+      @offsetA = -24
       @image = @imagesAttack[1]
-    end 
+    end
+    if move_x == 1002
+      @image = @imagesAttack[0]
+    end
 
     regen()
     indices = [0] * 1 + [1] * 1 + [2] * 1 + [3] * 1
@@ -120,7 +124,7 @@ class Hero
     end
 
     # Mouvement horizontal, se déplace si le prochain bloc dans la direction n'est pas solide
-    if move_x > 0 && move_x != 1000
+    if move_x > 0 && move_x < 1000
 
       # Bruitage
       if @map.solid(@x,@y+1) && @lastPlay<((Time.now.to_f*1000.0).to_i)-350

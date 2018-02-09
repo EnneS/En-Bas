@@ -2,7 +2,7 @@ require 'set'
 class Window < Gosu::Window
 
   def initialize(width, height)
-    super(width, height, false)
+    super(width, height, true)
     self.caption = "Hardcore Survival"
 
     @start_time = Time.now
@@ -181,8 +181,6 @@ class Window < Gosu::Window
 
       if button_down?(Gosu::MsLeft)
 
-        @hero.update(1000)
-
         cursor_x = self.mouse_x
         cursor_y = self.mouse_y
 
@@ -199,10 +197,12 @@ class Window < Gosu::Window
           @dir = 1
         end
 
+        @hero.update(1001 + @dir)
+
         @mobs.each do |m|
           #puts "hx : " + hx.to_s + " mx : " + (m.x - 24).to_s
           dist = ((hx - m.x - 24)**2 + (hy - m.y + 32)**2)**0.5
-          if ((m.x - 24) - hx)*@dir < 0 && dist < 2.5*32*$scale
+          if ((m.x - 24) - hx)*@dir < 0 && dist < 3.5*32*$scale
 
             #if @hero.attack(m, 200)
 
