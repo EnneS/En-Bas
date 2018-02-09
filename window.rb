@@ -67,7 +67,7 @@ class Window < Gosu::Window
   end
 
   def generate()
-    @map.generate(3, 3000, 128, 8, 7, 60)
+    @map.generate(3, 500, 128, 8, 7, 60)
     @map.save
     @hero = Hero.new((((@map.data.size-1)/2)*(32*$scale))-1, (@map.ground((@map.data.size-1)/2)*(32*$scale))-1, @map)
   end

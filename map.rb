@@ -6,7 +6,7 @@ module Tiles
   Stone = 3
   DarkStone = 4
   Water = 5
-  Lava = 6
+  RareChest = 6
   Chest = 7
   Torch1 = 80
   Torch2 = 81
@@ -83,7 +83,6 @@ class Layer
 
 end
 
-
 class Map
 
   attr_reader :w, :h, :data, :lightmap, :images, :transparency, :shadow
@@ -102,6 +101,7 @@ class Map
     @images[2] = Gosu::Image.new("res/tiles/dirt.png", {:tileable => true })
     @images[3] = Gosu::Image.new("res/tiles/stone.png", {:tileable => true })
     @images[4] = Gosu::Image.new("res/tiles/darkStone.png", {:tileable => true })
+    @images[6] = Gosu::Image.new("res/tiles/RareChest.png", {:tileable => true })
     @images[7] = Gosu::Image.new("res/tiles/chest.png", {:tileable => true })
 
     (0..3).each do |i|
@@ -116,6 +116,7 @@ class Map
     @transparency[2] = 7
     @transparency[3] = 9
     @transparency[4] = 11
+    @transparency[7] = 4
     @transparency[7] = 4
 
     (0..3).each do |i|
@@ -134,9 +135,9 @@ class Map
     @light[7] = 3
 
     (0..3).each do |i|
-      @light[(8.to_s+i.to_s).to_i] = 20
-      @light[(9.to_s+i.to_s).to_i] = 20
-      @light[(10.to_s+i.to_s).to_i] = 20
+      @light[(8.to_s+i.to_s).to_i] = 25
+      @light[(9.to_s+i.to_s).to_i] = 25
+      @light[(10.to_s+i.to_s).to_i] = 25
     end
 
     @shadow = Gosu::Image.new("res/tiles/shadow.png", {:tileable => true })
@@ -313,7 +314,6 @@ class Map
     end
 
 
-
     for i in 0..@w-1
       for j in 0..@h-1
         if !caves[i][j]
@@ -348,6 +348,16 @@ class Map
       @data[x][y] = Tiles::Chest
       nbCoffres -= 1;
     end
+    v = 31
+    b = 1
+    while b != Tiles::Air || v >= 32 - @transparency[0]
+      x = $rng.Random(w)
+      y = $rng.Random(h)
+      b = @data[x][y]
+      v = @lightmap[x][y]
+    end
+    puts x.to_s + " " + y.to_s
+    @data[x][y] = Tiles::RareChest
   end
 
   def getIdTorch(x)
