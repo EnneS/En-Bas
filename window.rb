@@ -50,7 +50,7 @@ class Window < Gosu::Window
     @cursor = Gosu::Image.new("res/cursor.png")
     @camera_x = @camera_y = 0
 
-    @mobCap = 20
+    @mobCap = 15
     @mobs = Set.new()
 
     @gameStarted = false
@@ -215,11 +215,11 @@ class Window < Gosu::Window
         end
       end
       #mobs
-      if @mobs.size < @mobCap
+      if @mobs.size < @mobCap && $rng.Random(100) <= 10
         spawnMob()
       end
       @mobs.each do |m|
-        if !m.HeroInRange(50)
+        if !m.HeroInRange(30)
           @mobs.delete(m)
         else
           m.IA()
@@ -230,19 +230,19 @@ class Window < Gosu::Window
 
   def spawnMob()
     xr = $rng.Random(80) - 40
-    yr = $rng.Random(80) - 40
-    x = xr + @camera_x/64
-    y = yr + @camera_y/64
+    yr = $rng.Random(60) - 20
+    x = xr + @camera_x/(32*$scale)
+    y = yr + @camera_y/(32*$scale)
 
     if xr > 0
-      x += Gosu::screen_width()/64
+      x += Gosu::screen_width()/(32*$scale)
     end
 
     if yr > 0
-      y += Gosu::screen_height()/64
+      y += Gosu::screen_height()/(32*$scale)
     end
-    if @map.data[x][y] == Tiles::Air
-      @mobs.add(Monstre.new($rng.Random(2), x*64, y*64, @map, @hero))
+    if @map.data[x][y] == Tiles::Air && $rng.Random(@map.lightmap[x][y] + 10) < 10
+      @mobs.add(Monstre.new($rng.Random(2), x*(32*$scale), y*(32*$scale), @map, @hero))
     end
   end
 

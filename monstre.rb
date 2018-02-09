@@ -222,7 +222,7 @@ class Monstre
           @xt = ($rng.Random(5) - 2)*$scale*32 + @hero.x
           @yt = 0
           @lastMovement = n
-          @speed = 7
+          @speed = 6
         end
       else
         xf = @xt - @x
@@ -260,7 +260,7 @@ class Monstre
 
 
           @lastMovement = n
-          @speed = 8
+          @speed = 7
         end
       else
         xf = @xt - @x
