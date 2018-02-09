@@ -212,8 +212,8 @@ class Monstre
       n = (Time.now.to_f*1000.0).to_i
       if n - @lastMovement > @delay
         if @focus == nil
-          @delay = $rng.Random(3000) + 500
-          @xt = ($rng.Random(5) - 2)*$scale*32 + @x
+          @delay = $rng.Random(5000) + 800
+          @xt = ($rng.Random(25) - 12)*$scale*32 + @x
           @yt = 0
           @lastMovement = n
           @speed = 3
@@ -245,8 +245,8 @@ class Monstre
       n = (Time.now.to_f*1000.0).to_i
       if n - @lastMovement > @delay
         if @focus == nil
-          @delay = $rng.Random(2000) + 300
-          @xt = ($rng.Random(11) - 5)*$scale*32 + @x
+          @delay = $rng.Random(3000) + 500
+          @xt = ($rng.Random(25) - 12)*$scale*32 + @x
           @yt = ($rng.Random(11) - 5)*$scale*32 + @y
           @lastMovement = n
           @speed = 3
