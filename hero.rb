@@ -6,11 +6,11 @@ class Hero
     @map = map
 
 
-    @regenDelay = 4000
-    @regenRate = 600
+    @regenDelay = 15000
+    @regenRate = 1500
     @cooldown = 700
     @invincibility = 600
-    
+
     #gestion bruitage
     @pas = Gosu::Sample.new("res/song/pas.wav")
     @lastPlay = (Time.now.to_f*1000.0).to_i
@@ -82,7 +82,7 @@ class Hero
 
   def regen()
     if @lastHit < (Time.now.to_f*1000).to_i - @regenDelay
-      if @lastRegen < (Time.now.to_f*1000).to_i - @regenRate
+      if @lastRegen < (Time.now.to_f*1000).to_i - @regenRate && @pv < 100
         @pv+=1
         @lastRegen = (Time.now.to_f*1000).to_i
       end

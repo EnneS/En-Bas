@@ -9,6 +9,8 @@ class Window < Gosu::Window
     @tempsEcoule = 0
     @dureSon = 10
 
+    @dir = 1
+
     @song0 = Gosu::Song.new("res/song/Imminent.mp3")
     @song1 = Gosu::Song.new("res/song/Nebulous.mp3")
     @song2 = Gosu::Song.new("res/song/Youthful.mp3")
@@ -173,8 +175,34 @@ class Window < Gosu::Window
       @camera_x = [[@hero.x - 1920 / 2, 0].max, ((@map.w)-3)*48 - 1920].min
       @camera_y = [[@hero.y - 1080 / 2, 0].max, ((@map.h)-3)*48 - 1080].min
 
-
       if button_down?(Gosu::MsLeft)
+        cursor_x = self.mouse_x
+        cursor_y = self.mouse_y
+
+        cursor_r_x = @camera_x+cursor_x
+        cursor_r_y = @camera_y+cursor_y
+
+        hx = @hero.x + 24
+        hy = @hero.y - 48
+
+        if cursor_r_x < hx
+          @dir = -1
+        end
+        if cursor_r_x > hx
+          @dir = 1
+        end
+
+        @mobs.each do |m|
+          dist = ((hx - m.x - 24)**2 + (hx - m.y + 32)**2)**0.5
+          if ((m.x - 24) - hx)*@dir > 0 && dist < 1.5*32*$scale
+            if hero.attack(m, 200)
+              @mobs.delete(m)
+            end
+          end
+        end
+      end
+
+      if button_down?(Gosu::MsRight)
 
         cursor_x = self.mouse_x
         cursor_y = self.mouse_y
@@ -184,14 +212,14 @@ class Window < Gosu::Window
 
           x,y = @map.trouveBlocP(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
 
-          #if @hero.dernierBlocPoser < (Time.now.to_f*1000).to_i-500 and x != -1 and y != -1
+          if x != -1 and y != -1
 
             bloc_x, bloc_y = @map.trouveBlocP(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
             #puts bloc_x.to_s+" . "+bloc_y.to_s
             @map.poserBloc(bloc_x,bloc_y,v)
             @inventaire.pick(v,1)
 
-          #end
+          end
 
         end
 
@@ -203,13 +231,15 @@ class Window < Gosu::Window
             bloc_x, bloc_y = @map.trouveBloc(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
             id = @map.data[bloc_x][bloc_y]
 
-            if id != 7
-              @inventaire.store(id,1)
-            else
+            if id == 7
               prng = Random.new
               @inventaire.store(80,prng.rand(10))
-            end 
-
+            elsif id >= 80
+              @inventaire.store(80,1)
+            else
+              @inventaire.store(id,1)
+            end
+            
             @map.detruireBloc(bloc_x,bloc_y)
 
          
