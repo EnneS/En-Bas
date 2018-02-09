@@ -160,10 +160,6 @@ class Map
   def setBlock(x, y, v)
     @data[x][y] = v
     updateLight(x, y, 0)
-    #addBlockToWaitList(x-1, y)
-    #addBlockToWaitList(x+1, y)
-    #addBlockToWaitList(x, y-1)
-    #addBlockToWaitList(x, y+1)
   end
 
   def interpolate(a, b, x)
@@ -373,19 +369,22 @@ class Map
 
     for i in debutX..finX
       for j in debutY..finY
-        if i >= 0 && j >= 0 && @data[i][j] != Tiles::Air && @data[i][j] <80 # S'il ne s'agit pas d'un block d'air
-          @images[@data[i][j]].draw($scale*i*(@images[@data[i][j]].width), $scale*j*(@images[@data[i][j]].height), -1, $scale, $scale) # on le dessine en fonction de sa position dans le tableau
-          alpha = 255 - (@lightmap[i][j] * 8)
-          col = Gosu::Color.new(alpha, 255, 255, 255)
-
-          @shadow.draw($scale*i*(@shadow.width), $scale*j*(@shadow.height), -1, $scale, $scale, col)
+        if i >= 0 && j >= 0 && @data[i][j] <80 # S'il ne s'agit pas d'un block d'air
+          if @data[i][j] != Tiles::Air
+            @images[@data[i][j]].draw($scale*i*(@images[@data[i][j]].width), $scale*j*(@images[@data[i][j]].height), -1, $scale, $scale) # on le dessine en fonction de sa position dans le tableau
+          end
+          if !( @data[i][j] == Tiles::Air && @lightmap[i][j] == (32 - @transparency[0]))
+            alpha = 255 - (@lightmap[i][j] * 8)
+            col = Gosu::Color.new(alpha, 255, 255, 255)
+            @shadow.draw($scale*i*(@shadow.width), $scale*j*(@shadow.height), 4, $scale, $scale, col)
+          end
         end
         if i >= 0 && j >= 0 && @data[i][j] >=80 &&  @data[i][j] <=103
           @images[getIdTorch(@data[i][j]/10)].draw($scale*i*(@images[getIdTorch(@data[i][j]/10)].width), $scale*j*(@images[getIdTorch(@data[i][j]/10)].height), -1, $scale, $scale) # on le dessine en fonction de sa position dans le tableau
 
           alpha = 255 - (@lightmap[i][j] * 8)
           col = Gosu::Color.new(alpha, 255, 255, 255)
-          @shadow.draw($scale*i*(@shadow.width), $scale*j*(@shadow.height), -1, $scale, $scale, col)
+          @shadow.draw($scale*i*(@shadow.width), $scale*j*(@shadow.height), 4, $scale, $scale, col)
         end
       end
     end

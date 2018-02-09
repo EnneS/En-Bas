@@ -13,13 +13,13 @@ class Window < Gosu::Window
     @song1 = Gosu::Song.new("res/song/Nebulous.mp3")
     @song2 = Gosu::Song.new("res/song/Youthful.mp3")
 
-    @ind = 0
+    @ind = $rng.Random(3)
 
-    @song0.volume = 0.5
-    @song1.volume = 0.5
-    @song2.volume = 0.5
+    @song0.volume = 0.4
+    @song1.volume = 0.4
+    @song2.volume = 0.4
 
-    @song1.play(true)
+    playSong()
 
     $font = Gosu::Font.new(self, "res/pokemon_pixel_font.ttf", 40)
     $fontXL = Gosu::Font.new(self, "res/pokemon_pixel_font.ttf", 70)
@@ -72,7 +72,7 @@ class Window < Gosu::Window
 
   def playSong()
     @ind+=1
-    @ind%=2
+    @ind%=3
     puts "New song : "+@ind.to_s
 
     @song0.play(true) && @song1.stop && @song2.stop if @ind == 0
