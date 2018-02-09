@@ -80,7 +80,7 @@ class Window < Gosu::Window
     @song2.play(true) && @song0.stop && @song1.stop if @ind == 2
 
     @dureSon = $rng.Random(120)+60
-    putc @dureSon.to_s
+    puts @dureSon.to_s
   end
 
 
@@ -220,7 +220,7 @@ class Window < Gosu::Window
         end
       end
       #mobs
-      if @mobs.size < @mobCap && $rng.Random(100) <= 10
+      if @mobs.size < @mobCap && $rng.Random(100) <= 7
         spawnMob()
       end
       @mobs.each do |m|
