@@ -75,7 +75,6 @@ class Window < Gosu::Window
   def playSong()
     @ind+=1
     @ind%=3
-    puts "New song : "+@ind.to_s
 
     @song0.play(true) && @song1.stop && @song2.stop if @ind == 0
     @song1.play(true) && @song0.stop && @song2.stop if @ind == 1
@@ -96,16 +95,11 @@ class Window < Gosu::Window
         end 
       end
 
-
-
      ##gestion des sons
      if (Time.now-@start_time) > @dureSon
         playSong
         @start_time = Time.now
       end
-
-
-
 
     @inventaire.setSelected(0) if Gosu::button_down?(Gosu::Kb1)
     @inventaire.setSelected(1) if Gosu::button_down?(Gosu::Kb2)

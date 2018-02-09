@@ -18,7 +18,7 @@ attr_reader :selected, :items
     @items = Array.new(@places) {Array.new(2)} #en premier l'id en second le nombre
     vider()
 
-    store(80,50)
+    store(80,5)
 
     @selection = Gosu::Image.new("res/tiles/barre.png")
     @barre = Gosu::Image.new("res/barre.png")

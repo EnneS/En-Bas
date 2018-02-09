@@ -11,7 +11,7 @@ module Tiles
   Torch1 = 80
   Torch2 = 81
   Torch3 = 82
-  Torch3 = 83
+
 
 end
 def min(a, b)
