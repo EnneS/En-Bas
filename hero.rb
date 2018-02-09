@@ -17,6 +17,7 @@ class Hero
     @lastHit = (Time.now.to_f*1000.0).to_i
     @lastRegen = (Time.now.to_f*1000.0).to_i
     @dernierBlocCasse = (Time.now.to_f*1000).to_i
+    @lastAttack = (Time.now.to_f*1000).to_i
 
     @x = x
     @y = y

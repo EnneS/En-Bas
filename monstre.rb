@@ -7,11 +7,11 @@ class Monstre
 
 
       if @type == 0
-        @vie = 200
+        @pv = 200
         @degats = 15
       end
       if @type == 1
-        @vie = 100
+        @pv = 100
         @degats = 20
       end
       @cooldown = 700
