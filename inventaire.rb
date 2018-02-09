@@ -7,7 +7,9 @@ class Inventaire
  3 : Stone
  4 : Pioche
  5 : Chest
- 6 : Torche
+ 8 : Torche
+ 9 : TorcheR
+ 10 : TorcheL
 =end
 attr_reader :selected, :items
 
@@ -28,7 +30,7 @@ attr_reader :selected, :items
     @images.push(Gosu::Image.new("res/tiles/dirt.png"))
     @images.push(Gosu::Image.new("res/tiles/stone.png"))
     @images.push(Gosu::Image.new("res/tiles/pioche.png"))
-    @images.push(Gosu::Image.new("res/tiles/chest.png"))
+    @images[7] = Gosu::Image.new("res/tiles/chest.png")
 
     (0..3).each do |i|
       @images[(8.to_s+i.to_s).to_i] = Gosu::Image.new("res/tiles/torch_000"+i.to_s+".png", {:tileable => true })
@@ -64,7 +66,7 @@ attr_reader :selected, :items
     emplacement = contains(id)
     if emplacement != -1 and @items[emplacement][1] >= nb
       @items[emplacement][1] -= nb
-      if @items[emplacement][1] == nb
+      if @items[emplacement][1] == 0
         @items[emplacement][0] = -1
         @items[emplacement][1] = -1
       end

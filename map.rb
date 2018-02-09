@@ -89,6 +89,13 @@ class Map
   attr_reader :w, :h, :data, :lightmap, :images, :transparency, :shadow
 
   def initialize()
+
+
+    #gestion bruitage
+    @casse = Gosu::Sample.new("res/song/casse.wav")
+    @pose = Gosu::Sample.new("res/song/pose.wav")
+    #@lastPlay = (Time.now.to_f*1000.0).to_i
+
     @images = Array.new(90)
     @images[0] = 0 # air
     @images[1] = Gosu::Image.new("res/tiles/grass.png", {:tileable => true })
@@ -121,7 +128,7 @@ class Map
     @light[1] = 0
     @light[2] = 0
     @light[3] = 0
-    @light[7] = 15
+    @light[7] = 3
 
     (0..3).each do |i|
       @light[(8.to_s+i.to_s).to_i] = 20
@@ -395,7 +402,7 @@ class Map
   def solid(x, y)
     #Test pour le bloc du bas gauche/droite et haut gauche/droite s'il est solide
     # On ne peut aussi pas dépasser les limites de la map
-    if x < 0 || x > (@data.size-3)*(32*$scale) || y > (@data[0].size-3)*(32*$scale) || @data[x / (32*$scale)][y / (32*$scale)] != 0 || @data[(x+56) / (32*$scale)][y / (32*$scale)] != 0 || @data[x / (32*$scale)][(y-70) / (32*$scale)] !=0 || @data[(x+48) / (32*$scale)][(y) / (32*$scale)] !=0 || @data[(x+56) / (32*$scale)][(y-70) / (32*$scale)] !=0
+    if x < 0 || x > (@data.size-7)*(32*$scale) || y > (@data[0].size-7)*(32*$scale) || @data[x / (32*$scale)][y / (32*$scale)] != 0 || @data[(x+56) / (32*$scale)][y / (32*$scale)] != 0 || @data[x / (32*$scale)][(y-70) / (32*$scale)] !=0 || @data[(x+48) / (32*$scale)][(y) / (32*$scale)] !=0 || @data[(x+56) / (32*$scale)][(y-70) / (32*$scale)] !=0
       return true
     else
       return false
@@ -405,7 +412,7 @@ class Map
   def solidLoup(x, y)
     #Test pour le bloc du bas gauche/droite et haut gauche/droite s'il est solide
     # On ne peut aussi pas dépasser les limites de la map
-    if x < 0 || x > (@data.size-3)*(32*$scale) || y > (@data[0].size-3)*(32*$scale) || @data[x / (32*$scale)][y / (32*$scale)] != 0 || @data[(x+110) / (32*$scale)][y / (32*$scale)] != 0 || @data[x / (32*$scale)][(y-40) / (32*$scale)] !=0 || @data[(x+50) / (32*$scale)][(y) / (32*$scale)] !=0 || @data[(x+110) / (32*$scale)][(y-40) / (32*$scale)] !=0
+    if x < 0 || x > (@data.size-7)*(32*$scale) || y > (@data[0].size-7)*(32*$scale) || @data[x / (32*$scale)][y / (32*$scale)] != 0 || @data[(x+110) / (32*$scale)][y / (32*$scale)] != 0 || @data[x / (32*$scale)][(y-40) / (32*$scale)] !=0 || @data[(x+50) / (32*$scale)][(y) / (32*$scale)] !=0 || @data[(x+110) / (32*$scale)][(y-40) / (32*$scale)] !=0
       return true
     else
       return false
@@ -414,7 +421,7 @@ class Map
   def solidBat(x, y)
     #Test pour le bloc du bas gauche/droite et haut gauche/droite s'il est solide
     # On ne peut aussi pas dépasser les limites de la map
-    if x < 0 || x > (@data.size-3)*(32*$scale) || y > (@data[0].size-3)*(32*$scale) || @data[x / (32*$scale)][y / (32*$scale)] != 0 || @data[(x+110) / (32*$scale)][y / (32*$scale)] != 0 || @data[x / (32*$scale)][(y-40) / (32*$scale)] !=0 || @data[(x+50) / (32*$scale)][(y) / (32*$scale)] !=0 || @data[(x+110) / (32*$scale)][(y-40) / (32*$scale)] !=0
+    if x < 0 || x > (@data.size-7)*(32*$scale) || y > (@data[0].size-7)*(32*$scale) || @data[x / (32*$scale)][y / (32*$scale)] != 0 || @data[(x+110) / (32*$scale)][y / (32*$scale)] != 0 || @data[x / (32*$scale)][(y-40) / (32*$scale)] !=0 || @data[(x+50) / (32*$scale)][(y) / (32*$scale)] !=0 || @data[(x+110) / (32*$scale)][(y-40) / (32*$scale)] !=0
       return true
     else
       return false
@@ -439,7 +446,7 @@ class Map
       b = 0.01
     end
     c = a/b
-    
+
     cx = 1
     cy = c
     cl = (cx**2 + cy**2)**0.5
@@ -524,27 +531,30 @@ class Map
     if id==80
       if (@data[bloc_x][bloc_y+1] != Tiles::Air)
         setBlock(bloc_x,bloc_y,80)
-        puts "Lol"
+        @pose.play(1,0.8,false)
         return
       end
       if (@data[bloc_x-1][bloc_y] != Tiles::Air)
-        puts "G"
         setBlock(bloc_x,bloc_y,100)
+        @pose.play(1,0.8,false)
         return
       end
       if (@data[bloc_x+1][bloc_y] != Tiles::Air)
         setBlock(bloc_x,bloc_y,90)
+        @pose.play(1,0.8,false)
         return
       end
       return
     end
 
     setBlock(bloc_x,bloc_y,id)
+    @pose.play(1,0.8,false)
 
   end
 
   def detruireBloc(bloc_x,bloc_y)
     setBlock(bloc_x,bloc_y,0)
+    @casse.play(1,0.8,false)
   end
 
 end

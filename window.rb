@@ -8,18 +8,18 @@ class Window < Gosu::Window
     @start_time = Time.now
     @tempsEcoule = 0
     @dureSon = 10
-    
+
     @song0 = Gosu::Song.new("res/song/Imminent.mp3")
     @song1 = Gosu::Song.new("res/song/Nebulous.mp3")
     @song2 = Gosu::Song.new("res/song/Youthful.mp3")
 
     @ind = 0
-      
+
     @song0.volume = 0.5
     @song1.volume = 0.5
     @song2.volume = 0.5
 
-    @song1.play(true) 
+    @song1.play(true)
 
     $font = Gosu::Font.new(self, "res/pokemon_pixel_font.ttf", 40)
     $fontXL = Gosu::Font.new(self, "res/pokemon_pixel_font.ttf", 70)
@@ -40,10 +40,10 @@ class Window < Gosu::Window
     @bg4 = Gosu::Image.new("res/4.png", {:tileable => true, :retro => true})
     @bgn = Gosu::Image.new("res/black.png", {:tileable => true, :retro => true})
 
-    #@grotte1 = Gosu::Font.new("res/fond.png")
+    @coeur = Gosu::Image.new("res/heart.png", {:tileable => true, :retro => true})
 
     @map = Map.new()
-    #generate()
+
     @inventaire = Inventaire.new(6)
     @inventaire.store(4, 1)
 
@@ -86,8 +86,8 @@ class Window < Gosu::Window
 
   def update
      ##gestion des sons
-     if (Time.now-@start_time) > @dureSon 
-        playSong 
+     if (Time.now-@start_time) > @dureSon
+        playSong
         puts (Time.now-@start_time).to_s
         @start_time = Time.now
       end
@@ -162,7 +162,7 @@ class Window < Gosu::Window
       #move_x *= 2 if Gosu::button_down?(Gosu::KbLeftShift)
       @hero.update(move_x)
       if Gosu::button_down?(Gosu::KbSpace) || Gosu.button_down?(Gosu::KB_UP) || Gosu.button_down?(Gosu::KB_Z)
-        @hero.jump 
+        @hero.jump
       end
 
       @move += move_x if temp != @hero.x
@@ -180,8 +180,7 @@ class Window < Gosu::Window
         cursor_y = self.mouse_y
 
         v = @inventaire.idItem(@inventaire.selected)
-
-        if (v != 4) && (v != 5)
+        if (v != 4) && (v != 5) && (v!=-1)
 
           x,y = @map.trouveBlocP(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
 
@@ -205,10 +204,16 @@ class Window < Gosu::Window
             bloc_x, bloc_y = @map.trouveBloc(cursor_x,cursor_y,@camera_x,@camera_y,@hero.x, @hero.y)
             id = @map.data[bloc_x][bloc_y]
 
-            @map.detruireBloc(bloc_x,bloc_y)
-            if @map.data[bloc_x][bloc_y] == 0
+            if id != 7
               @inventaire.store(id,1)
-            end
+            else
+              prng = Random.new
+              @inventaire.store(80,prng.rand(10))
+            end 
+
+            @map.detruireBloc(bloc_x,bloc_y)
+
+         
             @hero.dernierBlocCasse = (Time.now.to_f*1000).to_i
           end
 
@@ -361,8 +366,13 @@ class Window < Gosu::Window
       @bg4.draw(off4+@x4-@bg4.width*2.2, 0 + yoff, -6, 2.2,2.2)
 
       #Profondeur du joueur
-      $fontXL.draw("Profondeur : " + (@hero.y/(32*$scale)).round.to_s, 20, 20, 5)
+      $font.draw("Profondeur : " + (@hero.y/(32*$scale)).round.to_s, 20, 20, 5)
 
+      #Vie
+      @coeur.draw(20, 60, 5)
+      $font.draw((@hero.pv).to_s, 60, 60, 5)
+
+      #Inventaire
       @inventaire.draw
       Gosu.translate(-@camera_x, -@camera_y) do
         @hero.draw
