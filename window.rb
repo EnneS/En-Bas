@@ -2,7 +2,7 @@ require 'set'
 class Window < Gosu::Window
 
   def initialize(width, height)
-    super(width, height, false)
+    super(width, height, true)
     self.caption = "En Bas"
 
     @start_time = Time.now
@@ -191,13 +191,13 @@ class Window < Gosu::Window
         hy = @hero.y - 48
 
         if cursor_r_x < hx
-          @dir = -1
-        end
-        if cursor_r_x > hx
           @dir = 1
         end
+        if cursor_r_x > hx
+          @dir = -1
+        end
 
-        @hero.update(1001 + @dir)
+        @hero.update(1001 - @dir)
 
         @mobs.each do |m|
           #puts "hx : " + hx.to_s + " mx : " + (m.x - 24).to_s
