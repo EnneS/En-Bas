@@ -116,17 +116,17 @@ attr_reader :selected, :items
 
   def draw
 
-    @selection.draw((1920-@case.width-(@barre.width/6)), (1080/4) / @places + ((1080/@places)*@selected), 5)
+    @selection.draw((1920-@case.width-(@barre.width/6)), (1080/4) / @places + ((1080/@places)*@selected), 7)
 
-    @barre.draw(1920-@barre.width, 0, 3)
+    @barre.draw(1920-@barre.width, 0, 5)
     i = 0
     while i < @places do
-      @case.draw((1920-@case.width-(@barre.width/6)), (1080/4) / @places + ((1080/@places)*i), 4)
+      @case.draw((1920-@case.width-(@barre.width/6)), (1080/4) / @places + ((1080/@places)*i), 6)
 
         if @items[i][0] != -1 #si l'emplacement contient un item
-          @images[@items[i][0]].draw((1920-(@images[1].width)-(@case.width/2)-(@barre.width/6)), 1080/4/@places + ((1080/@places)*i) + 16, 6, 2, 2)
+          @images[@items[i][0]].draw((1920-(@images[1].width)-(@case.width/2)-(@barre.width/6)), 1080/4/@places + ((1080/@places)*i) + 16, 7, 2, 2)
 
-          $font.draw(@items[i][1].to_s, 1870,  1080/4/@places + ((1080/@places)*i) + 60, 7)
+          $font.draw(@items[i][1].to_s, 1870,  1080/4/@places + ((1080/@places)*i) + 60, 8)
         end
         i += 1
     end

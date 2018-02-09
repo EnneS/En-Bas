@@ -18,8 +18,8 @@ class Monstre
         @focusRangeActive = 15
       end
       if @type == 1
-        @focusRangeIdle = 20
-        @focusRangeActive = 25
+        @focusRangeIdle = 15
+        @focusRangeActive = 20
       end
       @hero = hero
 
@@ -255,8 +255,8 @@ class Monstre
 
           dist = ((@x - @hero.x)**2 + (@y - @hero.y)**2)**0.5
 
-          @xt = ($rng.Random(dist/2 + 1) - dist/4)*$scale*4 + @hero.x
-          @yt = ($rng.Random(dist/2 + 1) - dist/4)*$scale*4 + @hero.y
+          @xt = ($rng.Random(dist/2 + 5) - dist/4 - 2)*$scale*4 + @hero.x
+          @yt = ($rng.Random(dist/2 + 5) - dist/4 - 2)*$scale*4 + @hero.y
 
 
           @lastMovement = n
