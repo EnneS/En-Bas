@@ -193,9 +193,10 @@ class Window < Gosu::Window
         end
 
         @mobs.each do |m|
-          dist = ((hx - m.x - 24)**2 + (hx - m.y + 32)**2)**0.5
-          if ((m.x - 24) - hx)*@dir > 0 && dist < 1.5*32*$scale
-            if hero.attack(m, 200)
+          #puts "hx : " + hx.to_s + " mx : " + (m.x - 24).to_s
+          dist = ((hx - m.x - 24)**2 + (hy - m.y + 32)**2)**0.5
+          if ((m.x - 24) - hx)*@dir < 0 && dist < 2.5*32*$scale
+            if @hero.attack(m, 200)
               @mobs.delete(m)
             end
           end
@@ -239,7 +240,7 @@ class Window < Gosu::Window
             else
               @inventaire.store(id,1)
             end
-            
+
             @map.detruireBloc(bloc_x,bloc_y)
 
          

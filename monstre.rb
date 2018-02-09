@@ -7,11 +7,11 @@ class Monstre
 
 
       if @type == 0
-        @vie = 200
+        @pv = 200
         @degats = 15
       end
       if @type == 1
-        @vie = 100
+        @pv = 100
         @degats = 20
       end
       @cooldown = 700
@@ -100,10 +100,10 @@ class Monstre
       return @pv <= 0
     end
 
-    def attack(hero, degats)
+    def attack(hero)
       if @lastAttack < (Time.now.to_f*1000.0).to_i - @cooldown
         @lastAttack = (Time.now.to_f*1000.0).to_i
-        return hero.subirDegats(degats)
+        return hero.subirDegats(@degats)
       end
     end
 
