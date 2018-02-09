@@ -11,7 +11,7 @@ class Monstre
         @degats = 15
       end
       if @type == 1
-        @pv = 100
+        @pv = 150
         @degats = 20
       end
       @cooldown = 700
