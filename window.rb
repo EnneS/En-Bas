@@ -2,7 +2,7 @@ require 'set'
 class Window < Gosu::Window
 
   def initialize(width, height)
-    super(width, height, true)
+    super(width, height, false)
     self.caption = "Hardcore Survival"
 
     @start_time = Time.now
@@ -87,6 +87,18 @@ class Window < Gosu::Window
 
 
   def update
+     ##gestion attaque
+
+      @mobs.each do |m|
+        if (m.x-@hero.x).abs < 32*$scale && (m.y-@hero.y).abs < 32*$scale
+          if m.attack(@hero)
+            @gameStarted = false
+          end 
+        end 
+      end
+
+
+
      ##gestion des sons
      if (Time.now-@start_time) > @dureSon
         playSong
